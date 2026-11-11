@@ -1,41 +1,20 @@
-# EduSearcher — O'quv markazlar sayti (edusarcher.uz)
+# EduSearcher (edusearcher.uz) — v3 yangilanishi
 
-Next.js 14 + Supabase. Vercel'ga joylashga tayyor.
+Bu branchda saytning **v3 versiyasida qo'shilgan va o'zgartirilgan fayllari** turadi:
 
-## 1. Supabase
-1. supabase.com da yangi loyiha oching.
-2. **SQL Editor** da ketma-ket ishga tushiring: `supabase/1_schema.sql`, keyin `supabase/2_schema_roles.sql`.
-3. **Project Settings > API** dan `Project URL` va `anon public` kalitni oling.
+- `site/` — yangi va almashtirilgan fayllar (Next.js loyihasidagi o'z joylari bilan).
+  Admin panel sahifalari `site/app/__admin__/` ichida turadi; build paytida ular saytning yopiq admin manziliga ko'chiriladi.
+- `site.config.mjs` — mavjud fayllarga kiritiladigan kichik tuzatishlar va o'chiriladigan fayllar ro'yxati.
 
-## 2. Kompyuterda sinash
-```
-cp .env.example .env.local     # ichiga Supabase URL va kalitni yozing
-npm install
-npm run dev                    # http://localhost:3000
-```
+Vercel'dagi build shu branchni yuklab oladi, fayllarni loyihaga qo'shadi va keyin `next build` ishlaydi.
+Shuning uchun **bu branchni o'chirmang**: saytni qayta build qilishda kerak bo'ladi.
 
-## 3. GitHub
-```
-git init
-git add .
-git commit -m "Birinchi versiya"
-git branch -M main
-git remote add origin https://github.com/USERNAME/edusearcher.git
-git push -u origin main
-```
+## v3 da nima qo'shildi
 
-## 4. Vercel
-1. vercel.com > **Add New > Project** > GitHub'dagi repozitoriyani tanlang.
-2. **Environment Variables** ga qo'shing: `NEXT_PUBLIC_SUPABASE_URL` va `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-3. **Deploy** bosing.
-4. Supabase > **Authentication > URL Configuration**: `Site URL` ga Vercel manzilini yozing.
+- Foydalanuvchi kabineti (`/kirish`, `/kabinet`): login + parol, saqlangan markazlar, arizalar, o'qiyotgan kurslar, oylik to'lovlar.
+- O'quv markazi kabineti (`/markaz-kabineti`): statistika, arizalar, o'quvchilar, to'lovlar, markaz ma'lumotlari.
+- O'qishga ariza berish («sinov darsi» o'rniga): ariza markaz paneliga va bosh admin paneliga tushadi.
+- Bosh admin: markazlarga kabinet ochish, aloqa ma'lumotlarini bittada yoki alohida yashirish/ko'rsatish, foydalanuvchilar.
+- 19 ta yangi yo'nalish (kimyo, biologiya, tarix, huquq, kiberxavfsizlik, sun'iy intellekt va boshqalar).
 
-## 5. Birinchi adminni tayinlash
-Saytda `/login` orqali ro'yxatdan o'ting, keyin SQL Editor'da:
-```
-update profiles set role = 'admin'
-where id = (select id from auth.users where email = 'sizning@email.com');
-```
-
-## 6. Shartnomali markazga ega biriktirish
-Buyruqlar `supabase/2_schema_roles.sql` oxirida. Markaz egasi avval saytda ro'yxatdan o'tadi, keyin admin uning `uuid`sini markazga biriktiradi.
+Ma'lumotlar bazasi o'zgarishlari Supabase loyihasidagi `v3_*` migratsiyalarida saqlangan.

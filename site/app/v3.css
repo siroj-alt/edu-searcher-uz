@@ -1,0 +1,56 @@
+/* v3: kabinetlar, o'qishga arizalar, o'quvchilar va to'lovlar */
+
+/* Sarlavhadagi kabinet havolasi */
+.acct{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:15px;color:var(--text);transition:.2s;margin-left:-10px;white-space:nowrap}
+.acct:hover{border-color:var(--accent);color:var(--accent-d)}
+.acct svg{width:18px;height:18px;flex:none}
+.acct.on{background:var(--soft2);border-color:transparent;color:var(--accent-d)}
+@media(max-width:900px) and (min-width:761px){.cta{display:none}.acct{margin-left:auto}}
+@media(max-width:760px){.acct{margin-left:auto;padding:8px 14px;font-size:14px}.bnav{grid-template-columns:repeat(5,1fr)}.bnav a{font-size:11px}}
+
+/* Kabinet sarlavhasi va bo'limlar */
+.cab-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.cpick{font-size:22px;font-weight:800;padding:8px 12px;max-width:520px}
+.tab .tcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#e03131;color:#fff;font-size:11px;font-weight:800;vertical-align:1px}
+.tab.on .tcnt{background:#fff;color:var(--accent-d)}
+.pillst.contacted{background:#e7f5ff;color:#1864ab}
+.pillst.accepted,.pillst.paid{background:var(--soft2);color:var(--accent-d)}
+.pillst.cancelled{background:#f1f3f5;color:#868e96}
+input:disabled{background:var(--soft);color:var(--muted)}
+
+/* Ichki formalar (qabul qilish, tahrirlash, to'lov) */
+.subform{display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.atable td>.subform{margin:2px 0 6px}
+.subform label{font-weight:600}
+.paybox{display:grid;gap:10px;padding:14px;margin:4px 0 12px;border:1px solid #c3f0dd;border-radius:14px;background:linear-gradient(135deg,#f3fcf8,#fff 60%)}
+.payopts{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.paycard{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;background:#fff;font-size:14px}
+.paycard b{font-size:16px;letter-spacing:.04em}
+
+/* Markaz paneli: statistika */
+.ovgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ovcard{display:grid;gap:2px;width:100%;text-align:left;font:inherit;color:var(--text);margin:0;cursor:default}
+.ovcard.link{cursor:pointer;transition:.2s}
+.ovcard.link:hover{border-color:var(--accent);transform:translateY(-2px)}
+.ovcard b{font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--accent-d);line-height:1.15}
+.ovcard span{font-size:14px;font-weight:600}
+.ovcard small{font-size:12.5px}
+.ovbars{display:flex;align-items:flex-end;gap:2px;height:150px}
+.ovbar{flex:1;min-width:2px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:4px 4px 0 0;overflow:hidden;background:var(--soft)}
+.ovbar i{display:block;width:100%}
+.ovbar .v,.ovlegend .v{background:var(--accent)}
+.ovbar .a,.ovlegend .a{background:#f59f00}
+.ovlegend{display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--muted)}
+.ovlegend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+
+/* Admin: kontaktlarni bittada o'chirib-yoqish */
+.gswitch{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-color:#c3f0dd;background:linear-gradient(135deg,#f3fcf8,#fff 60%)}
+.gswitch.off{border-color:#ffc9c9;background:linear-gradient(135deg,#fff5f5,#fff 60%)}
+.gswitch>div{flex:1 1 320px}
+.gswitch .btn{flex:none}
+
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);z-index:3000;background:var(--text);color:#fff;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1000px){.ovgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.ovgrid{gap:10px}.ovcard b{font-size:24px}.cab-head{align-items:flex-start}.cpick{font-size:18px;max-width:100%}}
