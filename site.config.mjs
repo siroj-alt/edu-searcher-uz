@@ -46,6 +46,8 @@ export default {
     { file: 'components/AdminPanel.js', find: `[['stats', 'Umumiy'], ['centers', 'Markazlar'], ['admins', 'Adminlar']]`, replace: `[['stats', 'Umumiy'], ['centers', 'Markazlar'], ['users', 'Foydalanuvchilar'], ['admins', 'Adminlar']]` },
     { file: 'components/AdminPanel.js', find: `{tab === 'admins' && (`, replace: `{tab === 'users' && <UsersAdmin onMsg={setMsg} />}\n\n      {tab === 'admins' && (` },
 
+    { file: 'app/__admin__/tavsiya/page.js', find: `title: 'Tavsiya va belgilar | EduSearcher'`, replace: `title: 'Belgilar va kontaktlar | EduSearcher'` },
+
     // Filial telefonlari yashirilgan paytda ham boshqaruvda ko'rinadi
     { file: 'components/CenterManager.js', re: /setD\(data\);(\s*)\}, \[centerId\]\);/, replace: `const { data: bp } = await supabase.from('branch_contacts').select('branch_id,phone').eq('center_id', centerId);\n    const ph = Object.fromEntries((bp || []).map((x) => [x.branch_id, x.phone]));\n    if (data) data.branches = (data.branches || []).map((b) => ({ ...b, phone: ph[b.id] ?? b.phone }));\n    setD(data);$1}, [centerId]);` }
   ]

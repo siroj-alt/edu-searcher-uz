@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabase';
-import { useMe, refreshMe, signOut, rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom, APP_STATUS, PAY_METHOD, PAY_STATUS } from '../../lib/auth';
+import { useMe, refreshMe, signOut, rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom, thisMonth, APP_STATUS, PAY_METHOD, PAY_STATUS } from '../../lib/auth';
 import SavedList from '../SavedList';
 
 const TABS = [['markazlar', 'Markazlarim'], ['tolov', "To'lovlar"], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
@@ -170,10 +170,13 @@ function EnrollPay({ e, pays, info, onChange }) {
   const [note, setNote] = useState('');
   const [st, setSt] = useState({ busy: false, err: '' });
   const [copied, setCopied] = useState(false);
-  const endIso = e.ended_on ? String(e.ended_on).slice(0, 7) + '-01' : null;
-  const months = monthsFrom(e.started_on, e.status === 'active' ? 1 : 0).filter((m) => !endIso || m <= endIso).slice(0, 12);
   const byMonth = {};
   for (const p of pays) if (p.status !== 'rejected' || !byMonth[p.period]) byMonth[p.period] = p;
+  const endIso = e.ended_on ? String(e.ended_on).slice(0, 7) + '-01' : null;
+  // Keyingi oy faqat joriy oy to'langan (yoki tekshirilayotgan) bo'lsa ko'rsatiladi
+  const cur = byMonth[thisMonth()];
+  const ahead = e.status === 'active' && cur && cur.status !== 'rejected' ? 1 : 0;
+  const months = monthsFrom(e.started_on, ahead).filter((m) => !endIso || m <= endIso).slice(0, 12);
 
   async function report(period) {
     setSt({ busy: true, err: '' });
