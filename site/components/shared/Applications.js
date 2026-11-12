@@ -19,7 +19,7 @@ export default function Applications({ centerId = null, onChange }) {
 
   const load = useCallback(async () => {
     setErr('');
-    let q = supabase.from('applications').select('id,center_id,course_id,course_name,full_name,phone,note,status,reply,created_at,centers(name)');
+    let q = supabase.from('applications').select('id,center_id,course_id,course_name,full_name,phone,note,status,reply,source,tg_id,created_at,centers(name)');
     if (centerId) q = q.eq('center_id', centerId);
     if (tab) q = q.eq('status', tab);
     const { data, error } = await q.order('created_at', { ascending: false }).limit(500);
@@ -37,8 +37,8 @@ export default function Applications({ centerId = null, onChange }) {
   }
 
   function exportCsv() {
-    const head = ['Sana', 'Markaz', 'Ism familiya', 'Telefon', 'Kurs', 'Izoh', 'Holat'];
-    const lines = [head.map(csvCell).join(','), ...(rows || []).map((r) => [fmtDT(r.created_at), r.centers?.name, r.full_name, r.phone, r.course_name, r.note, APP_STATUS[r.status]].map(csvCell).join(','))];
+    const head = ['Sana', 'Markaz', 'Ism familiya', 'Telefon', 'Kurs', 'Izoh', 'Holat', 'Manba'];
+    const lines = [head.map(csvCell).join(','), ...(rows || []).map((r) => [fmtDT(r.created_at), r.centers?.name, r.full_name, r.phone, r.course_name, r.note, APP_STATUS[r.status], r.source === 'telegram' ? 'Telegram bot' : 'Sayt'].map(csvCell).join(','))];
     const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = `arizalar-${today()}.csv`;
@@ -80,7 +80,7 @@ function Row({ r, cols, showCenter, open, onOpen, onStatus, onDone }) {
       <tr className={s === 'new' ? 'new' : ''}>
         <td style={{ whiteSpace: 'nowrap' }}>{fmtDT(r.created_at)}</td>
         {showCenter ? <td><Link className="ok" href={`/centers/${r.center_id}`} target="_blank">{r.centers?.name}</Link></td> : null}
-        <td>{r.full_name}</td>
+        <td>{r.full_name}{r.source === 'telegram' ? <div><span className="pillst contacted" title="Telegram bot orqali yuborilgan">🤖 Telegram bot</span></div> : null}</td>
         <td style={{ whiteSpace: 'nowrap' }}><a className="ok" href={tel(r.phone)}>{r.phone}</a></td>
         <td>{r.course_name ? <b>{r.course_name}</b> : <span className="muted">Kurs ko'rsatilmagan</span>}{r.note ? <div className="muted" style={{ marginTop: 2 }}>{r.note}</div> : null}{s === 'rejected' && r.reply ? <div className="muted" style={{ marginTop: 2 }}>Sabab: {r.reply}</div> : null}</td>
         <td><span className={'pillst ' + s}>{s === 'new' ? 'Yangi' : APP_STATUS[s]}</span></td>

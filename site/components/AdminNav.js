@@ -35,6 +35,7 @@ export default function AdminNav() {
     [ADMIN + '/arizalar', 'Arizalar', cnt.applications_new],
     [ADMIN + '/sharhlar', 'Sharhlar', cnt.reviews_pending],
     [ADMIN + '/tavsiya', 'Belgilar va kontaktlar'],
+    [ADMIN + '/bot', 'Telegram bot'],
     [ADMIN + '/statistika', 'Statistika']
   ];
   return (
