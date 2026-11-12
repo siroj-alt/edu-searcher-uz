@@ -50,6 +50,9 @@ export default {
     { file: 'components/AdminPanel.js', find: `const nz = (v) => (v && v.trim() ? v.trim() : null);`, replace: `const nz = (v) => (v && v.trim() ? v.trim() : null);\nconst fetchAllCenters = async () => {\n  const all = [];\n  let error = null;\n  for (let from = 0; from < 50000; from += 1000) {\n    const r = await supabase.from('centers').select('*').order('created_at', { ascending: false }).order('id').range(from, from + 999);\n    if (r.error) { error = r.error; break; }\n    const rows = r.data || [];\n    all.push(...rows);\n    if (rows.length < 1000) break;\n  }\n  return { data: all, error };\n};` },
     { file: 'components/AdminPanel.js', find: `supabase.from('centers').select('*').order('created_at', { ascending: false }).limit(2000),`, replace: `fetchAllCenters(),` },
 
+    // Kurs/narx o'zgargach sahifada eski ma'lumot qolmasligi uchun: Next.js server keshi o'rniga har so'rov yangi ma'lumot oladi
+    { file: 'lib/supabase.js', find: `export const supabase = createClient(url, key);`, replace: `const noStoreFetch = (input, init) => fetch(input, { ...(init || {}), cache: 'no-store' });\n\nexport const supabase = createClient(url, key, { global: { fetch: noStoreFetch } });` },
+
     { file: 'app/__admin__/tavsiya/page.js', find: `title: 'Tavsiya va belgilar | EduSearcher'`, replace: `title: 'Belgilar va kontaktlar | EduSearcher'` },
 
     // Filial telefonlari yashirilgan paytda ham boshqaruvda ko'rinadi
