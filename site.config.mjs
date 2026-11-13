@@ -80,6 +80,20 @@ export default {
     { file: 'app/__admin__/tavsiya/page.js', find: `title: 'Tavsiya va belgilar | EduSearcher'`, replace: `title: 'Belgilar va kontaktlar | EduSearcher'` },
 
     // Filial telefonlari yashirilgan paytda ham boshqaruvda ko'rinadi
-    { file: 'components/CenterManager.js', re: /setD\(data\);(\s*)\}, \[centerId\]\);/, replace: `const { data: bp } = await supabase.from('branch_contacts').select('branch_id,phone').eq('center_id', centerId);\n    const ph = Object.fromEntries((bp || []).map((x) => [x.branch_id, x.phone]));\n    if (data) data.branches = (data.branches || []).map((b) => ({ ...b, phone: ph[b.id] ?? b.phone }));\n    setD(data);$1}, [centerId]);` }
+    { file: 'components/CenterManager.js', re: /setD\(data\);(\s*)\}, \[centerId\]\);/, replace: `const { data: bp } = await supabase.from('branch_contacts').select('branch_id,phone').eq('center_id', centerId);\n    const ph = Object.fromEntries((bp || []).map((x) => [x.branch_id, x.phone]));\n    if (data) data.branches = (data.branches || []).map((b) => ({ ...b, phone: ph[b.id] ?? b.phone }));\n    setD(data);$1}, [centerId]);` },
+
+    // v5: markaz rasmlari (bir nechta rasm, asosiy rasm kartalarda va kurslar ro'yxatida)
+    { file: "lib/points.js", find: "is_featured,created_at,updated_at,branches(id,address,lat,lng,region_id)", replace: "is_featured,created_at,updated_at,cover_url,branches(id,address,lat,lng,region_id)" },
+    { file: "components/SavedList.js", find: "'id,name,rating,phone,website,is_verified,is_featured,branches(", replace: "'id,name,rating,phone,website,is_verified,is_featured,cover_url,branches(" },
+    { file: "app/centers/[id]/page.js", find: "is_featured,updated_at,created_at,' +", replace: "is_featured,updated_at,created_at,cover_url,center_photos(id,url,thumb_url,is_cover,sort),' +" },
+    { file: "app/centers/[id]/page.js", find: "'id,name,rating,phone,website,is_verified,is_featured,branches!inner(", replace: "'id,name,rating,phone,website,is_verified,is_featured,cover_url,branches!inner(" },
+    { file: "app/centers/[id]/page.js", find: "import ReviewForm from '../../../components/ReviewForm';", replace: "import ReviewForm from '../../../components/ReviewForm';\nimport CenterGallery from '../../../components/CenterGallery';" },
+    { file: "app/centers/[id]/page.js", re: /(<section className="card">\s*<div className="chead">)/, replace: "<CenterGallery photos={c.center_photos || []} name={c.name} />\n      $1" },
+    { file: "app/centers/[id]/page.js", find: "<div className=\"av lg\" style={{ background: color }}>{initials(c.name)}</div>", replace: "{c.cover_url ? <img className=\"av lg pic\" src={c.cover_url} alt=\"\" /> : <div className=\"av lg\" style={{ background: color }}>{initials(c.name)}</div>}" },
+    { file: "app/search/page.js", find: "const featured = new Set((featData || []).map((x) => x.id));", replace: "const featured = new Set((featData || []).map((x) => x.id));\n  const covIds = [...new Set(rows.map((r) => r.center_id))].slice(0, 150);\n  const { data: covData } = covIds.length ? await supabase.from('centers').select('id,cover_url').in('id', covIds).not('cover_url', 'is', null) : { data: [] };\n  const covers = Object.fromEntries((covData || []).map((x) => [x.id, x.cover_url]));" },
+    { file: "app/search/page.js", find: "{isBest && <span className=\"bestb\">Eng mos natija</span>}", replace: "{covers[r.center_id] ? <Link href={\"/centers/\" + r.center_id} className=\"rcov\" tabIndex={-1} aria-hidden=\"true\"><img src={covers[r.center_id]} alt=\"\" loading=\"lazy\" decoding=\"async\" /></Link> : null}\n                  {isBest && <span className=\"bestb\">Eng mos natija</span>}" },
+    { file: "components/AdminPanel.js", find: "import UsersAdmin from './admin/UsersAdmin';", replace: "import UsersAdmin from './admin/UsersAdmin';\nimport CenterPhotos from './shared/CenterPhotos';" },
+    { file: "components/AdminPanel.js", find: "<CenterAccess center={c} onMsg={setMsg} onChange={load} />", replace: "<CenterPhotos centerId={c.id} onMsg={setMsg} />\n                  <CenterAccess center={c} onMsg={setMsg} onChange={load} />" }
+
   ]
 };

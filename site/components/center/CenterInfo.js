@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import CenterManager from '../CenterManager';
+import CenterPhotos from '../shared/CenterPhotos';
 import ContactsEditor from '../shared/ContactsEditor';
 
 // Markaz ma'lumotlarini tahrirlash: nom, tavsif, aloqa, filiallar va kurslar
@@ -44,6 +45,8 @@ export default function CenterInfo({ center, onChange }) {
         {hidden ? <p className="note" style={{ margin: 0 }}>Hozir aloqa ma'lumotlari saytda ko'rsatilmayapti (sayt ma'muriyati sozlamasi). Foydalanuvchilar siz bilan sayt orqali ariza qoldirib bog'lanadi.</p> : null}
         <ContactsEditor centerId={center.id} onSaved={onChange} />
       </div>
+
+      <CenterPhotos centerId={center.id} onMsg={(m) => { if (m) alertBar(m); }} />
 
       <CenterManager centerId={center.id} onMsg={(m) => { setMsg(''); setErr(''); if (m) alertBar(m); }} />
     </>

@@ -19,7 +19,8 @@ export default function CenterTile({ c, i = 0, slug = null }) {
   return (
     <div className="tilew">
       <Link className="ccard" style={{ '--i': i, '--c': color }} href={`/centers/${c.id}`}>
-        <div className="ctop">
+        <div className={'ctop' + (c.cover_url ? ' img' : '')}>
+          {c.cover_url ? <img src={c.cover_url} alt={c.name} loading="lazy" decoding="async" /> : null}
           <span className="av" style={{ background: color }}>
             {c.logo_url ? <img src={c.logo_url} alt="" loading="lazy" decoding="async" /> : initials(c.name)}
           </span>
