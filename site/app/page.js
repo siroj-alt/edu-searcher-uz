@@ -40,7 +40,6 @@ export default async function Home() {
   const s = data || { centers: 0, branches: 0, courses: 0, cats: [], regions: {}, top: [] };
   const cats = (s.cats || []).filter((c) => c.n > 0).sort((a, b) => b.n - a.n);
   const regions = s.regions || {};
-  const nRegions = Object.keys(regions).length;
   const top = pickTop((s.top || []).map((c) => ({ ...c, branches: c.branches || [], courses: c.courses || [] })));
   const first = cats.slice(0, 8), rest = cats.slice(8);
 
@@ -48,7 +47,7 @@ export default async function Home() {
     <>
       <section className="hero">
         <div className="hero-l">
-          <span className="pill"><i aria-hidden="true" />{fmt(s.centers)} ta o'quv markazi · {nRegions} viloyat</span>
+          <span className="pill"><i aria-hidden="true" />{fmt(s.centers)} ta o'quv markazi · butun O'zbekiston bo'ylab</span>
           <h1>O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</h1>
           <p className="lead">Kurs, narx va manzil bo'yicha solishtiring, so'ng sayt orqali to'g'ridan-to'g'ri o'qishga ariza bering.</p>
           <HomeSearch cats={s.cats || []} />
