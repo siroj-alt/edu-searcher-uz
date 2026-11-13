@@ -18,7 +18,7 @@ export default async function Xarita({ searchParams }) {
   for (const b of all) {
     if (region && b.r !== region.id) continue;
     if (slug && !(b.s || []).includes(slug)) continue;
-    points.push({ id: points.length + ':' + b.c + ':' + b.lat + ',' + b.lng, centerId: b.c, name: b.n, address: b.a, lat: b.lat, lng: b.lng, color: colorFor(slug || (b.s || [])[0]), rating: b.rt });
+    points.push({ id: b.c.slice(0, 8) + points.length, centerId: b.c, name: b.n, address: b.a, lat: b.lat, lng: b.lng, color: colorFor(slug || (b.s || [])[0]), rating: b.rt });
   }
   const nCenters = new Set(points.map((p) => p.centerId)).size;
   const used = new Set(all.flatMap((b) => b.s || []));
