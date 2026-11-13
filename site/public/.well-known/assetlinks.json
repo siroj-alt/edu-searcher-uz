@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "uz.edusearcher.app",
+    "sha256_cert_fingerprints": ["5D:47:CD:7C:4B:0E:C3:9A:CD:2D:E6:A3:E2:B9:43:EB:46:3D:58:98:37:60:B7:9E:2B:51:AA:DB:4F:5C:77:A2"]
+  }
+}]
