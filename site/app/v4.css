@@ -268,6 +268,7 @@ html[data-theme=dark] .ctags span{background:color-mix(in srgb,var(--c) 22%,var(
 .myloc{color:var(--text);background:var(--card);border:1px solid var(--line);right:12px;bottom:16px}
 .maptoast{color:var(--text);left:12px;right:auto;bottom:16px}
 .maptoast button{background:var(--soft);color:var(--muted)}
+.xbar{scrollbar-width:none}.xbar::-webkit-scrollbar{display:none}
 .xbar a,.xcount{box-shadow:var(--shadow)}
 .xbar a{color:var(--text)}
 .xbar a.on{border-color:var(--accent);color:var(--accent-d)}
@@ -292,6 +293,7 @@ html[data-theme=dark] [class*=balloon] .pop b{color:var(--text)}
   .xmap .mzoom{display:none}
   .xmap .xcount{bottom:calc(98px + env(safe-area-inset-bottom))}
   .xmap .maptoast{bottom:calc(150px + env(safe-area-inset-bottom))}
+  .xmap [class*=copyrights-pane]{bottom:calc(84px + env(safe-area-inset-bottom))!important}
   .mzoom{display:none}
 }
 
@@ -308,7 +310,7 @@ html[data-theme=dark] [class*=balloon] .pop b{color:var(--text)}
   .hero h1{font-size:35px;line-height:1.08}
   .hero .lead{font-size:16px;margin-top:14px}
   .hsearch{flex-direction:column;align-items:stretch;gap:8px;margin-top:22px;border-radius:24px}
-  .hsearch .hq,.hsearch .hreg{background:var(--field);border-radius:16px;min-height:52px}
+  .hsearch .hq,.hsearch .hreg{background:var(--field);border-radius:16px;min-height:52px;flex:0 0 auto}
   .hsearch .hdiv{display:none}
   .hsearch select{max-width:none;flex:1;padding-right:24px}
   .hsearch .hgo{min-height:52px;font-size:17px}
@@ -318,6 +320,7 @@ html[data-theme=dark] [class*=balloon] .pop b{color:var(--text)}
   .hpop span{display:none}
   .hteaser{height:220px;border-radius:26px}
   .hteaser .tok,.hteaser .pin.me{display:none}
+  .hteaser .tchip{top:12px!important;right:12px!important}
   .hteaser .tcard{left:12px;right:12px;bottom:12px;padding:10px 12px;border-radius:16px}
   .hteaser .tcard .ti{display:none}
   .hteaser .tcard b{font-size:15px}

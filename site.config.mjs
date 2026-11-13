@@ -34,7 +34,7 @@ export default {
     { file: 'app/centers/[id]/page.js', find: `const minPrice = prices.length ? Math.min(...prices) : null;`, replace: `const minPrice = prices.length ? Math.min(...prices) : null;\n  const courseOpts = groupList.flatMap((g) => g.list.map((k) => ({ id: k.id, name: k.name, price: k.price_monthly || null })));` },
 
     // Markaz sahifasi: kursning o'z nomi (masalan "IELTS 7+ intensiv") yo'nalish nomi o'rniga ko'rinadi
-    { file: 'app/centers/[id]/page.js', find: `<span>{LEVELS[k.level] || k.level}{k.duration_months`, replace: `<span>{k.name && k.name.trim() && k.name.trim() !== g.cat.name ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months` },
+    { file: 'app/centers/[id]/page.js', find: `<span>{LEVELS[k.level] || k.level}{k.duration_months`, replace: `<span>{k.name && k.name.trim() && !k.name.trim().toLowerCase().startsWith(g.cat.name.toLowerCase()) ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months` },
     { file: 'app/centers/[id]/page.js', find: `.neq('id', c.id).limit(400)`, replace: `.neq('id', c.id).limit(120)` },
 
     // Viloyat sahifalari matni

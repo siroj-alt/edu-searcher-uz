@@ -26,7 +26,7 @@ export default function HomeSearch({ cats = [] }) {
     <form className="hsearch" role="search" onSubmit={go}>
       <label className="hq">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5" /></svg>
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Kurs yoki markaz: IELTS, Matematika, Najot Ta'lim" aria-label="Kurs yoki markaz nomi" maxLength={60} enterKeyHint="search" />
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Kurs yoki markaz nomi" aria-label="Kurs yoki markaz nomi" maxLength={60} enterKeyHint="search" />
       </label>
       <span className="hdiv" aria-hidden="true" />
       <label className="hreg">
