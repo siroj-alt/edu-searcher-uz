@@ -69,3 +69,5 @@ html[data-theme=dark] .adm{--side:#050D0A}
   .adm-main .tabs{display:flex;overflow-x:auto;flex-wrap:nowrap}
   .adm-main .tab{flex:none}
 }
+html[data-theme=dark] .adm-side{border-right:1px solid var(--line)}
+@media(min-width:901px){.adm-main .row:has(> .adm-head) > .btn{display:none}}

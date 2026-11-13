@@ -6,6 +6,8 @@ import { useMe } from '../lib/auth';
 import { Heart } from './Glyphs';
 import LoginAsk from './LoginAsk';
 
+const PEND = 'es-pending-save';
+
 // Markazni saqlash: faqat shaxsiy kabinetga kirgan foydalanuvchi uchun.
 // Kirmagan bo'lsa, kabinetga kirish taklif qilinadi va kirgach shu sahifaga qaytadi.
 export default function SaveButton({ id, compact = false, label = true }) {
@@ -17,10 +19,20 @@ export default function SaveButton({ id, compact = false, label = true }) {
     setOn(getSaved().includes(id));
     return onSavedChange((list) => setOn(list.includes(id)));
   }, [id]);
+  // Kabinetga kirib qaytgach, kirishdan oldin bosilgan markaz avtomatik saqlanadi
+  useEffect(() => {
+    if (!me) return;
+    let pend = null;
+    try { pend = sessionStorage.getItem(PEND); } catch {}
+    if (pend !== id) return;
+    try { sessionStorage.removeItem(PEND); } catch {}
+    const t = setTimeout(() => { if (!getSaved().includes(id)) setOn(toggleSaved(id)); }, 800);
+    return () => clearTimeout(t);
+  }, [me, id]);
   const click = (e) => {
     e.preventDefault(); e.stopPropagation();
     if (me === undefined) return; // hali tekshirilmoqda
-    if (!me) return setAsk(true);
+    if (!me) { try { sessionStorage.setItem(PEND, id); } catch {} return setAsk(true); }
     setOn(toggleSaved(id));
   };
   const saved = on && !!me;
