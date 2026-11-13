@@ -17,13 +17,18 @@ export default {
     { file: 'app/layout.js', find: `export const viewport = { themeColor: '#12B886' };`, replace: `export const viewport = { themeColor: [{ media: '(prefers-color-scheme: light)', color: '#F5FAF7' }, { media: '(prefers-color-scheme: dark)', color: '#07130E' }], colorScheme: 'light dark', viewportFit: 'cover' };` },
     { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
 
+    // Ilova (PWA): o'rnatish taklifi, service worker, iPhone uchun sozlamalar
+    { file: 'app/layout.js', find: `import Motion from '../components/Motion';`, replace: `import Motion from '../components/Motion';\nimport PwaSetup from '../components/PwaSetup';` },
+    { file: 'app/layout.js', find: `<Motion />`, replace: `<Motion />\n        <PwaSetup />` },
+    { file: 'app/layout.js', find: `applicationName: 'EduSearcher',`, replace: `applicationName: 'EduSearcher',\n  appleWebApp: { capable: true, title: 'EduSearcher', statusBarStyle: 'default' },` },
+
     // v4: oq fonlar mavzu rangiga (qorong'u rejimda ham to'g'ri ko'rinishi uchun)
     { file: 'app/globals.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 15 },
     { file: 'app/extra.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 1 },
     { file: 'app/v2.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 5 },
     { file: 'app/motion.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 2 },
     { file: 'app/__admin__/statistika/stats.css', re: /background:#fff(?![0-9a-fA-F])/, replace: 'background:var(--card)', count: 2 },
-    { file: 'app/layout.js', find: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>`, replace: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>\n                  <li><Link href="/kabinet">Shaxsiy kabinet</Link></li>` },
+    { file: 'app/layout.js', find: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>`, replace: `<li><Link href="/saqlangan">Saqlanganlar</Link></li>\n                  <li><Link href="/kabinet">Shaxsiy kabinet</Link></li>\n                  <li><Link href="/ilova">Telefon ilovasi</Link></li>` },
 
     // Markaz sahifasi: "sinov darsi" o'rniga o'qishga ariza
     { file: 'app/centers/[id]/page.js', find: `import LeadForm from '../../../components/LeadForm';`, replace: `import ApplyForm from '../../../components/ApplyForm';` },
