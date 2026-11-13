@@ -55,7 +55,11 @@ export default async function Home() {
             <span>Mashhur:</span>
             {cats.slice(0, 6).map((c) => <Link key={c.id} href={`/search?cat=${c.id}`}>{c.name}</Link>)}
           </div>
-          <Link className="hmore" href="/search">Daraja, narx va masofa bo'yicha batafsil qidiruv</Link>
+          <Link className="hfilter" href="/search">
+            <span className="fi" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.5" /><circle cx="10" cy="17" r="2.5" /></svg></span>
+            <span className="ft"><b>Batafsil qidiruv</b><small>Daraja, narx va masofa bo'yicha tanlang</small></span>
+            <span className="fa" aria-hidden="true">{ARROW}</span>
+          </Link>
         </div>
 
         <Link className="hteaser" href="/xarita" aria-label={`Xaritani ochish: ${fmt(s.branches)} ta filial`}>

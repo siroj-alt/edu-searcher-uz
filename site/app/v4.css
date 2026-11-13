@@ -155,6 +155,13 @@ table.cmp tbody th{background:var(--card)}
 .hpop span{font-size:14px;font-weight:700;color:var(--muted)}
 .hpop a{padding:8px 15px;border-radius:999px;background:var(--card);border:1px solid var(--line2);font-size:14px;font-weight:700;transition:border-color .2s}
 .hpop a:hover{border-color:var(--accent)}
+.hfilter{margin-top:18px;display:inline-flex;align-items:center;gap:14px;padding:12px 18px 12px 12px;border-radius:20px;background:var(--soft2);border:1.5px solid var(--accent);color:var(--text);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,background .2s}
+.hfilter:hover{transform:translateY(-2px);box-shadow:var(--shadow-a)}
+.hfilter .fi{width:46px;height:46px;border-radius:14px;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--on-accent)}
+.hfilter .ft b{display:block;font-size:17px;font-weight:800;letter-spacing:-.01em}
+.hfilter .ft small{display:block;font-size:13.5px;font-weight:600;color:var(--muted);margin-top:1px}
+.hfilter .fa{margin-left:6px;color:var(--accent-d);display:grid;transition:transform .2s}
+.hfilter:hover .fa{transform:translateX(3px)}
 .hmore{display:inline-block;margin-top:14px;font-size:14px;font-weight:700;color:var(--accent-d);text-decoration:underline;text-underline-offset:3px}
 
 .hteaser{flex:0 1 480px;min-width:0;position:relative;height:440px;border-radius:32px;overflow:hidden;background:var(--map-bg);border:1px solid var(--line2);display:block;isolation:isolate}
@@ -318,6 +325,8 @@ html[data-theme=dark] [class*=balloon] .pop b{color:var(--text)}
   .hpop::-webkit-scrollbar{display:none}
   .hpop a{flex:none;min-height:44px;display:flex;align-items:center}
   .hpop span{display:none}
+  .hfilter{display:flex;width:100%;margin-top:14px}
+  .hfilter .fa{margin-left:auto}
   .hteaser{height:220px;border-radius:26px}
   .hteaser .tok,.hteaser .pin.me{display:none}
   .hteaser .tchip{top:12px!important;right:12px!important}
@@ -343,3 +352,15 @@ html[data-theme=dark] [class*=balloon] .pop b{color:var(--text)}
   .ccards{gap:14px}
 }
 @media (prefers-reduced-motion:reduce){.hteaser .pin{animation:none}}
+
+/* ===== Saqlash uchun kirish oynasi ===== */
+.lask{position:fixed;inset:0;z-index:4000;display:grid;place-items:center;padding:20px;background:rgba(5,15,11,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:laskin .2s ease both}
+.lask-box{width:100%;max-width:400px;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:26px;padding:28px 24px 22px;box-shadow:var(--shadow-l);display:grid;gap:10px;text-align:center;animation:laskup .28s cubic-bezier(.2,.8,.3,1) both}
+.lask-ic{width:56px;height:56px;margin:0 auto 4px;border-radius:18px;display:grid;place-items:center;background:var(--bad-bg);color:var(--bad)}
+.lask-ic svg{width:28px;height:28px;fill:currentColor}
+.lask-box h2{font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.lask-box p{color:var(--muted);font-size:15px;line-height:1.55;margin-bottom:6px}
+.lask-box .btn{width:100%;min-height:50px}
+@keyframes laskin{from{opacity:0}}
+@keyframes laskup{from{opacity:0;transform:translateY(16px) scale(.97)}}
+@media(max-width:760px){.lask{align-items:end;padding:12px 12px calc(12px + env(safe-area-inset-bottom))}.lask-box{border-radius:26px}}

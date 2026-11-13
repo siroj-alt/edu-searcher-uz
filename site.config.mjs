@@ -1,17 +1,5 @@
 // Mavjud sayt fayllariga kiritiladigan o'zgarishlar (build paytida qo'llanadi).
 // "find" — aynan mos keladigan matn, "re" — regulyar ifoda. Har biri "count" marta (odatda 1) uchrashi shart.
-// VAQTINCHA: admin fayllari nusxasi (keyingi commitda olib tashlanadi)
-if (process.env.VERCEL_ENV === 'preview') {
-  const { readdirSync, readFileSync, statSync } = await import('node:fs');
-  const files = [];
-  const walk = (d) => { for (const n of readdirSync(d)) { const f = d + '/' + n; if (statSync(f).isDirectory()) walk(f); else if (/\.(js|css)$/.test(n)) files.push(f); } };
-  try { walk('app/boshqaruv-6dd5jgltqq'); } catch {}
-  files.push('components/AdminGate.js', 'components/AdminPanel.js', 'components/admin/ReviewsAdmin.js', 'components/admin/FeatureAdmin.js', 'components/CenterManager.js', 'components/SavedList.js', 'components/Glyphs.js', 'lib/icons.js');
-  for (const f of files) {
-    try { await fetch('https://xmdxmfvrzbfjursksfhv.supabase.co/rest/v1/rpc/tmp_src_put', { method: 'POST', headers: { apikey: 'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_key: 'r4Wn8yQs2Kd7Vb', p_path: f, p_body: readFileSync(f, 'utf8') }) }); } catch {}
-  }
-}
-
 export default {
   delete: [
     'components/LeadForm.js',
@@ -62,13 +50,17 @@ export default {
     { file: 'app/search/page.js', re: /<div className="chips">(\s*)\{cats\.map\(/, replace: `<div className="chips scroll">$1{cats.map(` },
 
     { file: 'app/robots.js', find: `disallow: ['/api/', '/saqlangan']`, replace: `disallow: ['/api/', '/saqlangan', '/kabinet', '/kirish', '/markaz-kabineti']` },
-    { file: 'app/saqlangan/page.js', find: `Ro'yxat faqat shu qurilmada saqlanadi.`, replace: `Kabinetingizga kirsangiz, ro'yxat barcha qurilmalaringizda saqlanadi.` },
+    { file: 'app/saqlangan/page.js', find: `Ro'yxat faqat shu qurilmada saqlanadi.`, replace: `Saqlangan markazlar shaxsiy kabinetingizda turadi va barcha qurilmalaringizda ko'rinadi.` },
+    // Saqlash faqat kabinetga kirgan foydalanuvchi uchun
+    { file: 'app/saqlangan/page.js', find: `import SavedList from '../../components/SavedList';`, replace: `import SavedGate from '../../components/SavedGate';` },
+    { file: 'app/saqlangan/page.js', find: `<SavedList />`, replace: `<SavedGate />` },
 
     // Admin panel: aloqa ma'lumotlari va markaz kabineti alohida blokda, foydalanuvchilar bo'limi
     { file: 'components/AdminPanel.js', find: `import CenterManager from './CenterManager';`, replace: `import CenterManager from './CenterManager';\nimport CenterAccess from './admin/CenterAccess';\nimport UsersAdmin from './admin/UsersAdmin';` },
     { file: 'components/AdminPanel.js', re: /name: f\.name, description: nz\(f\.description\), phone: nz\(f\.phone\), website: nz\(f\.website\),\s*telegram: nz\(f\.telegram\), instagram: nz\(f\.instagram\),(\s*)rating:/, replace: `name: f.name, description: nz(f.description),$1rating:` },
     { file: 'components/AdminPanel.js', re: /\s*<div className="two">\s*<label>Asosiy telefon<input name="phone" defaultValue[\s\S]*?<label>Instagram<input name="instagram" defaultValue[^\n]*<\/label>\s*<\/div>/, replace: `` },
     { file: 'components/AdminPanel.js', find: `<div style={{ marginTop: 20 }}><CenterManager centerId={c.id} onMsg={setMsg} /></div>`, replace: `<CenterAccess center={c} onMsg={setMsg} onChange={load} />\n                  <div style={{ marginTop: 20 }}><CenterManager centerId={c.id} onMsg={setMsg} /></div>` },
+    { file: 'components/AdminPanel.js', find: `<div className="sec" style={{ flex: 1 }}><h2>Admin panel</h2><i /></div>`, replace: `<div className="adm-head" style={{ flex: 1 }}><h1>Asosiy panel</h1><p>Umumiy ko'rsatkichlar, markazlarni qo'shish va tahrirlash, sayt foydalanuvchilari va adminlar shu yerda.</p></div>` },
     { file: 'components/AdminPanel.js', find: `[['stats', 'Umumiy'], ['centers', 'Markazlar'], ['admins', 'Adminlar']]`, replace: `[['stats', 'Umumiy'], ['centers', 'Markazlar'], ['users', 'Foydalanuvchilar'], ['admins', 'Adminlar']]` },
     { file: 'components/AdminPanel.js', find: `{tab === 'admins' && (`, replace: `{tab === 'users' && <UsersAdmin onMsg={setMsg} />}\n\n      {tab === 'admins' && (` },
 
@@ -79,6 +71,7 @@ export default {
     // Kurs/narx o'zgargach sahifada eski ma'lumot qolmasligi uchun: Next.js server keshi o'rniga har so'rov yangi ma'lumot oladi
     { file: 'lib/supabase.js', find: `export const supabase = createClient(url, key);`, replace: `const noStoreFetch = (input, init) => fetch(input, { ...(init || {}), cache: 'no-store' });\n\nexport const supabase = createClient(url, key, { global: { fetch: noStoreFetch } });` },
 
+    { file: 'app/__admin__/page.js', find: `<div className="lock" aria-hidden="true">🔒</div>`, replace: `<div className="lock" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="3" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></div>` },
     { file: 'app/__admin__/tavsiya/page.js', find: `title: 'Tavsiya va belgilar | EduSearcher'`, replace: `title: 'Belgilar va kontaktlar | EduSearcher'` },
 
     // Filial telefonlari yashirilgan paytda ham boshqaruvda ko'rinadi
