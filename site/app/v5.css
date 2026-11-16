@@ -291,3 +291,5 @@ html[data-theme=dark] .cmpcell.best{background:var(--ok-bg)}
   .chero .actions>.btn:first-child{flex:1 1 100%;height:52px;font-size:16px}
   .chero .actions .savebtn{display:inline-flex;align-items:center;gap:6px}
 }
+.cmpcell.lbl{position:sticky;left:0;z-index:1}
+@media(max-width:560px){.cmptable{grid-template-columns:92px repeat(var(--n),minmax(140px,1fr));min-width:calc(92px + var(--n)*140px)}.cmpcell{padding:12px 10px;font-size:14px}.cmpcell.lbl{font-size:12px}}
