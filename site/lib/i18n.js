@@ -106,6 +106,7 @@ Object.assign(RU, NAMES);
 
 // Uzunroq matnlar ichidagi bo'laklar (raqamli va aralash matnlar uchun)
 export const RU_PARTS = [
+  [/Filtr, (\d+) ta tanlangan/g, 'Фильтр, выбрано: $1'], [/(\d+) ta rasm/g, '$1 фото'],
   [/([\d,.]+) ming gacha/g, 'до $1 тыс'], [/([\d,.]+) mln gacha/g, 'до $1 млн'], [/([\d,.]+ (?:ming|mln)) dan so'm/g, "от $1 so'm"],
   [/(\d+) ta markaz tanlandi/g, '$1 выбрано'], [/(\d+) ta natija topildi/g, 'Найдено: $1'], [/(\d+) ta filial/g, 'филиалов: $1'],
   [/(\d+) ta viloyatda/g, 'в $1 регионах'], [/(\d+) ta viloyat/g, '$1 региона'], [/(\d+) ta sharh asosida/g, 'на основе $1 отзывов'],
@@ -113,7 +114,7 @@ export const RU_PARTS = [
   [/Yana (\d+) ta/g, 'Ещё $1'], [/(\d+) ta\b/g, '$1'], [/so'm\/oy/g, 'сум/мес'], [/(\S+ (?:ming|mln)) so'mdan/g, 'от $1 сум'], [/so'm/g, 'сум'], [/ ming\b/g, ' тыс'], [/ mln\b/g, ' млн'],
   [/Ma'lumot yangilangan:/g, 'Данные обновлены:'], [/Narxlar: oyiga/g, 'Цены: от'], [/dagi o'quv markazlari/g, ' — учебные центры'],
   [/markazidan hisoblandi\. Aniqroq natija uchun «Menga yaqin» tugmasini bosing\./g, 'расстояние от центра региона. Для точности нажмите «Рядом со мной».'],
-  [/^Masofa /g, ''], [/ markaziga yaqin/g, ': ближе к центру'], [/«(.+)» bo'yicha/g, 'По запросу «$1»'], [/Filtr, (\d+) ta tanlangan/g, 'Фильтр, выбрано: $1'],
+  [/^Masofa /g, ''], [/ markaziga yaqin/g, ': ближе к центру'], [/«(.+)» bo'yicha/g, 'По запросу «$1»'],
   [/ filtrini olib tashlash/g, ': убрать фильтр'], [/Masofani (\d+) km gacha oshirish/g, 'Увеличить расстояние до $1 км'], [/ qidiruvini tozalash/g, ': очистить поиск'],
   [/: qo'ng'iroq qilish/g, ': позвонить']
 ];

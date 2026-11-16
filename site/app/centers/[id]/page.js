@@ -212,7 +212,7 @@ export default async function CenterPage({ params }) {
                 <h3 style={{ marginBottom: 6 }}>{g.cat.name}</h3>
                 {g.list.map((k) => (
                   <div key={k.id} className="crow">
-                    <span>{k.name && k.name.trim() && !k.name.trim().toLowerCase().startsWith(g.cat.name.toLowerCase()) ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months ? <small className="muted"> · {k.duration_months} oy</small> : null}{k.schedule ? <small className="muted"> · {k.schedule}</small> : null}</span>
+                    <span>{k.name && k.name.trim() && !k.name.trim().toLowerCase().startsWith(g.cat.name.toLowerCase()) ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months ? <small className="muted">{` · ${k.duration_months} oy`}</small> : null}{k.schedule ? <small className="muted"> · {k.schedule}</small> : null}</span>
                     <span className="kmb">{k.price_monthly ? `${Number(k.price_monthly).toLocaleString('ru-RU')} so'm/oy` : 'Narx kelishiladi'}</span>
                   </div>
                 ))}
@@ -256,7 +256,7 @@ export default async function CenterPage({ params }) {
         <section className="card">
           {reviews.length ? (
             <>
-              <div className="revsum"><span className="big">{revAvg.toFixed(1)}</span><div><Stars value={revAvg} /><div className="muted" style={{ fontSize: 13 }}>{reviews.length} ta sharh asosida</div></div></div>
+              <div className="revsum"><span className="big">{revAvg.toFixed(1)}</span><div><Stars value={revAvg} /><div className="muted" style={{ fontSize: 13 }}>{`${reviews.length} ta sharh asosida`}</div></div></div>
               {reviews.map((r) => (
                 <div key={r.id} className="rev">
                   <div className="rh2"><b>{r.name}</b><small>{fmtDate(r.created_at)}</small></div>

@@ -88,7 +88,7 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
             <div className="fs-seg four">
               <button type="button" className={!v.price ? 'on' : ''} aria-pressed={!v.price} onClick={() => setV((o) => ({ ...o, price: '' }))}>Barchasi</button>
               {PRICES.map((p) => (
-                <button type="button" key={p} className={Number(v.price) === p ? 'on' : ''} aria-pressed={Number(v.price) === p} onClick={() => set('price', String(p))}>{fmtSum(p)} gacha</button>
+                <button type="button" key={p} className={Number(v.price) === p ? 'on' : ''} aria-pressed={Number(v.price) === p} onClick={() => set('price', String(p))}>{`${fmtSum(p)} gacha`}</button>
               ))}
             </div>
           </fieldset>
