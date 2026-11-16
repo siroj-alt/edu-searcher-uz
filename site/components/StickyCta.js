@@ -9,21 +9,22 @@ const TG = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidt
 export default function StickyCta({ phone = '', telegram = '', name = '' }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    const form = document.getElementById('ariza-forma');
-    const head = document.getElementById('center-actions');
-    let formIn = false, headIn = true;
-    const upd = () => setShow(!formIn && !headIn);
-    const io = new IntersectionObserver((es) => {
-      for (const e of es) {
-        if (e.target === form) formIn = e.isIntersecting;
-        if (e.target === head) headIn = e.isIntersecting;
-      }
-      upd();
-    }, { rootMargin: '0px 0px -80px 0px' });
-    if (form) io.observe(form);
-    if (head) io.observe(head); else headIn = false;
-    upd();
-    return () => io.disconnect();
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const form = document.getElementById('ariza-forma');
+      const head = document.getElementById('center-actions');
+      const vh = window.innerHeight;
+      const headIn = head ? head.getBoundingClientRect().bottom > 0 : false;
+      const fr = form ? form.getBoundingClientRect() : null;
+      const formIn = fr ? fr.top < vh - 80 && fr.bottom > 0 : false;
+      setShow(!headIn && !formIn);
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(check); };
+    check();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); cancelAnimationFrame(raf); };
   }, []);
   useEffect(() => {
     document.documentElement.classList.toggle('has-cta', show);

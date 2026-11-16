@@ -279,3 +279,15 @@ html[data-theme=dark] .cmpcell.best{background:var(--ok-bg)}
 /* ===== Bildirishnoma ===== */
 .toastw{position:fixed;z-index:5000;left:0;right:0;top:calc(76px + env(safe-area-inset-top));display:flex;justify-content:center;pointer-events:none;padding:0 16px}
 .toast{max-width:420px;padding:12px 18px;border-radius:18px;font-size:14.5px;font-weight:700;color:var(--text);text-align:center;animation:es-pop .22s ease}
+
+/* Natija kartasidagi tugmalar */
+.racts .cmpt.ic{width:100%;height:auto;min-height:42px;padding:10px;border-radius:12px}
+.racts a.tg{border:1px solid var(--line)}
+
+/* Markaz sarlavhasidagi tugmalar: telefonda ixcham */
+@media(max-width:760px){
+  .chero .actions{display:flex;flex-wrap:wrap;gap:8px}
+  .chero .actions>*{flex:1 1 auto;min-width:0;height:44px;padding:0 14px;font-size:14px;white-space:nowrap;border-radius:14px;justify-content:center}
+  .chero .actions>.btn:first-child{flex:1 1 100%;height:52px;font-size:16px}
+  .chero .actions .savebtn{display:inline-flex;align-items:center;gap:6px}
+}

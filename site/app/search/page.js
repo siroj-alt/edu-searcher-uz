@@ -79,7 +79,7 @@ export default async function Search({ searchParams }) {
           <input type="search" name="q" defaultValue={q} placeholder="Markaz nomi yoki manzil" aria-label="Markaz nomi yoki manzil" maxLength={60} />
           {Object.entries(params).filter(([k, v]) => k !== 'q' && v).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
         </form>
-        <FilterSheet cats={cats} init={params} count={nFilters} />
+        <FilterSheet cats={cats} init={cat && !levelRaw ? { ...params, level: 'beginner' } : params} count={nFilters} />
       </div>
       <div className="sortrow">
         <NearMe params={params} active={hasPos} />
