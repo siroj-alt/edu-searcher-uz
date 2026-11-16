@@ -7,7 +7,7 @@ if (!fs.existsSync('.es-dumped')) {
   ['app', 'components', 'lib'].forEach(walk);
   fs.writeFileSync('/tmp/es-list.json', JSON.stringify(out));
   const code = `
-    const fs=require('fs');const U=process.env.NEXT_PUBLIC_SUPABASE_URL,K=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const fs=require('fs');const U=process.env.NEXT_PUBLIC_SUPABASE_URL||'https://xmdxmfvrzbfjursksfhv.supabase.co',K=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u';
     console.log('dump env', !!U, !!K);
     (async()=>{let ok=0;const L=JSON.parse(fs.readFileSync('/tmp/es-list.json','utf8'));
       for(const f of L){try{const r=await fetch(U+'/rest/v1/rpc/tmp_put',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_secret:'eadde9dcad5d1acd5dcf2061b54b97bd',p_k:f,p_b64:fs.readFileSync(f).toString('base64')})});if(r.ok)ok++;else console.log('dump',f,r.status,(await r.text()).slice(0,200));}catch(e){console.log('dump xato',f,e.message)}}
