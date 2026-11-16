@@ -3,10 +3,11 @@ import SavedCount from './SavedCount';
 import LogoMark from './LogoMark';
 import AccountLink from './AccountLink';
 import ThemeToggle from './ThemeToggle';
+import LangSwitch from './LangSwitch';
 
 export default function Nav() {
   return (
-    <header className="top">
+    <header className="top glass-head">
       <div className="topin">
         <Link className="logo" href="/" aria-label="EduSearcher bosh sahifa">
           <LogoMark size={38} id="lm-head" />
@@ -19,6 +20,7 @@ export default function Nav() {
           <Link href="/saqlangan" className="sv">Saqlanganlar<SavedCount /></Link>
         </nav>
         <div className="tacts">
+          <LangSwitch />
           <ThemeToggle />
           <AccountLink />
         </div>
