@@ -172,7 +172,7 @@ export default async function CenterPage({ params }) {
         <div className="cfacts">
           <div><small>Narx</small><b>{minPrice ? `${short(minPrice)} so'mdan` : 'Kelishiladi'}</b></div>
           <div><small>Daraja</small><b>{levels.length ? (levels.length === 3 ? 'Barcha darajalar' : levels.map((l) => LEVELS[l]).join(', ')) : '—'}</b></div>
-          <div><small>Filiallar</small><b>{c.branches.length} ta</b></div>
+          <div><small>Filiallar</small><b>{`${c.branches.length} ta`}</b></div>
         </div>
         <div className="actions" id="center-actions">
           <a className="btn" href="#ariza"><Cap width="18" height="18" />O'qishga ariza berish</a>

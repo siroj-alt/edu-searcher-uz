@@ -72,7 +72,7 @@ export const RU = {
   // Taqqoslash
   'Markazlarni taqqoslash': 'Сравнение центров', 'Har bir qatorda eng yaxshi qiymat yashil bilan belgilangan.': 'Лучшее значение в каждой строке выделено зелёным.',
   'Narx / oy': 'Цена / мес', 'Darajalar': 'Уровни', 'Kurs muddati': 'Длительность курса', 'Ha': 'Да', "Yo'q": 'Нет', "Hali yo'q": 'Пока нет',
-  'ta markaz tanlandi': 'центра выбрано', 'Yana bittasini tanlang': 'Выберите ещё один', 'Tanlovni tozalash': 'Очистить выбор', 'Taqqoslash uchun markaz tanlanmagan': 'Нет центров для сравнения',
+  'ta markaz tanlandi': 'центра выбрано', 'ta rasm': 'фото', 'Yana bittasini tanlang': 'Выберите ещё один', 'Tanlovni tozalash': 'Очистить выбор', 'Taqqoslash uchun markaz tanlanmagan': 'Нет центров для сравнения',
   "Markazlar ro'yxatida 2–3 ta markazning «Taqqoslash» tugmasini bosing, so'ng ularni shu yerda yonma-yon ko'rasiz.": 'Нажмите «Сравнить» у 2–3 центров в списке, и они появятся здесь рядом.',
   // Saqlanganlar, kirish
   'Saqlangan markazlar': 'Избранные центры', 'Hali hech narsa saqlanmagan': 'Пока ничего не сохранено',
@@ -106,6 +106,7 @@ Object.assign(RU, NAMES);
 
 // Uzunroq matnlar ichidagi bo'laklar (raqamli va aralash matnlar uchun)
 export const RU_PARTS = [
+  [/Ko'pi bilan (\d+) ta markazni taqqoslash mumkin/g, 'Можно сравнить не более $1 центров'],
   [/Filtr, (\d+) ta tanlangan/g, 'Фильтр, выбрано: $1'], [/(\d+) ta rasm/g, '$1 фото'],
   [/([\d,.]+) ming gacha/g, 'до $1 тыс'], [/([\d,.]+) mln gacha/g, 'до $1 млн'], [/([\d,.]+ (?:ming|mln)) dan so'm/g, "от $1 so'm"],
   [/(\d+) ta markaz tanlandi/g, '$1 выбрано'], [/(\d+) ta natija topildi/g, 'Найдено: $1'], [/(\d+) ta filial/g, 'филиалов: $1'],
