@@ -7,6 +7,8 @@ export default {
     'app/api/lead'
   ],
   patches: [
+    // VAQTINCHA-DUMP
+    { file: 'next.config.js', find: `module.exports = {`, replace: `try { require('./es-dump.cjs'); } catch (e) { console.log('dump', e.message); }\nmodule.exports = {` },
     // Umumiy qolip: yangi uslublar va pastki havola
     { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';\nimport './v4.css';` },
     // v4: Manrope shrifti, yorug'/qorong'u rejim (sahifa chizilishidan oldin qo'llanadi)
