@@ -62,7 +62,7 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
         <header className="fs-head">
           <h2 id="fs-t">Filtr</h2>
           <button type="button" className="fs-x" onClick={() => setOpen(false)} aria-label="Yopish">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </header>
         <div className="fs-body">
@@ -103,7 +103,7 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
                 </select>
               </label>
               <button type="button" className={'fs-loc' + (v.lat ? ' on' : '')} onClick={v.lat ? () => setV((o) => ({ ...o, lat: '', lng: '', sort: o.sort === 'near' ? '' : o.sort })) : locate} disabled={busy}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
                 {busy ? 'Aniqlanmoqda…' : v.lat ? 'Joylashuvim ✓' : 'Joylashuvim'}
               </button>
             </div>
@@ -129,7 +129,7 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
   return (
     <>
       <button type="button" className="fbtn" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-label={count ? `Filtr, ${count} ta tanlangan` : 'Filtr'}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" /><circle cx="15" cy="7" r="2" /><circle cx="9" cy="17" r="2" /></svg>
         <span className="fbtn-t">Filtr</span>
         {count ? <span className="fbtn-n">{count}</span> : null}
       </button>

@@ -23,7 +23,7 @@ export default function NearMe({ params = {}, active = false }) {
   };
   return (
     <button type="button" className={'nearme' + (active ? ' on' : '')} onClick={go} disabled={busy} aria-pressed={active}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
         {busy ? <path d="M12 3a9 9 0 1 0 9 9" className="spin" /> : <><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></>}
       </svg>
       {busy ? 'Aniqlanmoqda…' : 'Menga yaqin'}

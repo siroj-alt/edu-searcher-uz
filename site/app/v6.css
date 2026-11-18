@@ -1,0 +1,177 @@
+/* v6: butun sayt liquid glass uslubida.
+   Qoidalar: haqiqiy shisha (blur) faqat suzib turadigan boshqaruv qatlamida (sarlavha, menyu, panellar, oynalar);
+   kontent kartalari yarim shaffof "muzli" sirt; shisha ostida doim rangli fon bo'ladi; shisha ustiga shisha qo'yilmaydi. */
+
+:root{
+  --amb-1:rgba(61,220,151,.30);
+  --amb-2:rgba(94,177,255,.26);
+  --amb-3:rgba(186,156,255,.20);
+  --amb-4:rgba(255,196,122,.20);
+  --gl-card:rgba(255,255,255,.62);
+  --gl-card-h:rgba(255,255,255,.78);
+  --gl-ctrl:rgba(255,255,255,.55);
+  --gl-ctrl-h:rgba(255,255,255,.8);
+  --gl-edge:rgba(255,255,255,.85);
+  --gl-edge2:rgba(14,42,34,.08);
+  --gl-hi:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.25);
+  --gl-drop:0 10px 30px rgba(14,42,34,.08),0 1px 3px rgba(14,42,34,.06);
+  --gl-drop-h:0 22px 48px rgba(14,42,34,.14),0 2px 6px rgba(14,42,34,.08);
+  --gl-spring:cubic-bezier(.34,1.45,.5,1);
+}
+html[data-theme=dark]{
+  --amb-1:rgba(61,220,151,.16);
+  --amb-2:rgba(64,140,255,.14);
+  --amb-3:rgba(150,110,255,.12);
+  --amb-4:rgba(255,170,90,.08);
+  --gl-card:rgba(20,40,32,.58);
+  --gl-card-h:rgba(26,50,40,.7);
+  --gl-ctrl:rgba(26,48,39,.55);
+  --gl-ctrl-h:rgba(34,62,50,.75);
+  --gl-edge:rgba(255,255,255,.1);
+  --gl-edge2:rgba(0,0,0,.25);
+  --gl-hi:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(255,255,255,.03);
+  --gl-drop:0 10px 30px rgba(0,0,0,.35),0 1px 3px rgba(0,0,0,.3);
+  --gl-drop-h:0 22px 48px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.35);
+}
+
+/* ===== Fon: shisha sindirishi uchun yumshoq rangli nur ===== */
+body::before{
+  content:'';position:fixed;inset:-20vmax;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38vmax 32vmax at 12% 8%,var(--amb-1),transparent 70%),
+    radial-gradient(34vmax 30vmax at 92% 18%,var(--amb-2),transparent 70%),
+    radial-gradient(40vmax 34vmax at 78% 82%,var(--amb-3),transparent 70%),
+    radial-gradient(30vmax 28vmax at 10% 88%,var(--amb-4),transparent 70%);
+  animation:gl-drift 38s ease-in-out infinite alternate;will-change:transform
+}
+@keyframes gl-drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-3vmax,2vmax,0) scale(1.06)}}
+
+/* ===== Kontent sirtlari: muzli shisha (yengil, blur'siz — tez ishlaydi) ===== */
+.card,.ccard,.rcard,.cat,.hcat,.rgn,.step,.hstep,.faq details,.cmptable,.skcard,.qacts,.empty,.lead-card,.paycard,.branch,.cfacts>div,.hsearch,.hfilter,.hteaser,.ilova-hero,.subform{
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 40%),var(--gl-card)!important;
+  border-color:var(--gl-edge)!important;
+  box-shadow:var(--gl-drop),var(--gl-hi)!important
+}
+html[data-theme=dark] .card,html[data-theme=dark] .ccard,html[data-theme=dark] .rcard,html[data-theme=dark] .cat,html[data-theme=dark] .hcat,html[data-theme=dark] .rgn,
+html[data-theme=dark] .step,html[data-theme=dark] .hstep,html[data-theme=dark] .faq details,html[data-theme=dark] .cmptable,html[data-theme=dark] .skcard,html[data-theme=dark] .qacts,
+html[data-theme=dark] .empty,html[data-theme=dark] .lead-card,html[data-theme=dark] .paycard,html[data-theme=dark] .branch,html[data-theme=dark] .cfacts>div,html[data-theme=dark] .hsearch,
+html[data-theme=dark] .hfilter,html[data-theme=dark] .hteaser,html[data-theme=dark] .ilova-hero,html[data-theme=dark] .subform{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 40%),var(--gl-card)!important
+}
+.tilew .qacts{box-shadow:var(--gl-hi)!important;border-top-style:dashed!important}
+.tilew .ccard{box-shadow:var(--gl-hi)!important}
+.tilew{box-shadow:var(--gl-drop)}
+.tilew:hover,.rcard:hover,.cat:hover,.hcat:hover,.rgn:hover{box-shadow:var(--gl-drop-h),var(--gl-hi)!important}
+.rcard:hover,.cat:hover,.hcat:hover,.rgn:hover{background:var(--gl-card-h)!important}
+.cmpcell.lbl{background:rgba(255,255,255,.35)}
+html[data-theme=dark] .cmpcell.lbl{background:rgba(255,255,255,.03)}
+.cfacts>div{box-shadow:var(--gl-hi)!important}
+
+/* Kompyuterda katta kartalar haqiqiy shisha (blur) — telefonda tejamkorlik uchun yo'q */
+@media(min-width:900px) and (hover:hover){
+  .card,.hsearch,.hfilter,.cmptable,.empty{-webkit-backdrop-filter:saturate(160%) blur(16px);backdrop-filter:saturate(160%) blur(16px)}
+}
+
+/* ===== Boshqaruv elementlari: shisha tugmalar va chiplar ===== */
+.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x,.crumbs a{
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.05)),var(--gl-ctrl)!important;
+  border-color:var(--gl-edge)!important;
+  box-shadow:0 2px 8px rgba(14,42,34,.06),var(--gl-hi)!important
+}
+html[data-theme=dark] :is(.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x){
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0)),var(--gl-ctrl)!important
+}
+.crumbs a{background:none!important;box-shadow:none!important}
+.chips a:hover,.sorts a:hover,.qa:hover,.btn.ghost:hover,.racts .g:hover,.cmpt:hover,.savebtn:hover,.thm:hover{background:var(--gl-ctrl-h)!important}
+
+/* Tanlangan holat: rangli (tinted) shisha */
+.chips a.on,.sorts a.on,.fs-chips button.on,.lang button.on,.pager .cur,.cmpt.on{
+  background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0) 55%),var(--accent)!important;
+  border-color:color-mix(in srgb,var(--accent) 70%,#fff)!important;
+  color:var(--on-accent)!important;
+  box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.5)!important
+}
+.sorts a.on{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 55%),var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important;box-shadow:0 6px 16px rgba(14,42,34,.2),inset 0 1px 0 rgba(255,255,255,.25)!important}
+.savebtn.on{background:var(--bad-bg)!important;color:var(--bad)!important}
+
+/* Asosiy tugmalar: rangli shisha, ichki yorug'lik */
+.btn:not(.ghost):not(.danger),.go,.cta,.hgo,.fs-go,.scta-go,.cmpgo:not(.off),.go2,.racts .p,.nearme.on,.fbtn,.fs-loc.on{
+  background-image:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 52%)!important;
+  box-shadow:0 10px 24px color-mix(in srgb,var(--accent) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(0,0,0,.12)!important
+}
+.fbtn{background-color:var(--cta-bg)!important;box-shadow:0 10px 24px rgba(14,42,34,.22),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 6px rgba(0,0,0,.2)!important}
+.nearme:not(.on),.fs-loc:not(.on){background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0)),color-mix(in srgb,var(--ok-bg) 80%,transparent)!important;box-shadow:var(--gl-hi)!important}
+.af{background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0)),color-mix(in srgb,var(--hl) 85%,transparent)!important;box-shadow:var(--gl-hi)}
+html[data-theme=dark] .af{background:color-mix(in srgb,var(--hl) 80%,transparent)!important}
+.fs-seg{background:color-mix(in srgb,var(--soft) 70%,transparent)!important;box-shadow:inset 0 1px 3px rgba(14,42,34,.08)}
+.fs-seg button.on{background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.2)),var(--gl-ctrl-h)!important}
+html[data-theme=dark] .fs-seg button.on{background:var(--gl-ctrl-h)!important}
+
+/* Bosilganda "suyuq" javob: prujinali kichrayish */
+:is(.btn,.go,.cta,.hgo,.fs-go,.scta-go,.cmpgo,.qa,.cmpt,.savebtn,.chips a,.sorts a,.fs-chips button,.fs-seg button,.nearme,.fbtn,.thm,.lang button,.af,.racts a,.scta-ic){
+  transition:transform .32s var(--gl-spring),background-color .2s,box-shadow .25s,border-color .2s,color .2s
+}
+:is(.btn,.go,.cta,.hgo,.fs-go,.scta-go,.cmpgo,.qa,.cmpt,.savebtn,.chips a,.sorts a,.fs-chips button,.fs-seg button,.nearme,.fbtn,.thm,.lang button,.af,.racts a,.scta-ic):active{transform:scale(.95);transition-duration:.08s}
+
+/* Kirish maydonlari */
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{
+  background-color:color-mix(in srgb,var(--card) 70%,transparent)
+}
+.sq input,.hsearch input,.hsearch select{background:transparent!important}
+
+/* ===== Suzuvchi qatlam: haqiqiy liquid glass ===== */
+.top.glass-head,.bnav,.cmpbar,.scta,.fsheet,.toast,.lask-box,.pwa-ask{
+  -webkit-backdrop-filter:saturate(190%) blur(26px)!important;backdrop-filter:saturate(190%) blur(26px)!important
+}
+.top.glass-head{
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.3))!important;
+  border-bottom:1px solid var(--gl-edge)!important;box-shadow:0 6px 24px rgba(14,42,34,.06),inset 0 -1px 0 rgba(255,255,255,.6)!important
+}
+html[data-theme=dark] .top.glass-head{background:linear-gradient(180deg,rgba(14,30,23,.7),rgba(14,30,23,.5))!important;box-shadow:0 6px 24px rgba(0,0,0,.35),inset 0 -1px 0 rgba(255,255,255,.05)!important}
+.lask-box,.pwa-ask{
+  background:radial-gradient(120% 60% at 10% 0%,var(--lg-sheen),transparent 45%),var(--lg-strong)!important;
+  border:1px solid var(--gl-edge)!important;box-shadow:var(--lg-sh),inset 0 1px 0 var(--lg-hi)!important
+}
+
+/* Pastki menyu: tanlangan bo'lim ostida suzib yuradigan suyuq tomchi */
+@media(max-width:760px){
+  .bnav{gap:0!important}
+  .bnav a{position:relative;z-index:1;background:none!important;box-shadow:none!important;transition:color .25s,transform .32s var(--gl-spring)}
+  .bnav a:active{transform:scale(.92)}
+  .bn-ind{position:absolute;z-index:0;top:6px;bottom:6px;left:6px;width:calc((100% - 12px) / 4);border-radius:27px;
+    background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.25)),var(--tab-on);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 6px 16px rgba(15,123,85,.18);
+    transform:translateX(calc(var(--x) * 100%));
+    transition:transform .55s var(--gl-spring),opacity .2s}
+  .bn-ind.off{opacity:0}
+  html[data-theme=dark] .bn-ind{background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02)),var(--tab-on);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 6px 16px rgba(0,0,0,.35)}
+}
+@media(min-width:761px){.bn-ind{display:none}}
+
+/* Sarlavhadagi bo'limlar: shisha "pill" */
+@media(min-width:761px){
+  .tnav a{border-radius:12px;transition:background .2s}
+  .tnav a:hover{background:var(--gl-ctrl)}
+}
+
+/* Ulashish va boshqa tugmalardagi belgilar bir xil o'lchamda */
+.shr-ic{width:18px!important;height:18px!important;flex:none}
+.btn svg,.savebtn svg,.cmpt svg{flex:none}
+.btn>svg,.btn .ic svg{width:18px;height:18px}
+
+/* ===== Footer ===== */
+.foot2{position:relative}
+
+/* ===== Harakatni kamaytirish va shaffoflikni kamaytirish ===== */
+@media (prefers-reduced-motion:reduce){
+  body::before{animation:none}
+  .bn-ind,:is(.btn,.go,.cta,.hgo,.fs-go,.scta-go,.cmpgo,.qa,.cmpt,.savebtn,.chips a,.sorts a,.nearme,.fbtn,.thm,.af,.racts a){transition:none!important}
+}
+@media (prefers-reduced-transparency:reduce){
+  body::before{display:none}
+  .card,.ccard,.rcard,.cat,.hcat,.rgn,.qacts,.empty,.hsearch,.hfilter,.cmptable{background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .top.glass-head,.bnav,.cmpbar,.scta,.fsheet,.toast,.lask-box,.pwa-ask{background:var(--card)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+@media (prefers-contrast:more){
+  .card,.ccard,.rcard,.chips a,.btn.ghost,.qa,.cmpt{border-color:var(--line2)!important}
+}

@@ -27,7 +27,7 @@ const norm = (t) => String(t || '').toLowerCase().replace(/[ʻʼ‘’`']/g, "'"
 const fmtSum = (n) => (n >= 1e6 ? (n / 1e6).toLocaleString('ru-RU') + ' mln' : Math.round(n / 1000) + ' ming');
 const tgHref = (t) => (/^https?:/i.test(t) ? t : 'https://t.me/' + String(t).replace(/^@/, ''));
 const minPrice = (c) => { const p = c.courses.map((k) => Number(k.price_monthly)).filter((x) => x > 0); return p.length ? Math.min(...p) : null; };
-const X = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" /></svg>;
+const X = <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" /></svg>;
 
 export default async function Search({ searchParams }) {
   const sp = searchParams || {};
@@ -262,7 +262,7 @@ function EmptyState({ link, q, km, price, region, levelRaw, cat }) {
   return (
     <div className="empty glass-soft">
       <span className="empty-ic" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5M8.5 11h5" /></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5M8.5 11h5" /></svg>
       </span>
       <h2 className="h2">Bu filtr bo'yicha markaz topilmadi</h2>
       <p className="muted">Filtrni biroz kengaytirib ko'ring:</p>

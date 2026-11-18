@@ -96,7 +96,7 @@ export default async function Compare({ searchParams }) {
                 const best = r.best != null && r.vals[i] === r.best;
                 return (
                   <div key={x.c.id} className={'cmpcell' + (best ? ' best' : '')}>
-                    {best ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-label="Eng yaxshi"><path d="M5 12l5 5 9-10" /></svg> : null}
+                    {best ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-label="Eng yaxshi"><path d="M5 12l5 5 9-10" /></svg> : null}
                     {r.show(x)}
                   </div>
                 );

@@ -23,8 +23,10 @@ export default function BottomNav() {
   const path = usePathname() || '/';
   const me = useMe();
   if (path.startsWith('/boshqaruv')) return null;
+  const idx = ITEMS.findIndex((it) => it[3](path));
   return (
     <nav className="bnav" aria-label="Asosiy menyu">
+      <span className={'bn-ind' + (idx < 0 ? ' off' : '')} style={{ '--x': Math.max(idx, 0) }} aria-hidden="true" />
       {ITEMS.map(([href, label, ic, act]) => {
         const on = act(path);
         return (
