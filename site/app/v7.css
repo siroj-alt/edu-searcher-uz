@@ -85,25 +85,25 @@ html[data-theme=dark] .tile-fav .savebtn.ic{background:rgba(14,31,24,.72)!import
 .sec-n{font-weight:800;line-height:1.2}
 .sec-c{font-size:12px;color:var(--muted)}
 /* qidiruv sahifasida: gorizontal qator */
-.secs.row{overflow-x:auto;scrollbar-width:none;margin:2px -4px 12px;padding:4px 4px 6px}
-.secs.row::-webkit-scrollbar{display:none}
-.secs.row .sec-i{flex:none;width:76px}
-.secs.row .sec-ic{width:48px;height:48px}
-.secs.row .sec-ic svg{width:22px;height:22px}
-.secs.row .sec-n{font-size:12.5px;font-weight:700;color:var(--muted)}
-.secs.row .sec-i.on .sec-ic{box-shadow:0 0 0 3px var(--bg),0 0 0 5.5px var(--c),0 10px 22px color-mix(in srgb,var(--c) 34%,transparent)}
-.secs.row .sec-i.on .sec-n{color:var(--text);font-weight:800}
+.secs-row{overflow-x:auto;scrollbar-width:none;margin:2px -4px 12px;padding:4px 4px 6px}
+.secs-row::-webkit-scrollbar{display:none}
+.secs-row .sec-i{flex:none;width:76px}
+.secs-row .sec-ic{width:48px;height:48px}
+.secs-row .sec-ic svg{width:22px;height:22px}
+.secs-row .sec-n{font-size:12.5px;font-weight:700;color:var(--muted)}
+.secs-row .sec-i.on .sec-ic{box-shadow:0 0 0 3px var(--bg),0 0 0 5.5px var(--c),0 10px 22px color-mix(in srgb,var(--c) 34%,transparent)}
+.secs-row .sec-i.on .sec-n{color:var(--text);font-weight:800}
 /* bosh sahifada: katta to'r */
-.secs.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:4px 0 18px}
-.secs.grid .sec-i{padding:18px 8px 16px;border-radius:22px;
+.secs-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:4px 0 18px}
+.secs-grid .sec-i{padding:18px 8px 16px;border-radius:22px;
   background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 50%),var(--gl-card);border:1px solid var(--gl-edge);box-shadow:var(--gl-drop),var(--gl-hi)}
-html[data-theme=dark] .secs.grid .sec-i{background:var(--gl-card)}
-@media(hover:hover){.secs.grid .sec-i:hover{transform:translateY(-3px);box-shadow:var(--gl-drop-h),var(--gl-hi)}}
-.secs.grid .sec-ic{width:68px;height:68px}
-.secs.grid .sec-ic svg{width:30px;height:30px}
-.secs.grid .sec-n{font-size:14.5px}
-@media(max-width:900px){.secs.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}}
-@media(max-width:420px){.secs.grid .sec-i{padding:14px 4px 12px;border-radius:18px}.secs.grid .sec-ic{width:56px;height:56px}.secs.grid .sec-ic svg{width:26px;height:26px}.secs.grid .sec-n{font-size:13px}}
+html[data-theme=dark] .secs-grid .sec-i{background:var(--gl-card)}
+@media(hover:hover){.secs-grid .sec-i:hover{transform:translateY(-3px);box-shadow:var(--gl-drop-h),var(--gl-hi)}}
+.secs-grid .sec-ic{width:68px;height:68px}
+.secs-grid .sec-ic svg{width:30px;height:30px}
+.secs-grid .sec-n{font-size:14.5px}
+@media(max-width:900px){.secs-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}}
+@media(max-width:420px){.secs-grid .sec-i{padding:14px 4px 12px;border-radius:18px}.secs-grid .sec-ic{width:56px;height:56px}.secs-grid .sec-ic svg{width:26px;height:26px}.secs-grid .sec-n{font-size:13px}}
 
 /* ===== Bosh sahifa (OLX uslubida) ===== */
 .ohero{max-width:1240px;margin:0 auto;padding:28px 24px 8px}
