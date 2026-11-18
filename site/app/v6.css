@@ -73,26 +73,26 @@ html[data-theme=dark] .cmpcell.lbl{background:rgba(255,255,255,.03)}
 }
 
 /* ===== Boshqaruv elementlari: shisha tugmalar va chiplar ===== */
-.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x,.crumbs a{
+:is(.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x,.crumbs a):not(.on):not(.cur){
   background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.05)),var(--gl-ctrl)!important;
   border-color:var(--gl-edge)!important;
   box-shadow:0 2px 8px rgba(14,42,34,.06),var(--gl-hi)!important
 }
-html[data-theme=dark] :is(.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x){
+html[data-theme=dark] :is(.chips a,.sorts a,.tag,.pager a,.pager span:not(.gap),.thm,.lang,.acct,.savebtn,.cmpt,.qa,.btn.ghost,.racts .g,.fs-chips button,.sq,.scta-ic,.cmprm,.cmpx,.fs-x):not(.on):not(.cur){
   background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0)),var(--gl-ctrl)!important
 }
 .crumbs a{background:none!important;box-shadow:none!important}
-.chips a:hover,.sorts a:hover,.qa:hover,.btn.ghost:hover,.racts .g:hover,.cmpt:hover,.savebtn:hover,.thm:hover{background:var(--gl-ctrl-h)!important}
+:is(.chips a,.sorts a,.qa,.btn.ghost,.racts .g,.cmpt,.savebtn,.thm):not(.on):not(.cur):hover{background:var(--gl-ctrl-h)!important}
 
 /* Tanlangan holat: rangli (tinted) shisha */
-.chips a.on,.sorts a.on,.fs-chips button.on,.lang button.on,.pager .cur,.cmpt.on{
+:is(.chips a,.sorts a,.fs-chips button,.lang button,.pager span,.cmpt).on,.pager span.cur{
   background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0) 55%),var(--accent)!important;
   border-color:color-mix(in srgb,var(--accent) 70%,#fff)!important;
   color:var(--on-accent)!important;
   box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.5)!important
 }
-.sorts a.on{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 55%),var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important;box-shadow:0 6px 16px rgba(14,42,34,.2),inset 0 1px 0 rgba(255,255,255,.25)!important}
-.savebtn.on{background:var(--bad-bg)!important;color:var(--bad)!important}
+html .sorts a.on{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 55%),var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important;box-shadow:0 6px 16px rgba(14,42,34,.2),inset 0 1px 0 rgba(255,255,255,.25)!important}
+html .savebtn.on{background:var(--bad-bg)!important;color:var(--bad)!important;border-color:transparent!important}
 
 /* Asosiy tugmalar: rangli shisha, ichki yorug'lik */
 .btn:not(.ghost):not(.danger),.go,.cta,.hgo,.fs-go,.scta-go,.cmpgo:not(.off),.go2,.racts .p,.nearme.on,.fbtn,.fs-loc.on{

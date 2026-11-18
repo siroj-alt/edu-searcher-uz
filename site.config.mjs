@@ -14,7 +14,7 @@ export default {
     { file: 'app/layout.js', find: `const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font' });`, replace: `const inter = Manrope({ subsets: ['latin', 'cyrillic'], variable: '--font', display: 'swap' });` },
     { file: 'app/layout.js', find: `<html lang="uz" className={inter.variable}>`, replace: `<html lang="uz" className={inter.variable} data-theme="light" suppressHydrationWarning>` },
     { file: 'app/layout.js', find: `<head>`, replace: `<head>\n        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />\n        <script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />` },
-    { file: 'app/layout.js', find: `export const viewport = { themeColor: '#12B886' };`, replace: `export const viewport = { themeColor: [{ media: '(prefers-color-scheme: light)', color: '#F5FAF7' }, { media: '(prefers-color-scheme: dark)', color: '#07130E' }], colorScheme: 'light dark', viewportFit: 'cover' };` },
+    { file: 'app/layout.js', find: `export const viewport = { themeColor: '#12B886' };`, replace: `export const viewport = { themeColor: '#F5FAF7', colorScheme: 'light', viewportFit: 'cover' };` },
     { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
 
     // Ilova (PWA): o'rnatish taklifi, service worker, iPhone uchun sozlamalar
