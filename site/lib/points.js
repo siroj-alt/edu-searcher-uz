@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 import { colorFor } from './cats';
 
-const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,created_at,updated_at,cover_url,branches(id,address,lat,lng,region_id),courses(level,price_monthly,categories(slug,name))';
+const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,created_at,updated_at,cover_url,branches(id,address,lat,lng,region_id,district_id),courses(level,price_monthly,categories(slug,name))';
 const PAGE = 1000; // Supabase bir so'rovda ko'pi bilan 1000 qator qaytaradi
 
 export async function loadCenters() {
@@ -26,6 +26,30 @@ export function inRegion(centers, regionId) {
   return centers
     .map((c) => ({ ...c, branches: c.branches.filter((b) => b.region_id === regionId) }))
     .filter((c) => c.branches.length > 0);
+}
+
+// Tuman bo'yicha filtr
+export function inDistrict(centers, districtId) {
+  if (!districtId) return centers;
+  return centers
+    .map((c) => ({ ...c, branches: c.branches.filter((b) => b.district_id === districtId) }))
+    .filter((c) => c.branches.length > 0);
+}
+
+// Bo'lim bo'yicha filtr: markazda bo'limdagi yo'nalishlardan kamida bittasi bo'lsa
+export function inSection(centers, slugs) {
+  if (!slugs || !slugs.length) return centers;
+  const set = new Set(slugs);
+  return centers.filter((c) => c.courses.some((k) => set.has(k.categories?.slug)));
+}
+
+// Narx oralig'i: markazda shu oraliqdagi narxli kurs bo'lsa
+export function inPrice(centers, min, max) {
+  if (!min && !max) return centers;
+  return centers.filter((c) => c.courses.some((k) => {
+    const p = Number(k.price_monthly);
+    return p > 0 && (!min || p >= min) && (!max || p <= max);
+  }));
 }
 
 export function toPoints(centers, slug) {

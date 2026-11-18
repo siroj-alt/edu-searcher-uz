@@ -14,6 +14,7 @@ const ICONS = {
   reviews: ic(<path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z" />),
   badges: ic(<><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z" /><path d="M9 12l2.2 2.2L15.5 10" /></>),
   bot: ic(<><path d="M21 4L3 11l6 2.5L11.5 20l3-5 5.5 4z" /><path d="M9 13.5l6-4.5" /></>),
+  reqs: ic(<><path d="M4 21V8l8-5 8 5v13" /><path d="M9 21v-6h6v6" /><path d="M12 9v3M10.5 10.5h3" /></>),
   stats: ic(<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>)
 };
 
@@ -51,6 +52,7 @@ export default function AdminNav() {
 
   const items = [
     [ADMIN, 'Asosiy panel', "Markazlar, foydalanuvchilar, adminlar", 'home'],
+    [ADMIN + '/markaz-sorovlari', "Markaz so'rovlari", "Yangi markazlarni tasdiqlash", 'reqs', cnt.center_requests_pending],
     [ADMIN + '/arizalar', 'Arizalar', "O'qishga yuborilgan arizalar", 'apps', cnt.applications_new],
     [ADMIN + '/sharhlar', 'Sharhlar', 'Tasdiqlashni kutayotgan sharhlar', 'reviews', cnt.reviews_pending],
     [ADMIN + '/tavsiya', 'Belgilar va kontaktlar', 'Tavsiya, tasdiq belgisi, aloqa', 'badges'],

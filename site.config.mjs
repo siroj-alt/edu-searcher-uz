@@ -8,14 +8,14 @@ export default {
   ],
   patches: [
     // Umumiy qolip: yangi uslublar va pastki havola
-    { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';\nimport './v4.css';\nimport './v5.css';\nimport './v6.css';` },
+    { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';\nimport './v4.css';\nimport './v5.css';\nimport './v6.css';\nimport './v7.css';` },
     // v4: Manrope shrifti, yorug'/qorong'u rejim (sahifa chizilishidan oldin qo'llanadi)
     { file: 'app/layout.js', find: `import { Inter } from 'next/font/google';`, replace: `import { Manrope } from 'next/font/google';\nimport { THEME_SCRIPT } from '../lib/theme';\nimport { LANG_SCRIPT } from '../lib/i18n';` },
     { file: 'app/layout.js', find: `const inter = Inter({ subsets: ['latin', 'cyrillic'], variable: '--font' });`, replace: `const inter = Manrope({ subsets: ['latin', 'cyrillic'], variable: '--font', display: 'swap' });` },
     { file: 'app/layout.js', find: `<html lang="uz" className={inter.variable}>`, replace: `<html lang="uz" className={inter.variable} data-theme="light" suppressHydrationWarning>` },
     { file: 'app/layout.js', find: `<head>`, replace: `<head>\n        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />\n        <script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />` },
     { file: 'app/layout.js', find: `export const viewport = { themeColor: '#12B886' };`, replace: `export const viewport = { themeColor: '#F5FAF7', colorScheme: 'light', viewportFit: 'cover' };` },
-    { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
+    { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-royxat">Markazni qo'shish</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
 
     // Ilova (PWA): o'rnatish taklifi, service worker, iPhone uchun sozlamalar
     { file: 'app/layout.js', find: `import Motion from '../components/Motion';`, replace: `import Motion from '../components/Motion';\nimport PwaSetup from '../components/PwaSetup';\nimport CompareBar from '../components/CompareBar';\nimport Toast from '../components/Toast';\nimport Translator from '../components/Translator';` },
@@ -65,7 +65,7 @@ export default {
     { file: 'components/AdminPanel.js', find: `supabase.from('centers').select('*').order('created_at', { ascending: false }).limit(2000),`, replace: `fetchAllCenters(),` },
 
     // Kurs/narx o'zgargach sahifada eski ma'lumot qolmasligi uchun: Next.js server keshi o'rniga har so'rov yangi ma'lumot oladi
-    { file: 'lib/supabase.js', find: `export const supabase = createClient(url, key);`, replace: `const noStoreFetch = (input, init) => fetch(input, { ...(init || {}), cache: 'no-store' });\n\nexport const supabase = createClient(url, key, { global: { fetch: noStoreFetch } });` },
+    { file: 'lib/supabase.js', find: `export const supabase = createClient(url, key);`, replace: `const noStoreFetch = (input, init) => fetch(input, { ...(init || {}), cache: 'no-store' });\n\nexport const supabase = createClient(url, key, { global: { fetch: noStoreFetch }, auth: { flowType: 'pkce', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } });` },
 
     { file: 'app/__admin__/page.js', find: `<div className="lock" aria-hidden="true">🔒</div>`, replace: `<div className="lock" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="10" width="16" height="11" rx="3" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></div>` },
     { file: 'app/__admin__/tavsiya/page.js', find: `title: 'Tavsiya va belgilar | EduSearcher'`, replace: `title: 'Belgilar va kontaktlar | EduSearcher'` },

@@ -120,6 +120,32 @@ export const RU_PARTS = [
   [/: qo'ng'iroq qilish/g, ': позвонить']
 ];
 
+
+Object.assign(RU, {
+  'Chet tillari': 'Иностранные языки', 'IT va dasturlash': 'IT и программирование', 'Bolalar uchun': 'Для детей', 'Fanlar va imtihonlar': 'Предметы и экзамены',
+  'Kasbiy kurslar': 'Профессиональные курсы', "San'at va ijod": 'Искусство и творчество', 'Tillar': 'Языки', 'Bolalar': 'Дети', 'Fanlar': 'Предметы', 'Kasbiy': 'Профессии', "San'at": 'Искусство', 'IT': 'IT',
+  "Kurs bo'limlari": 'Разделы курсов', "Bo'lim": 'Раздел', "Bo'limni tanlang: tillar, IT, bolalar uchun, kasbiy, san'at va boshqalar.": 'Выберите раздел: языки, IT, для детей, профессии, искусство и другое.',
+  "Tuman, daraja, narx oralig'i va masofa bo'yicha tanlang": 'Выбор по району, уровню, диапазону цен и расстоянию',
+  'Tasdiqlangan markazlar, narx va manzil bir qarashda.': 'Проверенные центры, цены и адреса с первого взгляда.',
+  "Narx, oyiga (so'm)": 'Цена в месяц (сум)', 'dan': 'от', 'gacha': 'до', 'Narxni tozalash': 'Сбросить цену', 'Barcha tuman va shaharlar': 'Все районы и города',
+  'Tumanlar yuklanmoqda…': 'Загрузка районов…', 'Tuman yoki shahar': 'Район или город', "«dan» qiymati «gacha» qiymatidan katta bo'lmasin": '«От» не должно быть больше «до»',
+  'Shaxmat': 'Шахматы', 'Rasm chizish': 'Рисование', 'Musiqa': 'Музыка', 'Raqs': 'Танцы', 'Maktabga tayyorlov': 'Подготовка к школе', 'Tikuvchilik': 'Шитьё', 'Oshpazlik': 'Кулинария', "Sartaroshlik va go'zallik": 'Парикмахерское дело и красота',
+  'Google orqali kirish': 'Войти через Google', 'Apple ID orqali kirish': 'Войти через Apple ID', "Google orqali ro'yxatdan o'tish": 'Регистрация через Google', "Apple ID orqali ro'yxatdan o'tish": 'Регистрация через Apple ID',
+  'yoki login va parol bilan': 'или по логину и паролю', 'Ochilmoqda…': 'Открываем…', 'Kabinetga kirilmoqda…': 'Входим в кабинет…', 'Kirish sahifasiga qaytish': 'Вернуться ко входу',
+  "Markazni qo'shish": 'Добавить центр', "O'quv markazingizni qo'shing": 'Добавьте свой учебный центр', "Markazni ro'yxatdan o'tkazish": 'Зарегистрировать центр', 'Kabinetga kirish': 'Вход в кабинет',
+  "Bepul. Markazingiz qidiruvda va xaritada chiqadi, arizalar to'g'ridan-to'g'ri kabinetingizga tushadi.": 'Бесплатно. Центр появится в поиске и на карте, заявки придут прямо в кабинет.',
+  'Kabinetga kiring': 'Войдите в кабинет', "Markaz ma'lumotlarini yuboring": 'Отправьте данные центра', 'Tasdiqlashni kuting': 'Дождитесь подтверждения',
+  'Google, Apple yoki login va parol bilan.': 'Через Google, Apple или логин и пароль.', "Nomi, manzili, telefoni va yo'nalishlari.": 'Название, адрес, телефон и направления.',
+  "Ma'muriyat tekshirgach, markaz kabineti ochiladi.": 'После проверки откроется кабинет центра.', '1-qadam: kabinetga kiring': 'Шаг 1: войдите в кабинет', "2-qadam: markaz ma'lumotlari": 'Шаг 2: данные центра',
+  'Markaz nomi': 'Название центра', "Mas'ul shaxs": 'Контактное лицо', 'Telegram (ixtiyoriy)': 'Telegram (необязательно)', 'Manzil': 'Адрес', 'Tanlang': 'Выберите',
+  "Qo'shimcha ma'lumot (ixtiyoriy)": 'Дополнительно (необязательно)', "So'rovni yuborish": 'Отправить заявку', 'Yuborilmoqda…': 'Отправляем…', "Ko'rib chiqilmoqda": 'На рассмотрении',
+  'Tasdiqlangan': 'Подтверждено', 'Rad etilgan': 'Отклонено', "Yangi so'rov yuborish": 'Отправить новую заявку', 'Sizda markaz kabineti bor.': 'У вас есть кабинет центра.',
+  "Markaz kabinetiga o'tish": 'Перейти в кабинет центра', 'Avval viloyatni tanlang': 'Сначала выберите регион', "Markaz joylashuvini aniqlash (markazda turgan bo'lsangiz)": 'Определить местоположение центра (если вы в центре)',
+  'Joylashuv belgilandi ✓': 'Местоположение отмечено ✓', "Markazni qo'shing": 'Добавьте центр', "O'quv markazingiz shu yo'nalishdami?": 'Ваш центр работает в этом направлении?',
+  "Butun O'zbekiston bo'ylab qidirish": 'Искать по всему Узбекистану', "Barcha bo'limlar bo'yicha qidirish": 'Искать во всех разделах', 'Eng mos': 'Лучшее совпадение', 'Kabinetga kirish ': 'Вход в кабинет'
+});
+RU_PARTS.unshift([/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
+
 const norm = (s) => s.replace(/[ʻʼ‘’`]/g, "'").replace(/\s+/g, ' ').trim();
 const DICT = new Map(Object.entries(RU).map(([k, v]) => [norm(k), v]));
 
@@ -131,8 +157,8 @@ export function tr(s) {
   let out = key, changed = false;
   for (const [re, to] of RU_PARTS) { const n = out.replace(re, to); if (n !== out) { out = n; changed = true; } }
   // Ichidagi kategoriya/viloyat nomlari (masalan: "Ingliz tili · O'rta · Toshkent shahri")
-  if (/·|, /.test(out)) {
-    const parts = out.split(/(\s*·\s*|,\s+)/).map((p) => DICT.get(p) || p);
+  if (/·|, |: /.test(out)) {
+    const parts = out.split(/(\s*·\s*|,\s+|:\s+)/).map((p) => DICT.get(p) || p);
     const j = parts.join('');
     if (j !== out) { out = j; changed = true; }
   }

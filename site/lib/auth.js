@@ -112,3 +112,32 @@ export const thisMonth = () => { const n = new Date(); return `${n.getFullYear()
 export const APP_STATUS = { new: 'Yuborildi', contacted: "Bog'lanildi", accepted: 'Qabul qilindi', rejected: 'Rad etildi', cancelled: 'Bekor qilingan' };
 export const PAY_METHOD = { payme: 'Payme', click: 'Click', card: 'Kartaga o\'tkazma', cash: 'Naqd', other: 'Boshqa' };
 export const PAY_STATUS = { pending: 'Tekshirilmoqda', paid: "To'langan", rejected: 'Rad etilgan' };
+
+// ===== Google / Apple orqali kirish (Supabase OAuth, PKCE) =====
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://xmdxmfvrzbfjursksfhv.supabase.co';
+const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u';
+let provCache = null;
+
+// Supabase'da qaysi provayderlar yoqilganini bilib oladi (yoqilmaganlari tugma sifatida ko'rsatilmaydi)
+export function oauthProviders() {
+  if (!provCache) {
+    provCache = fetch(SB_URL + '/auth/v1/settings', { headers: { apikey: SB_KEY }, cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((j) => ({ google: !!j?.external?.google, apple: !!j?.external?.apple }))
+      .catch(() => ({ google: false, apple: false }));
+  }
+  return provCache;
+}
+
+const safeNext = (n) => (n && n.startsWith('/') && !n.startsWith('//') ? n : '');
+
+export async function signInWithProvider(provider, next = '') {
+  const redirectTo = `${window.location.origin}/auth/callback${safeNext(next) ? '?next=' + encodeURIComponent(safeNext(next)) : ''}`;
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo, ...(provider === 'google' ? { queryParams: { prompt: 'select_account' } } : {}) }
+  });
+  if (error) return /not enabled|unsupported provider/i.test(error.message || '') ? 'Bu usul hozircha yoqilmagan.' : "Kirib bo'lmadi. Qayta urinib ko'ring.";
+  return '';
+}
+export { safeNext };

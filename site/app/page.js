@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import HomeSearch from '../components/HomeSearch';
 import CenterTile from '../components/CenterTile';
+import SectionRow from '../components/SectionRow';
 import { supabase } from '../lib/supabase';
 import { CAT_COLORS, CAT_GLYPH } from '../lib/cats';
 import { REGIONS } from '../lib/regions';
@@ -16,13 +17,13 @@ const ARROW = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 const PINS = [[96, 104], [252, 96], [376, 200], [158, 196], [322, 152], [62, 300], [410, 70], [300, 250]];
 const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
 
-// Tavsiya etilgan 6 ta markaz: avval tavsiya belgilanganlar, so'ng har xil viloyatlardan reytingi yuqorilar
+// Tavsiya etilgan 12 ta markaz: avval tavsiya belgilanganlar, so'ng har xil viloyatlardan reytingi yuqorilar
 function pickTop(list) {
   const top = [], seen = new Set();
   const reg = (c) => c.branches[0]?.region_id;
-  for (const c of list) if (c.is_featured && top.length < 6) { top.push(c); seen.add(reg(c)); }
-  for (const c of list) { if (top.length >= 6) break; if (top.includes(c)) continue; if (!seen.has(reg(c))) { seen.add(reg(c)); top.push(c); } }
-  for (const c of list) { if (top.length >= 6) break; if (!top.includes(c)) top.push(c); }
+  for (const c of list) if (c.is_featured && top.length < 12) { top.push(c); seen.add(reg(c)); }
+  for (const c of list) { if (top.length >= 12) break; if (top.includes(c)) continue; if (!seen.has(reg(c))) { seen.add(reg(c)); top.push(c); } }
+  for (const c of list) { if (top.length >= 12) break; if (!top.includes(c)) top.push(c); }
   return top;
 }
 
@@ -45,23 +46,38 @@ export default async function Home() {
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-l">
+      <section className="ohero">
+        <div className="ohero-in">
           <span className="pill"><i aria-hidden="true" />{fmt(s.centers)} ta o'quv markazi · butun O'zbekiston bo'ylab</span>
           <h1>O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</h1>
-          <p className="lead">Kurs, narx va manzil bo'yicha solishtiring, so'ng sayt orqali to'g'ridan-to'g'ri o'qishga ariza bering.</p>
           <HomeSearch cats={s.cats || []} />
           <div className="hpop">
             <span>Mashhur:</span>
             {cats.slice(0, 6).map((c) => <Link key={c.id} href={`/search?cat=${c.id}`}>{c.name}</Link>)}
           </div>
-          <Link className="hfilter" href="/search">
-            <span className="fi" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.5" /><circle cx="10" cy="17" r="2.5" /></svg></span>
-            <span className="ft"><b>Batafsil qidiruv</b><small>Daraja, narx va masofa bo'yicha tanlang</small></span>
-            <span className="fa" aria-hidden="true">{ARROW}</span>
-          </Link>
         </div>
+      </section>
 
+      <div className="wrap">
+        <div className="hsec osec">
+          <div><h2>Kurs bo'limlari</h2><p>Bo'limni tanlang: tillar, IT, bolalar uchun, kasbiy, san'at va boshqalar.</p></div>
+          <Link href="/search">Barcha markazlar {ARROW}</Link>
+        </div>
+        <SectionRow variant="grid" />
+        <Link className="hfilter big" href="/search">
+          <span className="fi" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.5" /><circle cx="10" cy="17" r="2.5" /></svg></span>
+          <span className="ft"><b>Batafsil qidiruv</b><small>Tuman, daraja, narx oralig'i va masofa bo'yicha tanlang</small></span>
+          <span className="fa" aria-hidden="true">{ARROW}</span>
+        </Link>
+
+        <div className="hsec">
+          <div><h2>Tavsiya etilgan markazlar</h2><p>Tasdiqlangan markazlar, narx va manzil bir qarashda.</p></div>
+          <Link href="/search">Barchasi {ARROW}</Link>
+        </div>
+        <div className="tiles">{top.map((c, i) => <CenterTile key={c.id} c={c} i={i} />)}</div>
+      </div>
+
+      <section className="hmap wrap">
         <Link className="hteaser" href="/xarita" aria-label={`Xaritani ochish: ${fmt(s.branches)} ta filial`}>
           <svg className="mapart" viewBox="0 0 480 440" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <rect className="base" width="480" height="440" />
@@ -107,11 +123,6 @@ export default async function Home() {
           </details>
         ) : null}
 
-        <div className="hsec">
-          <div><h2>Tavsiya etilgan markazlar</h2><p>Tasdiqlangan markazlar, filiallar soni va oylik narx bir qarashda.</p></div>
-          <Link href="/search">Barcha markazlar {ARROW}</Link>
-        </div>
-        <div className="ccards">{top.map((c, i) => <CenterTile key={c.id} c={c} i={i} />)}</div>
 
         <div className="hsec">
           <div><h2>Viloyatlar bo'yicha</h2><p>O'zingiz yashaydigan viloyatdagi markazlarni oching.</p></div>
@@ -141,9 +152,12 @@ export default async function Home() {
         <section className="hcta">
           <div>
             <h2>O'quv markazingiz bormi?</h2>
-            <p>Markaz kabinetida arizalarni qabul qiling, o'quvchilar va oylik to'lovlarni bitta joyda boshqaring.</p>
+            <p>Markazingizni bepul qo'shing: arizalarni qabul qiling, o'quvchilar va oylik to'lovlarni bitta joyda boshqaring.</p>
           </div>
-          <Link href="/markaz-kabineti">Markaz kabinetiga kirish</Link>
+          <div className="hcta-b">
+            <Link href="/markaz-royxat">Markazni ro'yxatdan o'tkazish</Link>
+            <Link href="/markaz-kabineti" className="ghost">Kabinetga kirish</Link>
+          </div>
         </section>
       </div>
     </>

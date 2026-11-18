@@ -3,12 +3,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMe, refreshMe, signIn, signUp, signOut, homeFor, normLogin, LOGIN_RE, validPhone } from '../lib/auth';
+import OAuthButtons from './OAuthButtons';
 
 // Kirish va ro'yxatdan o'tish (login + parol)
-export default function AuthBox({ next = '' }) {
+export default function AuthBox({ next = '', defaultMode = 'login', title = '', subtitle = '' }) {
   const router = useRouter();
   const me = useMe();
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState(defaultMode);
   const [f, setF] = useState({ login: '', password: '', full_name: '', phone: '+998 ' });
   const [show, setShow] = useState(false);
   const [st, setSt] = useState({ busy: false, err: '' });
@@ -49,15 +50,16 @@ export default function AuthBox({ next = '' }) {
   const reg = mode === 'register';
   return (
     <div className="auth">
-      <h1 className="h1s" style={{ textAlign: 'center', marginBottom: 6 }}>{reg ? "Ro'yxatdan o'tish" : 'Kabinetga kirish'}</h1>
+      <h1 className="h1s" style={{ textAlign: 'center', marginBottom: 6 }}>{title || (reg ? "Ro'yxatdan o'tish" : 'Kabinetga kirish')}</h1>
       <p className="muted" style={{ textAlign: 'center', marginBottom: 18 }}>
-        {reg ? "Kabinet oching: markazlarni saqlang, o'qishga ariza bering va to'lovlaringizni kuzating." : "O'quvchilar va o'quv markazlari uchun yagona kirish."}
+        {subtitle || (reg ? "Kabinet oching: markazlarni saqlang, o'qishga ariza bering va to'lovlaringizni kuzating." : "O'quvchilar va o'quv markazlari uchun yagona kirish.")}
       </p>
       <div className="tabs" style={{ justifyContent: 'center' }}>
         <button type="button" className={'tab' + (!reg ? ' on' : '')} onClick={() => { setMode('login'); setSt({ busy: false, err: '' }); }}>Kirish</button>
         <button type="button" className={'tab' + (reg ? ' on' : '')} onClick={() => { setMode('register'); setSt({ busy: false, err: '' }); }}>Ro'yxatdan o'tish</button>
       </div>
       <form className="card stack" onSubmit={submit} noValidate>
+        <OAuthButtons next={next} label={reg ? "ro'yxatdan o'tish" : 'kirish'} />
         {reg ? (
           <>
             <label>Ism familiya<input value={f.full_name} onChange={set('full_name')} maxLength={80} autoComplete="name" placeholder="Masalan: Aziz Karimov" /></label>
