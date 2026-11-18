@@ -1,7 +1,7 @@
 /* EduSearcher service worker: ilova tez ochilishi va internet bo'lmaganda ham ishlashi uchun.
    Sahifalar har doim avval internetdan olinadi (eski ma'lumot ko'rsatilmasin),
    internet bo'lmasa oxirgi saqlangan nusxa yoki "Internet yo'q" sahifasi ochiladi. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC = 'es-static-' + VERSION;
 const PAGES = 'es-pages-' + VERSION;
 const OFFLINE = '/offline';

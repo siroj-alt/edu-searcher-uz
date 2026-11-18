@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { rpcMsg, normLogin } from '../../lib/auth';
 import ContactsEditor from '../shared/ContactsEditor';
+import Switch from '../Switch';
 
 const TR = { 'ʻ': '', 'ʼ': '', '‘': '', '’': '', "'": '', 'ş': 's', 'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ü': 'u' };
 const suggest = (name) => String(name || '').toLowerCase().replace(/[ʻʼ‘’'şçğıöü]/g, (c) => TR[c] ?? '').replace(/[^a-z0-9]+/g, '').slice(0, 20) || 'markaz';
@@ -18,26 +19,36 @@ export default function CenterAccess({ center, onMsg, onChange }) {
   const [owner, setOwner] = useState(undefined);
   const [f, setF] = useState({ login: '', password: '' });
   const [vis, setVis] = useState(center.contacts_visible !== false);
+  const [hidden, setHidden] = useState(!!center.is_hidden);
   const [busy, setBusy] = useState('');
   const [made, setMade] = useState(null);
   const [err, setErr] = useState('');
 
   useEffect(() => {
-    setVis(center.contacts_visible !== false); setErr('');
+    setVis(center.contacts_visible !== false); setHidden(!!center.is_hidden); setErr('');
     if (!center.owner_id) { setOwner(null); setF({ login: suggest(center.name), password: '' }); return; }
     supabase.from('profiles').select('id,login,email').eq('id', center.owner_id).maybeSingle().then(({ data }) => {
       setOwner(data || { id: center.owner_id, login: null });
       setF({ login: data?.login || '', password: '' });
     });
-  }, [center.id, center.owner_id, center.contacts_visible, center.name]);
+  }, [center.id, center.owner_id, center.contacts_visible, center.is_hidden, center.name]);
 
   async function toggleVis(on) {
-    setBusy('vis'); setErr('');
+    setErr('');
     const { error } = await supabase.rpc('admin_set_center_contacts_visible', { p_center: center.id, p_on: on });
-    setBusy('');
-    if (error) return setErr(rpcMsg(error));
-    setVis(on); onMsg?.(on ? "Aloqa ma'lumotlari saytda ko'rsatiladi" : "Aloqa ma'lumotlari saytda yashirildi"); onChange?.();
+    if (error) { setErr(rpcMsg(error)); return false; }
+    setVis(on); onMsg?.(on ? "Aloqa ma'lumotlari saytda ko'rsatiladi" : "Aloqa ma'lumotlari yashirildi (bazada saqlanib turibdi)"); onChange?.();
+    return true;
   }
+
+  async function toggleHidden(show) {
+    setErr('');
+    const { error } = await supabase.rpc('admin_set_center_hidden', { p_center: center.id, p_hidden: !show });
+    if (error) { setErr(rpcMsg(error)); return false; }
+    setHidden(!show); onMsg?.(show ? "Markaz saytda yana ko'rinadi" : "Markaz saytdan yashirildi. Barcha ma'lumotlari bazada saqlanib turibdi"); onChange?.();
+    return true;
+  }
+
 
   async function saveAccount(e) {
     e.preventDefault(); setErr(''); setMade(null);
@@ -74,12 +85,14 @@ export default function CenterAccess({ center, onMsg, onChange }) {
 
   return (
     <div className="subform" style={{ marginTop: 16 }}>
-      <b>Aloqa ma'lumotlari</b>
+      <b>Saytda ko'rinishi</b>
+      <div className="swgroup">
+        <Switch checked={!hidden} onChange={toggleHidden} label="Markaz saytda ko'rinsin"
+          sub="O'chirilsa markaz qidiruv, xarita va bosh sahifadan yashiriladi. Ma'lumotlari, kurslari va kabineti bazada saqlanib qoladi; yoqsangiz hammasi qaytadi." />
+        <Switch checked={vis} onChange={toggleVis} label="Aloqa ma'lumotlari ko'rinsin" sub="Veb-sayt, telefon, Telegram va Instagram. O'chirilsa ma'lumotlar o'chib ketmaydi." />
+      </div>
+      <b style={{ marginTop: 6 }}>Aloqa ma'lumotlari</b>
       <ContactsEditor centerId={center.id} onSaved={onChange} />
-      <label className="tgl">
-        <input type="checkbox" checked={vis} disabled={busy === 'vis'} onChange={(e) => toggleVis(e.target.checked)} />
-        Veb-sayt, telefon, Telegram va Instagram saytda ko'rinsin
-      </label>
 
       <b style={{ marginTop: 6 }}>Markaz kabineti</b>
       {owner === undefined ? <p className="muted">Yuklanmoqda...</p> : owner ? (

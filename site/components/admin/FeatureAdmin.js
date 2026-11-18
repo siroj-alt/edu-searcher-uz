@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { supabase } from '../../lib/supabase';
 import { regionById } from '../../lib/regions';
 import { rpcMsg } from '../../lib/auth';
+import Switch from '../Switch';
 
 const norm = (t) => String(t || '').toLowerCase().replace(/[ʻʼ‘’`']/g, "'");
-const FIELDS = 'id,name,rating,is_featured,is_verified,contacts_visible,owner_id,branches(region_id)';
+const FIELDS = 'id,name,rating,is_featured,is_verified,contacts_visible,is_hidden,owner_id,branches(region_id)';
 
 // Markazlar belgilari ("Tavsiya etilgan", "Tasdiqlangan") va aloqa ma'lumotlarining saytda ko'rinishi
 export default function FeatureAdmin() {
@@ -14,7 +15,6 @@ export default function FeatureAdmin() {
   const [q, setQ] = useState('');
   const [only, setOnly] = useState('');
   const [err, setErr] = useState('');
-  const [busy, setBusy] = useState('');
   const [globalOn, setGlobalOn] = useState(null);
 
   useEffect(() => {
@@ -37,30 +37,33 @@ export default function FeatureAdmin() {
     if (only === 'f') r = r.filter((x) => x.is_featured);
     if (only === 'v') r = r.filter((x) => x.is_verified);
     if (only === 'h') r = r.filter((x) => x.contacts_visible === false);
+    if (only === 'x') r = r.filter((x) => x.is_hidden);
     if (only === 'k') r = r.filter((x) => x.owner_id);
     if (q.trim()) { const n = norm(q.trim()); r = r.filter((x) => norm(x.name).includes(n)); }
     return r.slice(0, 300);
   }, [rows, q, only]);
 
-  async function toggle(c, field) {
-    const on = !(field === 'contacts_visible' ? c.contacts_visible !== false : c[field]);
-    setBusy(c.id + field); setErr('');
+  // Holatni o'zgartiradi: muvaffaqiyatli bo'lsa true. Ma'lumotlar o'chirilmaydi, faqat saytda ko'rinishi o'zgaradi.
+  async function toggle(c, field, on) {
+    setErr('');
     const call = field === 'contacts_visible'
       ? supabase.rpc('admin_set_center_contacts_visible', { p_center: c.id, p_on: on })
-      : supabase.rpc(field === 'is_featured' ? 'admin_set_featured' : 'admin_set_verified', { p_center: c.id, p_on: on });
+      : field === 'is_hidden'
+        ? supabase.rpc('admin_set_center_hidden', { p_center: c.id, p_hidden: on })
+        : supabase.rpc(field === 'is_featured' ? 'admin_set_featured' : 'admin_set_verified', { p_center: c.id, p_on: on });
     const { error } = await call;
-    setBusy('');
-    if (error) return setErr(rpcMsg(error, error.message));
+    if (error) { setErr(rpcMsg(error, error.message)); return false; }
     setRows((r) => r.map((x) => (x.id === c.id ? { ...x, [field]: on } : x)));
+    return true;
   }
 
   async function toggleGlobal(on) {
-    if (!confirm(on ? "Barcha markazlarning aloqa ma'lumotlari saytda ko'rsatilsinmi?" : "Barcha markazlarning veb-sayti, telefoni, Telegram va Instagrami saytdan yashirilsinmi?")) return;
-    setBusy('global'); setErr('');
+    if (!confirm(on ? "Barcha markazlarning aloqa ma'lumotlari saytda ko'rsatilsinmi?" : "Barcha markazlarning veb-sayti, telefoni, Telegram va Instagrami saytdan yashirilsinmi? Ma'lumotlar o'chirilmaydi, qayta yoqsangiz o'z joyiga qaytadi.")) return false;
+    setErr('');
     const { error } = await supabase.rpc('admin_set_contacts_visible', { p_on: on });
-    setBusy('');
-    if (error) return setErr(rpcMsg(error, error.message));
+    if (error) { setErr(rpcMsg(error, error.message)); return false; }
     setGlobalOn(on);
+    return true;
   }
 
   const all = rows || [];
@@ -68,23 +71,17 @@ export default function FeatureAdmin() {
   const nV = all.filter((x) => x.is_verified).length;
   const nH = all.filter((x) => x.contacts_visible === false).length;
   const nK = all.filter((x) => x.owner_id).length;
+  const nX = all.filter((x) => x.is_hidden).length;
 
   return (
     <div className="wrap page">
       <h1 className="h1s">Belgilar va kontaktlar</h1>
       <p className="muted" style={{ marginBottom: 14 }}>«Tavsiya etilgan» markazlar qidiruv natijalari va bosh sahifada birinchi ko'rsatiladi. «Tasdiqlangan» belgisi ma'lumotlari tekshirilgan markazlarga qo'yiladi.</p>
 
-      <div className={'card gswitch' + (globalOn === false ? ' off' : '')}>
-        <div>
-          <b>Aloqa ma'lumotlari: {globalOn === null ? '...' : globalOn ? "saytda ko'rinadi" : 'saytdan yashirilgan'}</b>
-          <p className="muted" style={{ fontSize: 14, marginTop: 4 }}>
-            Bitta tugma bilan barcha markazlarning veb-sayti, telefon raqamlari, Telegram va Instagrami ko'rsatiladi yoki yashiriladi.
-            Yashirilganda foydalanuvchilar markaz bilan faqat sayt orqali ariza qoldirib bog'lanadi. Alohida markaz uchun pastdagi jadvaldan foydalaning.
-          </p>
-        </div>
-        <button type="button" className={'btn' + (globalOn ? ' danger' : '')} disabled={globalOn === null || busy === 'global'} onClick={() => toggleGlobal(!globalOn)}>
-          {busy === 'global' ? 'Bajarilmoqda...' : globalOn ? 'Hammasini yashirish' : "Hammasini ko'rsatish"}
-        </button>
+      <div className="card swgroup">
+        <Switch checked={!!globalOn} disabled={globalOn === null} onChange={toggleGlobal}
+          label="Aloqa ma'lumotlari saytda ko'rinsin"
+          sub="Barcha markazlarning veb-sayti, telefoni, Telegram va Instagrami. O'chirilsa ma'lumotlar bazada saqlanib qoladi va foydalanuvchilar faqat ariza orqali bog'lanadi; yoqilganda hammasi qaytadi." />
       </div>
 
       <div className="tabs">
@@ -93,6 +90,7 @@ export default function FeatureAdmin() {
         <button type="button" className={'tab' + (only === 'v' ? ' on' : '')} onClick={() => setOnly('v')}>Tasdiqlangan ({nV})</button>
         <button type="button" className={'tab' + (only === 'h' ? ' on' : '')} onClick={() => setOnly('h')}>Kontakti yashirilgan ({nH})</button>
         <button type="button" className={'tab' + (only === 'k' ? ' on' : '')} onClick={() => setOnly('k')}>Kabineti bor ({nK})</button>
+        <button type="button" className={'tab' + (only === 'x' ? ' on' : '')} onClick={() => setOnly('x')}>Saytdan yashirilgan ({nX})</button>
       </div>
       <input className="asearch" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Markaz nomi bo'yicha qidirish" />
       <p className="muted" style={{ fontSize: 13, margin: '-4px 0 12px' }}>Ro'yxatda ko'pi bilan 300 ta markaz ko'rsatiladi, kerakli markazni nomi bo'yicha qidiring.</p>
@@ -100,7 +98,7 @@ export default function FeatureAdmin() {
       {rows === null ? <div className="card muted">Yuklanmoqda...</div> : (
         <div className="card ascroll" style={{ padding: 0 }}>
           <table className="atable">
-            <thead><tr><th>Markaz</th><th>Viloyat</th><th>Reyting</th><th>Tavsiya etilgan</th><th>Tasdiqlangan</th><th>Kontaktlar</th></tr></thead>
+            <thead><tr><th>Markaz</th><th>Viloyat</th><th>Reyting</th><th>Saytda</th><th>Tavsiya etilgan</th><th>Tasdiqlangan</th><th>Kontaktlar</th></tr></thead>
             <tbody>
               {list.map((c) => {
                 const regs = [...new Set((c.branches || []).map((b) => b.region_id))].map((r) => regionById(r)?.short).filter(Boolean);
@@ -110,9 +108,10 @@ export default function FeatureAdmin() {
                     <td><Link className="ok" href={`/centers/${c.id}`} target="_blank">{c.name}</Link>{c.owner_id ? <span className="pillst" style={{ marginLeft: 6 }}>kabinet</span> : null}</td>
                     <td className="muted">{regs.slice(0, 3).join(', ')}{regs.length > 3 ? '…' : ''}</td>
                     <td>{c.rating && Number(c.rating) > 0 ? Number(c.rating).toFixed(1) : '—'}</td>
-                    <td><label className="tgl"><input type="checkbox" checked={!!c.is_featured} disabled={busy === c.id + 'is_featured'} onChange={() => toggle(c, 'is_featured')} />{c.is_featured ? 'Ha' : "Yo'q"}</label></td>
-                    <td><label className="tgl"><input type="checkbox" checked={!!c.is_verified} disabled={busy === c.id + 'is_verified'} onChange={() => toggle(c, 'is_verified')} />{c.is_verified ? 'Ha' : "Yo'q"}</label></td>
-                    <td><label className="tgl"><input type="checkbox" checked={vis} disabled={busy === c.id + 'contacts_visible'} onChange={() => toggle(c, 'contacts_visible')} />{vis ? (globalOn === false ? 'Yoqilgan (umumiy yashirilgan)' : "Ko'rinadi") : 'Yashirilgan'}</label></td>
+                    <td><span className="swcell"><Switch checked={!c.is_hidden} onChange={(on) => toggle(c, 'is_hidden', !on)} ariaLabel={`${c.name}: saytda ko'rinsin`} /><small>{c.is_hidden ? 'Yashirilgan' : "Ko'rinadi"}</small></span></td>
+                    <td><span className="swcell"><Switch checked={!!c.is_featured} onChange={(on) => toggle(c, 'is_featured', on)} ariaLabel={`${c.name}: tavsiya etilgan`} /></span></td>
+                    <td><span className="swcell"><Switch checked={!!c.is_verified} onChange={(on) => toggle(c, 'is_verified', on)} ariaLabel={`${c.name}: tasdiqlangan`} /></span></td>
+                    <td><span className="swcell"><Switch checked={vis} onChange={(on) => toggle(c, 'contacts_visible', on)} ariaLabel={`${c.name}: aloqa ma'lumotlari ko'rinsin`} /><small>{vis ? (globalOn === false ? 'Umumiy yashirilgan' : "Ko'rinadi") : 'Yashirilgan'}</small></span></td>
                   </tr>
                 );
               })}

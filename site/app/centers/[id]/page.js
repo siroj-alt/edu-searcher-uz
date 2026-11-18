@@ -282,7 +282,7 @@ export default async function CenterPage({ params }) {
         </>
       ) : null}
 
-      <StickyCta phone={c.phone || ''} telegram={c.telegram || ''} name={c.name} />
+      <StickyCta id={c.id} phone={c.phone || ''} telegram={c.telegram || ''} name={c.name} />
     </div>
   );
 }

@@ -7,6 +7,8 @@ export default {
     'app/api/lead'
   ],
   patches: [
+    // Har bir build uchun noyob raqam (eski ochiq sahifalarni yangilash uchun)
+    { file: 'next.config.js', find: `module.exports = {`, replace: `module.exports = {\n  env: { ES_BUILD: process.env.VERCEL_DEPLOYMENT_ID || process.env.VERCEL_URL || String(Date.now()) },` },
     // Umumiy qolip: yangi uslublar va pastki havola
     { file: 'app/layout.js', find: `import './v2.css';`, replace: `import './v2.css';\nimport './v3.css';\nimport './v4.css';\nimport './v5.css';\nimport './v6.css';\nimport './v7.css';` },
     // v4: Manrope shrifti, yorug'/qorong'u rejim (sahifa chizilishidan oldin qo'llanadi)
@@ -18,8 +20,8 @@ export default {
     { file: 'app/layout.js', find: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>`, replace: `<li><Link href="/markazlar">Viloyatlar bo'yicha</Link></li>\n                  <li><Link href="/markaz-royxat">Markazni qo'shish</Link></li>\n                  <li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>` },
 
     // Ilova (PWA): o'rnatish taklifi, service worker, iPhone uchun sozlamalar
-    { file: 'app/layout.js', find: `import Motion from '../components/Motion';`, replace: `import Motion from '../components/Motion';\nimport PwaSetup from '../components/PwaSetup';\nimport CompareBar from '../components/CompareBar';\nimport Toast from '../components/Toast';\nimport Translator from '../components/Translator';` },
-    { file: 'app/layout.js', find: `<Motion />`, replace: `<Motion />\n        <PwaSetup />\n        <CompareBar />\n        <Toast />\n        <Translator />` },
+    { file: 'app/layout.js', find: `import Motion from '../components/Motion';`, replace: `import Motion from '../components/Motion';\nimport PwaSetup from '../components/PwaSetup';\nimport CompareBar from '../components/CompareBar';\nimport Toast from '../components/Toast';\nimport Translator from '../components/Translator';\nimport UpdateCheck from '../components/UpdateCheck';` },
+    { file: 'app/layout.js', find: `<Motion />`, replace: `<Motion />\n        <PwaSetup />\n        <CompareBar />\n        <Toast />\n        <Translator />\n        <UpdateCheck />` },
     { file: 'app/layout.js', find: `applicationName: 'EduSearcher',`, replace: `applicationName: 'EduSearcher',\n  appleWebApp: { capable: true, title: 'EduSearcher', statusBarStyle: 'default' },` },
 
     // v4: oq fonlar mavzu rangiga (qorong'u rejimda ham to'g'ri ko'rinishi uchun)
