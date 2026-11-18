@@ -10,7 +10,7 @@ export default function SectionRow({ active = '', hrefFor = (s) => `/search?boli
       {SECTIONS.map((s) => (
         <Link key={s.slug} href={hrefFor(active === s.slug && variant === 'row' ? '' : s.slug)} className={'sec-i' + (active === s.slug ? ' on' : '')} style={{ '--c': s.color }} aria-current={active === s.slug ? 'true' : undefined}>
           <span className="sec-ic"><Ic d={SECTION_ICON[s.icon]} /></span>
-          <span className="sec-n">{variant === 'grid' ? s.name : s.short}</span>
+          {variant === 'olx' ? <span className="sec-n"><span className="sec-l">{s.name}</span><span className="sec-s">{s.short}</span></span> : <span className="sec-n">{variant === 'grid' ? s.name : s.short}</span>}
           {counts && counts[s.slug] != null ? <small className="sec-c">{`${counts[s.slug]} ta markaz`}</small> : null}
         </Link>
       ))}

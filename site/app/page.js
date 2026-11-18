@@ -46,34 +46,25 @@ export default async function Home() {
 
   return (
     <>
-      <section className="ohero">
-        <div className="ohero-in">
-          <span className="pill"><i aria-hidden="true" />{fmt(s.centers)} ta o'quv markazi · butun O'zbekiston bo'ylab</span>
+      {/* OLX uslubi: ixcham sarlavha + qidiruv, darhol bo'limlar va markaz kartalari */}
+      <section className="ox">
+        <div className="ox-in">
           <h1>O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</h1>
           <HomeSearch cats={s.cats || []} />
-          <div className="hpop">
-            <span>Mashhur:</span>
-            {cats.slice(0, 6).map((c) => <Link key={c.id} href={`/search?cat=${c.id}`}>{c.name}</Link>)}
-          </div>
+          <p className="ox-n"><i aria-hidden="true" />{fmt(s.centers)} ta o'quv markazi · butun O'zbekiston bo'ylab</p>
         </div>
       </section>
 
       <div className="wrap">
-        <div className="hsec osec">
-          <div><h2>Kurs bo'limlari</h2><p>Bo'limni tanlang: tillar, IT, bolalar uchun, kasbiy, san'at va boshqalar.</p></div>
-          <Link href="/search">Barcha markazlar {ARROW}</Link>
-        </div>
-        <SectionRow variant="grid" />
-        <Link className="hfilter big" href="/search">
-          <span className="fi" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.5" /><circle cx="10" cy="17" r="2.5" /></svg></span>
+        <div className="ox-h"><h2>Kurs bo'limlari</h2><Link href="/search">Barchasi {ARROW}</Link></div>
+        <SectionRow variant="olx" />
+        <Link className="hfilter ox-f" href="/search">
+          <span className="fi" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2.5" /><circle cx="10" cy="17" r="2.5" /></svg></span>
           <span className="ft"><b>Batafsil qidiruv</b><small>Tuman, daraja, narx oralig'i va masofa bo'yicha tanlang</small></span>
           <span className="fa" aria-hidden="true">{ARROW}</span>
         </Link>
 
-        <div className="hsec">
-          <div><h2>Tavsiya etilgan markazlar</h2><p>Tasdiqlangan markazlar, narx va manzil bir qarashda.</p></div>
-          <Link href="/search">Barchasi {ARROW}</Link>
-        </div>
+        <div className="ox-h"><h2>Tavsiya etilgan markazlar</h2><Link href="/search">Barchasi {ARROW}</Link></div>
         <div className="tiles">{top.map((c, i) => <CenterTile key={c.id} c={c} i={i} />)}</div>
       </div>
 

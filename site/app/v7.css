@@ -239,3 +239,61 @@ html[data-theme=dark] .sw-track{background:rgba(120,120,128,.36)}
 }
 /* Markaz sahifasidagi pastki panel */
 .scta .cmpt.scta-cmp{height:52px;border-radius:26px;padding:0 16px;font-size:15px;flex:none}
+
+/* ===== Bosh sahifa v9: OLX uslubi — ixcham sarlavha, darhol bo'limlar va kartalar ===== */
+.ox{max-width:1240px;margin:0 auto;padding:22px 24px 4px}
+.ox-in{position:relative;border-radius:26px;padding:26px 28px 20px;
+  background:radial-gradient(60% 140% at 100% 0%,rgba(61,220,151,.2),transparent 60%),radial-gradient(50% 100% at 0% 100%,rgba(94,177,255,.12),transparent 60%),var(--gl-card);
+  border:1px solid var(--gl-edge);box-shadow:var(--gl-drop),var(--gl-hi)}
+.ox h1{margin:0;max-width:820px;font-size:clamp(22px,3vw,36px);line-height:1.12;font-weight:800;letter-spacing:-.03em;text-wrap:balance}
+.ox h1 mark{background:none;color:inherit;box-shadow:inset 0 -.3em 0 var(--hl);border-radius:2px}
+html .ox .hsearch{margin-top:16px;max-width:none;flex-wrap:nowrap}
+.ox .hsearch .hgo{display:flex;align-items:center;justify-content:center;gap:8px}
+.ox .hsearch .hgo-i{flex:none}
+.ox-n{margin-top:12px;display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--muted)}
+.ox-n i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent)}
+.ox-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}
+.ox-h h2{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.ox-h a{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14.5px;color:var(--accent-d);white-space:nowrap}
+.ox-h a svg{width:16px;height:16px}
+/* bo'limlar: OLX kategoriyalari kabi dumaloq belgilar, kartasiz, bitta qatorda */
+.secs-olx{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:0 0 16px}
+.secs-olx .sec-i{padding:6px 2px}
+.secs-olx .sec-ic{width:64px;height:64px}
+.secs-olx .sec-ic svg{width:28px;height:28px}
+.secs-olx .sec-n{font-size:14px}
+.secs-olx .sec-s{display:none}
+@media(hover:hover){.secs-olx .sec-i:hover{transform:translateY(-3px)}}
+.hfilter.ox-f{max-width:none;margin:0;padding:10px 14px 10px 10px;border-width:1.5px;gap:12px;animation:none}
+.ox-f .fi{width:42px;height:42px;border-radius:13px}
+.ox-f .ft{min-width:0}
+.ox-f .ft b{font-size:16px}
+.ox-f .ft small{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ox-f .fa{width:34px;height:34px}
+@media(max-width:760px){
+  .ox{padding:10px 12px 0}
+  .ox-in{padding:16px 14px 14px;border-radius:22px}
+  .ox h1{font-size:23px;line-height:1.15}
+  html .ox .hsearch{flex-direction:row;flex-wrap:wrap;align-items:stretch;gap:8px;margin-top:12px;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .ox .hsearch .hq{order:1;flex:1 1 0;min-width:0;min-height:50px;padding:0 12px;gap:10px;background:var(--field);border-radius:15px}
+  .ox .hsearch .hgo{order:2;flex:none;width:50px;min-height:50px;padding:0;border-radius:15px}
+  .ox .hsearch .hgo-t{display:none}
+  .ox .hsearch .hreg{order:3;flex:1 1 100%;min-height:42px;padding:0 12px;background:var(--field);border-radius:13px}
+  .ox .hsearch .hreg select{font-size:14.5px}
+  .ox-n{margin-top:10px;font-size:12.5px}
+  .ox-h{margin:18px 0 10px}
+  .ox-h h2{font-size:19px}
+  .ox-h a{font-size:13.5px}
+  .secs-olx{gap:4px;margin-bottom:12px}
+  .secs-olx .sec-i{gap:5px;padding:2px 0}
+  .secs-olx .sec-ic{width:48px;height:48px}
+  .secs-olx .sec-ic svg{width:22px;height:22px}
+  .secs-olx .sec-n{font-size:12px}
+  .secs-olx .sec-l{display:none}
+  .secs-olx .sec-s{display:inline}
+  .hfilter.ox-f{padding:8px 10px 8px 8px}
+  .ox-f .fi{width:38px;height:38px;border-radius:12px}
+  .ox-f .ft b{font-size:15px}
+  .ox-f .ft small{font-size:12px}
+  .ox-f .fa{width:30px;height:30px}
+}
