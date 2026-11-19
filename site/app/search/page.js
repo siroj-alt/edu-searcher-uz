@@ -29,7 +29,7 @@ const minPrice = (c) => { const p = c.courses.map((k) => Number(k.price_monthly)
 const intOf = (v) => { const n = parseInt(String(v || '').replace(/\D/g, ''), 10); return Number.isFinite(n) && n > 0 && n <= MAXP ? n : 0; };
 const X = <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" /></svg>;
 
-export default async function Search({ searchParams }) {
+export default async function Search({ searchParams, home = false }) {
   const sp = searchParams || {};
   const levelRaw = LEVELS[sp.level] ? sp.level : '';
   const region = regionBySlug(sp.region || '');
@@ -147,7 +147,9 @@ export default async function Search({ searchParams }) {
 
     return (
       <div className="wrap page spage">
-        <h1 className="h1s">{section ? `${section.name}: o'quv markazlari` : district ? `${district.name}dagi o'quv markazlari` : region ? `${region.name}dagi o'quv markazlari` : "O'zbekiston bo'ylab o'quv markazlari"}</h1>
+        {!nFilters && !q
+          ? <h1 className="h1s h1home">O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</h1>
+          : <h1 className="h1s">{section ? `${section.name}: o'quv markazlari` : district ? `${district.name}dagi o'quv markazlari` : region ? `${region.name}dagi o'quv markazlari` : "O'zbekiston bo'ylab o'quv markazlari"}</h1>}
         {toolbar(centers.length)}
         {catChips}
         <div className="sec">
@@ -158,6 +160,18 @@ export default async function Search({ searchParams }) {
           <>
             <div className="tiles">{shown.map((c, i) => <CenterTile key={c.id} c={c} i={i} reviews={revN[c.id] || 0} km={showKm ? dist.get(c.id) : null} districts={distName} />)}</div>
             <Pager page={page} pages={pages} href={(n) => link({ sahifa: n > 1 ? n : '' })} />
+            {home ? (
+              <section className="hcta">
+                <div>
+                  <h2>O'quv markazingiz bormi?</h2>
+                  <p>Markazingizni bepul qo'shing: arizalarni qabul qiling, o'quvchilar va oylik to'lovlarni bitta joyda boshqaring.</p>
+                </div>
+                <div className="hcta-b">
+                  <Link href="/markaz-royxat">Markazni ro'yxatdan o'tkazish</Link>
+                  <Link href="/markaz-kabineti" className="ghost">Kabinetga kirish</Link>
+                </div>
+              </section>
+            ) : null}
           </>
         ) : (
           <EmptyState link={link} q={q} km={km} price={pmin || pmax} region={region} district={district} levelRaw={levelRaw} section={section} />

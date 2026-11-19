@@ -13,7 +13,7 @@ const I = {
 };
 
 const ITEMS = [
-  ['/search', 'Markazlar', 'centers', (p) => p === '/' || p.startsWith('/search') || p.startsWith('/centers') || p.startsWith('/markazlar')],
+  ['/', 'Markazlar', 'centers', (p) => p === '/' || p.startsWith('/search') || p.startsWith('/centers') || p.startsWith('/markazlar')],
   ['/xarita', 'Xarita', 'map', (p) => p.startsWith('/xarita')],
   ['/saqlangan', 'Saqlangan', 'saved', (p) => p.startsWith('/saqlangan')],
   ['/kabinet', 'Profil', 'user', (p) => p.startsWith('/kabinet') || p.startsWith('/kirish') || p.startsWith('/markaz-kabineti')]
