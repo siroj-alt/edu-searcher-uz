@@ -203,17 +203,22 @@ export default async function Search({ searchParams, home = false }) {
   if (sort === 'price') rows = [...rows].sort((a, b) => (Number(a.price_monthly) || 9e12) - (Number(b.price_monthly) || 9e12));
   const bestCenter = hasRef && !sort && !pmin && !pmax && rows[0] ? rows[0].center_id : null;
 
-  const centerIds = [...new Set(rows.map((r) => r.center_id))].slice(0, 150);
-  const [featRes, cRes, revRes] = await Promise.all([
-    supabase.from('centers').select('id').eq('is_featured', true),
+  const { data: featData } = await supabase.from('centers').select('id').eq('is_featured', true);
+  const featured = new Set((featData || []).map((x) => x.id));
+  if (featured.size && !sort) rows = [...rows.filter((r) => featured.has(r.center_id)), ...rows.filter((r) => !featured.has(r.center_id))];
+  // Sahifalash: har sahifada PER_PAGE ta markaz
+  const allIds = [...new Set(rows.map((r) => r.center_id))];
+  const pages = Math.max(1, Math.ceil(allIds.length / PER_PAGE));
+  const page = Math.min(pageOf(sp.sahifa), pages);
+  const centerIds = allIds.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const onPage = new Set(centerIds);
+  const [cRes, revRes] = await Promise.all([
     centerIds.length ? supabase.from('centers').select('id,cover_url,logo_url,is_verified').in('id', centerIds) : Promise.resolve({ data: [] }),
     centerIds.length ? supabase.from('center_reviews').select('center_id').in('center_id', centerIds).eq('status', 'approved') : Promise.resolve({ data: [] })
   ]);
-  const featured = new Set((featRes.data || []).map((x) => x.id));
   const cinfo = Object.fromEntries((cRes.data || []).map((x) => [x.id, x]));
   const revN = {};
   for (const r of revRes.data || []) revN[r.center_id] = (revN[r.center_id] || 0) + 1;
-  if (featured.size && !sort) rows = [...rows.filter((r) => featured.has(r.center_id)), ...rows.filter((r) => !featured.has(r.center_id))];
 
   const color = colorFor(cat.slug);
   const seenB = new Set(), points = [];
@@ -225,7 +230,7 @@ export default async function Search({ searchParams, home = false }) {
   // Har bir markaz bir marta (eng mos filiali bilan) ko'rsatiladi
   const seenC = new Set(), tiles = [];
   for (const r of rows) {
-    if (seenC.has(r.center_id)) continue;
+    if (seenC.has(r.center_id) || !onPage.has(r.center_id)) continue;
     seenC.add(r.center_id);
     const reg = regionById(r.region_id);
     const dn = distName[brDist[r.branch_id]];
@@ -246,7 +251,7 @@ export default async function Search({ searchParams, home = false }) {
         <small className="muted">{`${cat.name} · ${levelRaw ? LEVELS[levelRaw] : 'Barcha darajalar'} · ${where}${km ? ` · ${fmtKmLim(km)} gacha` : ''}`}</small>
         <h1 className="h1s">Sizga mos markazlar</h1>
       </div>
-      {toolbar(tiles.length)}
+      {toolbar(allIds.length)}
       {catChips}
       <p className="note">
         <Icon name="pin" />
@@ -259,7 +264,10 @@ export default async function Search({ searchParams, home = false }) {
         <EmptyState link={link} q={q} km={km} price={pmin || pmax} region={region} district={district} levelRaw={levelRaw} cat={cat} />
       ) : (
         <div className="rgrid tgrid">
-          <div className="tiles">{tiles.map((t, i) => <Tile key={t.id} t={t} i={i} />)}</div>
+          <div>
+            <div className="tiles">{tiles.map((t, i) => <Tile key={t.id} t={t} i={i} />)}</div>
+            <Pager page={page} pages={pages} href={(n) => link({ sahifa: n > 1 ? n : '' })} />
+          </div>
           <div className="rmap">
             <MapView points={points} userPos={hasPos ? [lat, lng] : null} center={region ? [region.lat, region.lng] : null} />
           </div>
