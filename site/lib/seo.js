@@ -8,7 +8,8 @@ export const CAT_URL = {
   chemistry: 'kimyo', biology: 'biologiya', history: 'tarix', law: 'huquq', physics: 'fizika', uzbek: 'ona-tili',
   cybersecurity: 'kiberxavfsizlik', ai: 'suniy-intellekt', networking: 'tarmoq-administratorligi', video: 'video-montaj',
   design: 'grafik-dizayn', marketing: 'smm-marketing', robotics: 'robototexnika', accounting: 'buxgalteriya',
-  mental: 'mental-arifmetika', turkish: 'turk-tili', japanese: 'yapon-tili', french: 'fransuz-tili', computer: 'kompyuter-savodxonligi'
+  mental: 'mental-arifmetika', turkish: 'turk-tili', japanese: 'yapon-tili', french: 'fransuz-tili', computer: 'kompyuter-savodxonligi',
+  'uzbek-foreign': 'ozbek-tili-chet-elliklar'
 };
 export const CAT_FROM_URL = Object.fromEntries(Object.entries(CAT_URL).map(([k, v]) => [v, k]));
 
@@ -41,7 +42,8 @@ export const CAT_PHRASE = {
   chemistry: 'kimyo', biology: 'biologiya', history: 'tarix', law: 'huquq', physics: 'fizika', uzbek: 'ona tili va adabiyot',
   cybersecurity: 'kiberxavfsizlik', ai: "sun'iy intellekt", networking: 'tarmoq administratorligi', video: 'video montaj',
   design: 'grafik dizayn', marketing: 'SMM va marketing', robotics: 'robototexnika', accounting: 'buxgalteriya',
-  mental: 'mental arifmetika', turkish: 'turk tili', japanese: 'yapon tili', french: 'fransuz tili', computer: 'kompyuter savodxonligi'
+  mental: 'mental arifmetika', turkish: 'turk tili', japanese: 'yapon tili', french: 'fransuz tili', computer: 'kompyuter savodxonligi',
+  'uzbek-foreign': "chet elliklar uchun o'zbek tili"
 };
 export const catPhrase = (cat) => CAT_PHRASE[cat?.slug] || lowerFirst(cat?.name || '');
 

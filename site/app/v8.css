@@ -1,0 +1,122 @@
+/* v12: ariza, narx sanasi, reklama/hujjat belgilari, sharh, Telegram ulash, QR, narxlar indeksi, hamkorlik, admin */
+
+/* Umumiy yordamchilar */
+.btn.sm{height:36px;padding:0 14px;font-size:13.5px;border-radius:12px}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.lp-intro{max-width:72ch;color:var(--muted);line-height:1.6;margin:6px 0 14px}
+.lp-map{background:var(--map-bg,var(--card));border:1px solid var(--line)}
+
+/* Ariza formasi */
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--muted);margin:10px 0 4px;cursor:pointer}
+.consent input{width:18px;height:18px;flex:0 0 18px;margin-top:1px;accent-color:var(--accent)}
+.consent a{color:var(--accent-d);text-decoration:underline}
+.appcode,.appcode-s{font-family:inherit;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.appcode{display:inline-block;padding:2px 8px;border-radius:8px;background:var(--soft2);color:var(--accent-d)}
+.appcode-s{font-size:12px;font-weight:700;color:var(--muted);padding:1px 6px;border:1px solid var(--line);border-radius:6px;white-space:nowrap}
+
+/* Markaz sahifasi: kurs narxi sanasi, so'rash tugmasi, da'vo qilish, qaytarish shartlari */
+.pdate{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;font-weight:500}
+.pdate.stale{color:var(--warn)}
+.kask{margin-top:6px}
+.claim{font-size:13px;color:var(--muted);margin:8px 0 0}
+.claim a{color:var(--accent-d);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.refund .about{margin:0}
+.vbadge.docs{background:var(--ok-bg,var(--soft2));color:var(--accent-d)}
+.fbadge.ad,.tile-badge.ad{background:var(--card);color:var(--muted);border:1px solid var(--line2,var(--line));box-shadow:none;font-weight:700}
+
+/* Sharh qoldirish */
+.stars-in{display:flex;gap:4px;margin:4px 0 10px}
+.star-b{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--line2,#c8d3cd);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .12s}
+.star-b svg{width:22px;height:22px}
+.star-b.on{color:#F59F00;border-color:color-mix(in srgb,#F59F00 45%,var(--line))}
+.star-b:hover{transform:translateY(-1px)}
+.star-b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.revlogin{padding:14px;border-radius:14px;background:var(--soft);color:var(--text)}
+.revlogin p{margin:0;color:var(--muted);font-size:14px}
+
+/* Telegram ulash */
+.tglink-h{display:flex;gap:12px;align-items:flex-start}
+.tglink-ic{width:42px;height:42px;flex:0 0 42px;border-radius:12px;display:grid;place-items:center;background:#E7F5FF;color:#1C7ED6}
+.tglink.on .tglink-ic{background:var(--ok-bg,var(--soft2));color:var(--accent-d)}
+.tglink-h b{display:block}
+.tglink-h p{margin:2px 0 0;color:var(--muted);font-size:13.5px;line-height:1.45}
+
+/* Sharhlar uchun QR */
+.revqr-b{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.revqr-b img{width:148px;height:148px;border-radius:12px;background:#fff;padding:8px;border:1px solid var(--line)}
+.revqr-l{display:block;font-size:12.5px;word-break:break-all;padding:8px 10px;border-radius:10px;background:var(--soft);color:var(--text);margin-bottom:8px}
+
+/* Kurs narxlari indeksi */
+.pidx-reg{margin:4px 0 16px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}
+.pidx-reg a{white-space:nowrap}
+.pidx-table{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);margin-bottom:16px}
+.pidx-row{display:grid;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(90px,1fr)) 90px;gap:10px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums;font-size:14px}
+.pidx-row:first-child{border-top:0}
+.pidx-row.head{background:var(--soft);font-size:12.5px;font-weight:700;color:var(--muted)}
+.pidx-cat{display:flex;align-items:center;gap:10px;font-weight:700;min-width:0}
+.pidx-cat a{color:var(--text)}
+.pidx-cat a:hover{color:var(--accent-d)}
+.pidx-cat i{font-style:normal;width:30px;height:30px;flex:0 0 30px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
+.pidx-empty p{color:var(--muted);line-height:1.55}
+.pidx-note{font-size:13px;margin:-6px 0 16px}
+.pidx-cta{margin-top:18px}
+.pidx-cta p{color:var(--muted);line-height:1.55;margin:4px 0 0}
+@media (max-width:640px){
+  .pidx-row.head{display:none}
+  .pidx-row{grid-template-columns:1fr 1fr;gap:6px 12px}
+  .pidx-row .pidx-cat{grid-column:1 / -1}
+  .pidx-row>span[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:var(--muted);font-weight:600}
+}
+
+/* Hamkorlik */
+.hk-hero{padding:8px 0 6px}
+.hk-hero .h1s{max-width:20ch}
+.hk-terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0 8px}
+.hk-term b{display:block;font-size:30px;line-height:1.1;letter-spacing:-.02em;color:var(--accent-d);margin-bottom:6px}
+.hk-term span{color:var(--muted);font-size:14px;line-height:1.5}
+.hk-steps{list-style:none;padding:0;margin:0 0 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;counter-reset:hk}
+.hk-steps li{counter-increment:hk;position:relative;padding:16px 16px 16px 58px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.hk-steps li::before{content:counter(hk);position:absolute;left:16px;top:16px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent,#fff);font-weight:800;font-size:14px}
+.hk-steps h3{margin:0 0 4px;font-size:15.5px}
+.hk-steps p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.hk-list{margin:0 0 8px;padding-left:20px;line-height:1.7;max-width:72ch}
+.hk-faq{display:grid;gap:8px}
+.hk-faq details summary{cursor:pointer;font-weight:700;list-style:none}
+.hk-faq details summary::-webkit-details-marker{display:none}
+.hk-faq details summary::after{content:'+';float:right;color:var(--muted);font-weight:500}
+.hk-faq details[open] summary::after{content:'–'}
+.hk-faq details p{margin:8px 0 0;color:var(--muted);line-height:1.55}
+
+/* Admin: narxlarni yig'ish */
+.ptodo-f{display:flex;gap:8px;flex-wrap:wrap}
+.ptodo-f select,.ptodo-f input{height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 12px;font:inherit;font-size:14px;min-width:0;flex:1 1 180px}
+.ptodo-list{display:grid;gap:10px}
+.ptodo-c header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:8px}
+.ptodo-c header small{display:block;margin-top:2px}
+.ptodo-a{display:flex;gap:6px;flex-wrap:wrap}
+.ptodo-c ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ptodo-c li{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.ptodo-c li small{margin-left:4px}
+.ptodo-c form{display:flex;gap:6px}
+.ptodo-c form input{height:36px;width:170px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 10px;font:inherit;font-size:14px;font-variant-numeric:tabular-nums}
+.ptodo-ok{font-style:normal;color:var(--accent-d);font-weight:700;font-size:13.5px}
+
+/* Admin: oylik hisob */
+.bill-tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:12px;font-weight:700;background:var(--soft2);color:var(--accent-d);white-space:nowrap}
+.bill-tag.trial{background:var(--warn-bg);color:var(--warn)}
+.bill-items td{background:var(--soft)}
+.bill-items ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bill-items li{display:grid;grid-template-columns:90px 2fr 1.4fr 1.2fr 1.2fr;gap:10px;font-size:13px;align-items:center}
+.bill-items li.off{opacity:.6}
+.bill-items code{font-weight:700}
+@media (max-width:760px){.bill-items li{grid-template-columns:1fr 1fr}}
+
+/* Admin: sozlamalar */
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.set-f{display:grid;gap:6px;margin-top:14px}
+.set-f label{font-weight:700;font-size:14px}
+.set-f input{height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 12px;font:inherit;font-size:14px;min-width:0}
+.set-row{display:flex;gap:8px}
+.set-row input{flex:1}
+.set-f small{line-height:1.45}
+.dlinks{margin-top:22px}

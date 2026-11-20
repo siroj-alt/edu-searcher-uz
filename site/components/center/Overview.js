@@ -1,5 +1,6 @@
 'use client';
 import { fmtSum } from '../../lib/auth';
+import TgLink from '../shared/TgLink';
 
 const KINDS = [['call', "Qo'ng'iroq"], ['website', 'Veb-sayt'], ['telegram', 'Telegram'], ['instagram', 'Instagram'], ['route', "Yo'l ko'rsatish"]];
 
@@ -19,6 +20,7 @@ export default function Overview({ ov, days, onDays, onTab }) {
   ];
   return (
     <>
+      <TgLink compact />
       <div className="ov-head">
         <h2>Statistika</h2>
         <div className="ov-seg" role="group" aria-label="Davr">

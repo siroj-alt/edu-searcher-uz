@@ -1,90 +1,81 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '../lib/supabase';
-import { useMe, refreshMe, signIn, signUp, validPhone, rpcMsg, fmtSum } from '../lib/auth';
+import { useMe, validPhone, rpcMsg, fmtSum } from '../lib/auth';
+import { getSource } from '../lib/utm';
 
-// O'qishga ariza: markaz paneliga va bosh admin paneliga tushadi.
-// Mehmon ariza bilan birga kabinet ochadi (login — telefon raqami), shunda ariza holatini kuzata oladi.
+// Narx va jadvalni so'rash (ariza): ro'yxatdan o'tish shart emas — ism va telefon yetarli.
+// Ariza markaz paneliga va bosh admin paneliga tushadi. Kabinetga kirgan foydalanuvchi holatini kabinetda kuzatadi.
 export default function ApplyForm({ centerId, centerName, courses = [] }) {
   const me = useMe();
-  const [f, setF] = useState({ name: '', phone: '+998 ', course: courses[0]?.id || '', note: '', login: '', password: '' });
-  const [has, setHas] = useState(false);
-  const [st, setSt] = useState({ busy: false, ok: false, err: '' });
-  const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }));
-  const fail = (err) => setSt({ busy: false, ok: false, err });
+  const [f, setF] = useState({ name: '', phone: '+998 ', course: courses[0]?.id || '', note: '', consent: false });
+  const [st, setSt] = useState({ busy: false, ok: null, err: '' });
+  const formRef = useRef(null);
+  const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
+  const fail = (err) => setSt({ busy: false, ok: null, err });
 
   useEffect(() => {
     if (!me) return;
     setF((x) => ({ ...x, name: x.name || me.full_name || '', phone: x.phone.replace(/\D/g, '').length > 3 ? x.phone : (me.phone || x.phone) }));
   }, [me]);
 
+  // Kurslar ro'yxatidagi "Narxni so'rash" tugmasi shu formani kerakli kurs bilan ochadi
+  useEffect(() => {
+    const on = (e) => {
+      const d = e.detail || {};
+      if (d.center && d.center !== centerId) return;
+      setF((x) => ({
+        ...x,
+        course: d.course && courses.some((k) => k.id === d.course) ? d.course : x.course,
+        note: x.note || (d.kind === 'price' ? "Narxi va dars jadvalini bilmoqchiman" : x.note)
+      }));
+      setSt((s) => (s.ok ? s : { ...s, err: '' }));
+      setTimeout(() => { const el = formRef.current?.querySelector('input'); if (el) el.focus({ preventScroll: true }); }, 350);
+    };
+    window.addEventListener('es-ask', on);
+    return () => window.removeEventListener('es-ask', on);
+  }, [centerId, courses]);
+
   async function send(e) {
     e.preventDefault();
     const name = f.name.trim(), phone = f.phone.trim();
-    const login = !me && has;
-    if (!login && name.length < 2) return fail('Ism familiyangizni kiriting.');
-    if (!login && !validPhone(phone)) return fail("Telefon raqamini to'liq kiriting, masalan: +998 90 123 45 67");
-    if (login && !f.login.trim()) return fail('Login yoki telefon raqamingizni kiriting.');
-    if (!me && f.password.length < 6) return fail(has ? 'Parolingizni kiriting.' : "Kabinet uchun parol o'ylab toping (kamida 6 belgi).");
-    setSt({ busy: true, ok: false, err: '' });
-
-    let user = me;
-    if (!user) {
-      const err = has ? await signIn(f.login, f.password) : await signUp({ login: phone, password: f.password, full_name: name, phone });
-      if (err) return fail(!has && /band/.test(err) ? "Bu telefon raqam bilan kabinet ochilgan. «Kabinetim bor» ni tanlab, parolingiz bilan kiring." : err);
-      user = await refreshMe();
-      if (!user) return fail("Kabinetga kirib bo'lmadi. Qayta urinib ko'ring.");
-    }
-    const nm = name.length >= 2 ? name : (user.full_name || '').trim();
-    const ph = validPhone(phone) ? phone : (user.phone || '').trim();
-    if (nm.length < 2 || !validPhone(ph)) return fail('Ism familiya va telefon raqamingizni kiriting.');
-
-    const { error } = await supabase.rpc('submit_application', {
-      p_center: centerId, p_course: f.course || null, p_name: nm, p_phone: ph, p_note: f.note.trim() || null
+    if (name.length < 2) return fail('Ism familiyangizni kiriting.');
+    if (!validPhone(phone)) return fail("Telefon raqamini to'liq kiriting, masalan: +998 90 123 45 67");
+    if (!f.consent) return fail("Ma'lumotlaringiz markazga yuborilishiga rozilik bering.");
+    setSt({ busy: true, ok: null, err: '' });
+    const { data, error } = await supabase.rpc('submit_application', {
+      p_center: centerId, p_course: f.course || null, p_name: name, p_phone: phone, p_note: f.note.trim() || null,
+      p_source: getSource(), p_consent: true
     });
-    if (error) return fail(rpcMsg(error, "Ariza yuborilmadi. Birozdan so'ng qayta urinib ko'ring."));
-    setSt({ busy: false, ok: true, err: '' });
+    if (error) return fail(rpcMsg(error, "So'rov yuborilmadi. Birozdan so'ng qayta urinib ko'ring."));
+    setSt({ busy: false, ok: { code: data?.code || '' }, err: '' });
   }
 
   if (st.ok) {
     return (
       <div className="formmsg ok" role="status">
-        Rahmat! Arizangiz «{centerName}» markaziga yuborildi. Markaz siz bilan bog'lanadi, ariza holatini{' '}
-        <Link href="/kabinet" style={{ textDecoration: 'underline' }}>shaxsiy kabinetingizda</Link> kuzatishingiz mumkin.
+        <b>Rahmat! So'rovingiz «{centerName}» markaziga yuborildi.</b> Markaz siz bilan telefon orqali bog'lanadi.
+        {st.ok.code ? <> Ariza raqamingiz: <b className="appcode">{st.ok.code}</b> — markazga borganingizda shu raqamni ayting.</> : null}
+        {me ? (
+          <> Ariza holatini <Link href="/kabinet" style={{ textDecoration: 'underline' }}>shaxsiy kabinetingizda</Link> kuzatishingiz mumkin.</>
+        ) : (
+          <> Holatini kuzatmoqchi bo'lsangiz, <Link href="/kirish" style={{ textDecoration: 'underline' }}>kabinet oching</Link>.</>
+        )}
       </div>
     );
   }
 
-  const guest = !me;
-  const showPerson = !(guest && has);
   return (
-    <form className="lf" onSubmit={send} noValidate>
+    <form className="lf" onSubmit={send} noValidate ref={formRef}>
       <p className="muted" style={{ marginBottom: 12 }}>
-        Arizangiz to'g'ridan-to'g'ri markazga yetib boradi. Markaz siz bilan bog'lanib, kursga qabul qilgach, kurs va oylik to'lovlar kabinetingizda paydo bo'ladi.
+        Ro'yxatdan o'tish shart emas: ism va telefon raqamingizni qoldiring, markaz sizga narx, dars jadvali va bo'sh joylar haqida aytib beradi.
       </p>
-      {guest ? (
-        <div className="tabs" style={{ marginBottom: 12 }}>
-          <button type="button" className={'tab' + (!has ? ' on' : '')} onClick={() => { setHas(false); fail(''); }}>Yangi kabinet ochaman</button>
-          <button type="button" className={'tab' + (has ? ' on' : '')} onClick={() => { setHas(true); fail(''); }}>Kabinetim bor</button>
-        </div>
-      ) : null}
       <div className="fgrid2">
-        {showPerson ? (
-          <>
-            <label>Ism familiya<input value={f.name} onChange={set('name')} maxLength={80} autoComplete="name" placeholder="Ism familiya" /></label>
-            <label>Telefon raqam<input value={f.phone} onChange={set('phone')} maxLength={20} inputMode="tel" autoComplete="tel" placeholder="+998 90 123 45 67" /></label>
-          </>
-        ) : (
-          <label className="full">Login yoki telefon raqam<input value={f.login} onChange={set('login')} maxLength={60} autoCapitalize="none" autoComplete="username" placeholder="Masalan: 998901234567" /></label>
-        )}
-        {guest ? (
-          <label className="full">{has ? 'Parol' : "Kabinet uchun parol o'ylab toping (kamida 6 belgi)"}
-            <input value={f.password} onChange={set('password')} type="password" maxLength={72} autoComplete={has ? 'current-password' : 'new-password'} />
-          </label>
-        ) : null}
+        <label>Ism familiya<input value={f.name} onChange={set('name')} maxLength={80} autoComplete="name" placeholder="Ism familiya" /></label>
+        <label>Telefon raqam<input value={f.phone} onChange={set('phone')} maxLength={20} inputMode="tel" autoComplete="tel" placeholder="+998 90 123 45 67" /></label>
         {courses.length ? (
-          <label className="full">Qaysi kursga
+          <label className="full">Qaysi kurs
             <select value={f.course} onChange={set('course')}>
               {courses.map((k) => <option key={k.id} value={k.id}>{k.name}{k.price ? ` — ${fmtSum(k.price)}/oy` : ''}</option>)}
               <option value="">Hali aniq emas</option>
@@ -93,11 +84,13 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
         ) : null}
         <label className="full">Izoh (ixtiyoriy)<textarea value={f.note} onChange={set('note')} maxLength={500} placeholder="Masalan: farzandim uchun, kechki guruh kerak" /></label>
       </div>
-      <button className="btn" disabled={st.busy}>{st.busy ? 'Yuborilmoqda...' : 'Ariza yuborish'}</button>
+      <label className="consent">
+        <input type="checkbox" checked={f.consent} onChange={set('consent')} />
+        <span>Ismim va telefon raqamim shu so'rov bo'yicha bog'lanish uchun «{centerName}» markaziga yuborilishiga roziman.</span>
+      </label>
+      <button className="btn" disabled={st.busy}>{st.busy ? 'Yuborilmoqda...' : "So'rov yuborish"}</button>
       {st.err ? <div className="formmsg err" role="alert">{st.err}</div> : null}
-      <p className="hint">
-        {guest && !has ? 'Login sifatida telefon raqamingiz ishlatiladi. ' : ''}Telefon raqamingiz faqat shu ariza bo'yicha bog'lanish uchun markazga ko'rsatiladi.
-      </p>
+      <p className="hint">Ma'lumotlaringiz faqat shu markazga ko'rsatiladi va boshqa maqsadda ishlatilmaydi.</p>
     </form>
   );
 }

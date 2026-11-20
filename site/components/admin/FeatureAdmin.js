@@ -7,7 +7,7 @@ import { rpcMsg } from '../../lib/auth';
 import Switch from '../Switch';
 
 const norm = (t) => String(t || '').toLowerCase().replace(/[ʻʼ‘’`']/g, "'");
-const FIELDS = 'id,name,rating,is_featured,is_verified,contacts_visible,is_hidden,owner_id,branches(region_id)';
+const FIELDS = 'id,name,rating,is_featured,is_verified,docs_verified,is_sponsored,contacts_visible,is_hidden,owner_id,branches(region_id)';
 
 // Markazlar belgilari ("Tavsiya etilgan", "Tasdiqlangan") va aloqa ma'lumotlarining saytda ko'rinishi
 export default function FeatureAdmin() {
@@ -39,6 +39,8 @@ export default function FeatureAdmin() {
     if (only === 'h') r = r.filter((x) => x.contacts_visible === false);
     if (only === 'x') r = r.filter((x) => x.is_hidden);
     if (only === 'k') r = r.filter((x) => x.owner_id);
+    if (only === 'd') r = r.filter((x) => x.docs_verified);
+    if (only === 'a') r = r.filter((x) => x.is_sponsored);
     if (q.trim()) { const n = norm(q.trim()); r = r.filter((x) => norm(x.name).includes(n)); }
     return r.slice(0, 300);
   }, [rows, q, only]);
@@ -50,6 +52,8 @@ export default function FeatureAdmin() {
       ? supabase.rpc('admin_set_center_contacts_visible', { p_center: c.id, p_on: on })
       : field === 'is_hidden'
         ? supabase.rpc('admin_set_center_hidden', { p_center: c.id, p_hidden: on })
+        : field === 'docs_verified' || field === 'is_sponsored'
+          ? supabase.rpc('admin_set_center_flag', { p_center: c.id, p_field: field, p_on: on })
         : supabase.rpc(field === 'is_featured' ? 'admin_set_featured' : 'admin_set_verified', { p_center: c.id, p_on: on });
     const { error } = await call;
     if (error) { setErr(rpcMsg(error, error.message)); return false; }
@@ -72,11 +76,13 @@ export default function FeatureAdmin() {
   const nH = all.filter((x) => x.contacts_visible === false).length;
   const nK = all.filter((x) => x.owner_id).length;
   const nX = all.filter((x) => x.is_hidden).length;
+  const nD = all.filter((x) => x.docs_verified).length;
+  const nA = all.filter((x) => x.is_sponsored).length;
 
   return (
     <div className="wrap page">
       <h1 className="h1s">Belgilar va kontaktlar</h1>
-      <p className="muted" style={{ marginBottom: 14 }}>«Tavsiya etilgan» markazlar qidiruv natijalari va bosh sahifada birinchi ko'rsatiladi. «Tasdiqlangan» belgisi ma'lumotlari tekshirilgan markazlarga qo'yiladi.</p>
+      <p className="muted" style={{ marginBottom: 14 }}>«Tavsiya etilgan» markazlar qidiruv natijalari va bosh sahifada birinchi ko'rsatiladi. «Tasdiqlangan» belgisi ma'lumotlari tekshirilgan markazlarga qo'yiladi. «Hujjatlari tekshirilgan» — markaz faoliyat xabarnomasini ko'rsatganda. «Reklama» — pullik joylashuv: markaz ro'yxatlarda birinchi chiqadi va kartada «Reklama» deb belgilanadi.</p>
 
       <div className="card swgroup">
         <Switch checked={!!globalOn} disabled={globalOn === null} onChange={toggleGlobal}
@@ -91,6 +97,8 @@ export default function FeatureAdmin() {
         <button type="button" className={'tab' + (only === 'h' ? ' on' : '')} onClick={() => setOnly('h')}>Kontakti yashirilgan ({nH})</button>
         <button type="button" className={'tab' + (only === 'k' ? ' on' : '')} onClick={() => setOnly('k')}>Kabineti bor ({nK})</button>
         <button type="button" className={'tab' + (only === 'x' ? ' on' : '')} onClick={() => setOnly('x')}>Saytdan yashirilgan ({nX})</button>
+        <button type="button" className={'tab' + (only === 'd' ? ' on' : '')} onClick={() => setOnly('d')}>Hujjatlari tekshirilgan ({nD})</button>
+        <button type="button" className={'tab' + (only === 'a' ? ' on' : '')} onClick={() => setOnly('a')}>Reklama ({nA})</button>
       </div>
       <input className="asearch" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Markaz nomi bo'yicha qidirish" />
       <p className="muted" style={{ fontSize: 13, margin: '-4px 0 12px' }}>Ro'yxatda ko'pi bilan 300 ta markaz ko'rsatiladi, kerakli markazni nomi bo'yicha qidiring.</p>
@@ -98,7 +106,7 @@ export default function FeatureAdmin() {
       {rows === null ? <div className="card muted">Yuklanmoqda...</div> : (
         <div className="card ascroll" style={{ padding: 0 }}>
           <table className="atable">
-            <thead><tr><th>Markaz</th><th>Viloyat</th><th>Reyting</th><th>Saytda</th><th>Tavsiya etilgan</th><th>Tasdiqlangan</th><th>Kontaktlar</th></tr></thead>
+            <thead><tr><th>Markaz</th><th>Viloyat</th><th>Reyting</th><th>Saytda</th><th>Tavsiya etilgan</th><th>Tasdiqlangan</th><th>Hujjatlari tekshirilgan</th><th>Reklama</th><th>Kontaktlar</th></tr></thead>
             <tbody>
               {list.map((c) => {
                 const regs = [...new Set((c.branches || []).map((b) => b.region_id))].map((r) => regionById(r)?.short).filter(Boolean);
@@ -111,6 +119,8 @@ export default function FeatureAdmin() {
                     <td><span className="swcell"><Switch checked={!c.is_hidden} onChange={(on) => toggle(c, 'is_hidden', !on)} ariaLabel={`${c.name}: saytda ko'rinsin`} /><small>{c.is_hidden ? 'Yashirilgan' : "Ko'rinadi"}</small></span></td>
                     <td><span className="swcell"><Switch checked={!!c.is_featured} onChange={(on) => toggle(c, 'is_featured', on)} ariaLabel={`${c.name}: tavsiya etilgan`} /></span></td>
                     <td><span className="swcell"><Switch checked={!!c.is_verified} onChange={(on) => toggle(c, 'is_verified', on)} ariaLabel={`${c.name}: tasdiqlangan`} /></span></td>
+                    <td><span className="swcell"><Switch checked={!!c.docs_verified} onChange={(on) => toggle(c, 'docs_verified', on)} ariaLabel={`${c.name}: hujjatlari tekshirilgan`} /></span></td>
+                    <td><span className="swcell"><Switch checked={!!c.is_sponsored} onChange={(on) => toggle(c, 'is_sponsored', on)} ariaLabel={`${c.name}: reklama (pullik joy)`} /></span></td>
                     <td><span className="swcell"><Switch checked={vis} onChange={(on) => toggle(c, 'contacts_visible', on)} ariaLabel={`${c.name}: aloqa ma'lumotlari ko'rinsin`} /><small>{vis ? (globalOn === false ? 'Umumiy yashirilgan' : "Ko'rinadi") : 'Yashirilgan'}</small></span></td>
                   </tr>
                 );

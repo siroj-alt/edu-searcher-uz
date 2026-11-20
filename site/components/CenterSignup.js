@@ -11,7 +11,7 @@ const STATUS = { pending: "Ko'rib chiqilmoqda", approved: 'Tasdiqlangan', reject
 const fmtDate = (d) => new Date(d).toLocaleDateString('ru-RU');
 
 // Markazlar uchun ro'yxatdan o'tish: kabinetga kiring → markaz ma'lumotlarini yuboring → admin tasdiqlaydi
-export default function CenterSignup() {
+export default function CenterSignup({ markaz = '' }) {
   const me = useMe();
   const [req, setReq] = useState(undefined);
   const [again, setAgain] = useState(false);
@@ -41,7 +41,7 @@ export default function CenterSignup() {
     return (
       <div className="csu">
         {intro}
-        <AuthBox next="/markaz-royxat" defaultMode="register" title="1-qadam: kabinetga kiring" subtitle="Hisobingiz bo'lsa, «Kirish»ni tanlang. Keyingi qadamda markaz ma'lumotlarini kiritasiz." />
+        <AuthBox next={markaz ? `/markaz-royxat?markaz=${markaz}` : '/markaz-royxat'} defaultMode="register" title="1-qadam: kabinetga kiring" subtitle="Hisobingiz bo'lsa, «Kirish»ni tanlang. Keyingi qadamda markaz ma'lumotlarini kiritasiz." />
       </div>
     );
   }
@@ -93,12 +93,12 @@ export default function CenterSignup() {
           {req.admin_note ? <p>{req.admin_note}</p> : null}
           <button type="button" className="btn" onClick={() => setAgain(true)}>Yangi so'rov yuborish</button>
         </div>
-      ) : <CenterForm me={me} onSent={(r) => { setReq(r); setAgain(false); }} />}
+      ) : <CenterForm me={me} markaz={markaz} onSent={(r) => { setReq(r); setAgain(false); }} />}
     </div>
   );
 }
 
-function CenterForm({ me, onSent }) {
+function CenterForm({ me, onSent, markaz = '' }) {
   const [cats, setCats] = useState([]);
   const [dists, setDists] = useState([]);
   const [f, setF] = useState({ name: '', contact: me.full_name || '', phone: me.phone || '+998 ', telegram: '', region: '', district: '', address: '', note: '' });
@@ -115,6 +115,13 @@ function CenterForm({ me, onSent }) {
     if (!r) { setDists([]); return; }
     supabase.rpc('region_districts', { p_region: r.id }).then(({ data }) => setDists((data || []).slice().sort((a, b) => a.name.localeCompare(b.name))));
   }, [f.region]);
+  // Markaz sahifasidagi "Bu sizning markazingizmi?" havolasi orqali kelinsa — o'sha markaz oldindan tanlanadi
+  useEffect(() => {
+    if (!markaz) return;
+    supabase.from('centers').select('id,name,owner_id').eq('id', markaz).maybeSingle().then(({ data }) => {
+      if (data && !data.owner_id) { setExisting(data); setF((x) => ({ ...x, name: x.name || data.name })); }
+    });
+  }, [markaz]);
   // Saytda allaqachon bor markazni topish (shu markazning egasi ekanligingizni bildirish uchun)
   useEffect(() => {
     const q = f.name.trim();

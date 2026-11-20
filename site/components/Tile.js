@@ -15,7 +15,7 @@ export default function Tile({ t, i = 0 }) {
         {t.cover ? <img src={t.cover} alt="" loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
           : <span className="tile-ph"><span className="tile-g">{t.glyph}</span>{t.logo ? <img className="tile-lgb" src={t.logo} alt="" loading="lazy" decoding="async" /> : <span className="tile-av">{t.initials}</span>}</span>}
         {t.cover && t.logo ? <img className="tile-lg" src={t.logo} alt="" loading="lazy" decoding="async" /> : null}
-        {t.badge ? <span className={'tile-badge' + (t.badge === 'best' ? ' best' : '')}>{t.badge === 'best' ? 'Eng mos' : 'Tavsiya'}</span> : null}
+        {t.badge ? <span className={'tile-badge' + (t.badge === 'best' ? ' best' : t.badge === 'ad' ? ' ad' : '')}>{t.badge === 'best' ? 'Eng mos' : t.badge === 'ad' ? 'Reklama' : 'Tavsiya'}</span> : null}
       </Link>
       <div className="tile-fav"><SaveButton id={t.id} compact /></div>
       <div className="tile-b">
@@ -29,7 +29,7 @@ export default function Tile({ t, i = 0 }) {
         {t.rating > 0 ? <p className="tile-r">{STAR}<b>{t.rating.toFixed(1)}</b>{t.reviews ? <span>{` · ${t.reviews} sharh`}</span> : null}</p> : null}
       </div>
       <div className="tile-a">
-        <Link className="tile-go" href={href + '#ariza'}>Ariza berish</Link>
+        <Link className="tile-go" href={href + '#ariza'}>{/so'm/.test(t.price || '') ? "Jadvalni so'rash" : "Narxni so'rash"}</Link>
         <CompareToggle id={t.id} variant="chip" />
       </div>
     </article>

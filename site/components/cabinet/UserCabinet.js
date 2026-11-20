@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { supabase } from '../../lib/supabase';
 import { useMe, refreshMe, signOut, rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom, thisMonth, APP_STATUS, PAY_METHOD, PAY_STATUS } from '../../lib/auth';
 import SavedList from '../SavedList';
+import TgLink from '../shared/TgLink';
 
 const TABS = [['markazlar', 'Markazlarim'], ['tolov', "To'lovlar"], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
 const ENR_STATUS = { active: "O'qiyapman", finished: 'Tugatilgan', left: "To'xtatilgan" };
@@ -19,7 +20,7 @@ export default function UserCabinet({ initialTab = '' }) {
   const load = useCallback(async () => {
     if (!me) return;
     const [a, e, p] = await Promise.all([
-      supabase.from('applications').select('id,center_id,course_name,status,reply,note,created_at,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
+      supabase.from('applications').select('id,code,center_id,course_name,status,reply,note,created_at,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
       supabase.from('enrollments').select('id,center_id,course_name,group_name,monthly_fee,started_on,ended_on,status,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
       supabase.from('payments').select('id,enrollment_id,period,amount,method,status,note,created_at').eq('user_id', me.id).order('period', { ascending: false }).limit(1000)
     ]);
@@ -61,6 +62,7 @@ export default function UserCabinet({ initialTab = '' }) {
         {TABS.map(([k, v]) => <button key={k} type="button" className={'tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>{v}</button>)}
       </div>
       {err ? <div className="formmsg err" style={{ marginBottom: 12 }}>{err}</div> : null}
+      {me.role === 'user' ? <TgLink compact forStudent /> : null}
 
       {tab === 'markazlar' ? (
         !d ? <div className="card muted">Yuklanmoqda...</div> : (
@@ -129,7 +131,7 @@ function AppRow({ a, onChange }) {
       <div className="row">
         <div>
           <Link href={`/centers/${a.center_id}`}><b>{a.centers?.name || 'Markaz'}</b></Link>
-          <div className="muted" style={{ fontSize: 14 }}>{a.course_name || "Kurs ko'rsatilmagan"} · {fmtDay(a.created_at)}</div>
+          <div className="muted" style={{ fontSize: 14 }}>{a.course_name || "Kurs ko'rsatilmagan"} · {fmtDay(a.created_at)}{a.code ? <> · ariza raqami <b>{a.code}</b></> : null}</div>
         </div>
         <div className="row">
           <span className={'pillst ' + a.status}>{APP_STATUS[a.status] || a.status}</span>

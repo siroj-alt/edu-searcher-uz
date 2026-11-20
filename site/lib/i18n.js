@@ -145,6 +145,20 @@ Object.assign(RU, {
   "Butun O'zbekiston bo'ylab qidirish": 'Искать по всему Узбекистану', "Barcha bo'limlar bo'yicha qidirish": 'Искать во всех разделах', 'Eng mos': 'Лучшее совпадение', 'Kabinetga kirish ': 'Вход в кабинет'
 });
 Object.assign(RU, { "Yoki o'zingiz yozing:": 'Или введите сами:', 'km gacha': 'км', 'Barcha darajalar': 'Все уровни', 'masalan, 6': 'например, 6', "Masofa 0,5 dan 300 km gacha bo'lsin": 'Расстояние от 0,5 до 300 км' });
+// v12: ariza, narxlar, hamkorlik, sharhlar, Telegram
+Object.assign(RU, {
+  "Narx va jadvalni so'rash": 'Узнать цену и расписание', "Narxni so'rash": 'Узнать цену', "Jadvalni so'rash": 'Узнать расписание', "So'rov yuborish": 'Отправить запрос',
+  'Yuborilmoqda...': 'Отправляем...', 'Reklama': 'Реклама', 'Hujjatlari tekshirilgan': 'Документы проверены', "To'lov va pulni qaytarish shartlari": 'Условия оплаты и возврата',
+  'Izoh (ixtiyoriy)': 'Комментарий (необязательно)', "Ma'lumotlaringiz faqat shu markazga ko'rsatiladi va boshqa maqsadda ishlatilmaydi.": 'Ваши данные видит только этот центр, они не используются для других целей.',
+  "Kirish yoki ro'yxatdan o'tish": 'Войти или зарегистрироваться', 'Sharh yuborish': 'Отправить отзыв', "Baho qo'ying": 'Поставьте оценку', 'Ismingiz': 'Ваше имя', 'Fikringiz (ixtiyoriy)': 'Ваш отзыв (необязательно)',
+  "Soxta sharhlardan himoya uchun sharhni faqat kabinetiga kirgan foydalanuvchilar qoldira oladi. Ro'yxatdan o'tish bir daqiqa oladi.": 'Чтобы защититься от фейковых отзывов, оставлять отзывы могут только вошедшие пользователи. Регистрация занимает минуту.',
+  'Narxlar indeksi': 'Индекс цен', 'Kurs narxlari indeksi': 'Индекс цен на курсы', "Yo'nalish": 'Направление', 'Eng arzon': 'Самая низкая', "O'rtacha": 'Средняя', 'Eng qimmat': 'Самая высокая', 'Markazlar': 'Центры',
+  "Butun O'zbekiston": 'Весь Узбекистан', "Narxlar hozir yig'ilmoqda": 'Цены пока собираются', "Markazlarni ko'rish": 'Смотреть центры', "Tumanlar bo'yicha": 'По районам',
+  "O'quv markazimisiz?": 'Вы учебный центр?', 'Markaz kabineti': 'Кабинет центра', 'Hamkorlik shartlari': 'Условия сотрудничества', 'Hamkorlik': 'Сотрудничество',
+  "O'quvchi kelmasa — to'lov yo'q": 'Нет ученика — нет оплаты', "Markazni qo'shish": 'Добавить центр', 'Kabinetga kirish': 'Вход в кабинет', 'Qanday ishlaydi': 'Как это работает',
+  'Siz nima olasiz': 'Что вы получаете', 'Savol-javob': 'Вопросы и ответы', 'Boshlaymizmi?': 'Начнём?', 'Markazimni topish': 'Найти мой центр', 'Filtr bilan qidirish': 'Искать с фильтрами',
+  'Bosh sahifa': 'Главная', 'Viloyatlar': 'Регионы', 'Telegram bildirishnomalari': 'Уведомления в Telegram', 'Ulash': 'Подключить', 'Uzish': 'Отключить'
+});
 RU_PARTS.unshift([/([\d,]+) km gacha/g, 'до $1 км'], [/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
 
 const norm = (s) => s.replace(/[ʻʼ‘’`]/g, "'").replace(/\s+/g, ' ').trim();
@@ -167,4 +181,5 @@ export function tr(s) {
 }
 
 // Sahifa chizilishidan oldin: ruscha tanlangan bo'lsa, tarjima tugaguncha matn ko'rinmaydi (ko'pi bilan 1,5 soniya)
-export const LANG_SCRIPT = `(function(){try{if(localStorage.getItem('${LANG_KEY}')==='ru'){var h=document.documentElement;h.classList.add('i18n-wait');h.lang='ru';setTimeout(function(){h.classList.remove('i18n-wait')},1500);}}catch(e){}})();`;
+// /ru/... manzilida ochilsa — doim ruscha
+export const LANG_SCRIPT = `(function(){try{var p=location.pathname;if(p==='/ru'||p.indexOf('/ru/')===0){localStorage.setItem('${LANG_KEY}','ru');document.cookie='${LANG_KEY}=ru;path=/;max-age=31536000;samesite=lax';}if(localStorage.getItem('${LANG_KEY}')==='ru'){var h=document.documentElement;h.classList.add('i18n-wait');h.lang='ru';setTimeout(function(){h.classList.remove('i18n-wait')},1500);}}catch(e){}})();`;

@@ -13,6 +13,7 @@ import { colorFor, initials, CAT_GLYPH } from '../../lib/cats';
 import { regionBySlug, regionById } from '../../lib/regions';
 import { sectionBySlug } from '../../lib/sections';
 import { Icon } from '../../lib/icons';
+import { CAT_URL } from '../../lib/seo';
 
 export const dynamic = 'force-dynamic';
 export const metadata = {
@@ -43,7 +44,7 @@ export default async function Search({ searchParams, home = false }) {
 
   const [{ data: catsData }, { data: distData }] = await Promise.all([
     supabase.from('categories').select('id,name,slug').order('id'),
-    supabase.from('districts').select('id,name,region_id')
+    supabase.from('districts').select('id,name,region_id,slug')
   ]);
   const cats = catsData || [];
   const distName = Object.fromEntries((distData || []).map((d) => [d.id, d.name]));
@@ -136,7 +137,7 @@ export default async function Search({ searchParams, home = false }) {
     if (sort === 'near' || (!sort && hasPos)) centers.sort((a, b) => dist.get(a.id) - dist.get(b.id));
     else if (sort === 'rating') centers.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0) || byFeatured(a, b));
     else if (sort === 'price') centers.sort((a, b) => (minPrice(a) ?? 9e12) - (minPrice(b) ?? 9e12));
-    else centers.sort((a, b) => (b.cover_url ? 1 : 0) - (a.cover_url ? 1 : 0) || byFeatured(a, b));
+    else centers.sort((a, b) => (b.is_sponsored === true) - (a.is_sponsored === true) || (b.cover_url ? 1 : 0) - (a.cover_url ? 1 : 0) || byFeatured(a, b));
 
     const pages = Math.max(1, Math.ceil(centers.length / PER_PAGE));
     const page = Math.min(pageOf(sp.sahifa), pages);
@@ -203,9 +204,13 @@ export default async function Search({ searchParams, home = false }) {
   if (sort === 'price') rows = [...rows].sort((a, b) => (Number(a.price_monthly) || 9e12) - (Number(b.price_monthly) || 9e12));
   const bestCenter = hasRef && !sort && !pmin && !pmax && rows[0] ? rows[0].center_id : null;
 
-  const { data: featData } = await supabase.from('centers').select('id').eq('is_featured', true);
+  const { data: featData } = await supabase.from('centers').select('id,is_sponsored').or('is_featured.eq.true,is_sponsored.eq.true');
   const featured = new Set((featData || []).map((x) => x.id));
-  if (featured.size && !sort) rows = [...rows.filter((r) => featured.has(r.center_id)), ...rows.filter((r) => !featured.has(r.center_id))];
+  const sponsored = new Set((featData || []).filter((x) => x.is_sponsored).map((x) => x.id));
+  if (featured.size && !sort) {
+    const rank = (r) => (sponsored.has(r.center_id) ? 0 : featured.has(r.center_id) ? 1 : 2);
+    rows = rows.map((r, i) => [r, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map((x) => x[0]);
+  }
   // Sahifalash: har sahifada PER_PAGE ta markaz
   const allIds = [...new Set(rows.map((r) => r.center_id))];
   const pages = Math.max(1, Math.ceil(allIds.length / PER_PAGE));
@@ -236,13 +241,30 @@ export default async function Search({ searchParams, home = false }) {
     const dn = distName[brDist[r.branch_id]];
     tiles.push({
       id: r.center_id, name: r.center_name, cover: cinfo[r.center_id]?.cover_url || null, logo: cinfo[r.center_id]?.logo_url || null, color, glyph: CAT_GLYPH[cat.slug] || 'Edu', initials: initials(r.center_name),
-      badge: r.center_id === bestCenter ? 'best' : featured.has(r.center_id) ? 'feat' : null, verified: !!cinfo[r.center_id]?.is_verified,
+      badge: sponsored.has(r.center_id) ? 'ad' : r.center_id === bestCenter ? 'best' : featured.has(r.center_id) ? 'feat' : null, verified: !!cinfo[r.center_id]?.is_verified,
       sub: `${r.course_name && !norm(r.course_name).startsWith(norm(cat.name)) ? r.course_name : cat.name}${levelRaw ? ' · ' + LEVELS[levelRaw] : ''}`,
       price: r.price_monthly ? `${Number(r.price_monthly).toLocaleString('ru-RU')} so'm/oy` : 'Narx kelishiladi',
       place: dn || (reg ? reg.short : "O'zbekiston"),
       km: hasRef ? fmtKm(r.distance_km) : null, rating: Number(r.rating) || 0, reviews: revN[r.center_id] || 0,
       phone: r.phone || null, telegram: r.telegram || null
     });
+  }
+
+  // Tuman sahifalariga havolalar (shu yo'nalishda kamida 3 ta markaz bo'lgan tumanlar)
+  const distLinks = [];
+  if (region && !district && CAT_URL[cat.slug]) {
+    const per = new Map();
+    for (const r of rows) {
+      const d = brDist[r.branch_id];
+      if (!d) continue;
+      if (!per.has(d)) per.set(d, new Set());
+      per.get(d).add(r.center_id);
+    }
+    for (const d of distData || []) {
+      const n = per.get(d.id)?.size || 0;
+      if (d.slug && d.region_id === region.id && n >= 3) distLinks.push({ id: d.id, name: d.name, n, href: `/markazlar/${region.slug}/${CAT_URL[cat.slug]}/${d.slug}` });
+    }
+    distLinks.sort((a, b) => b.n - a.n);
   }
 
   return (
@@ -273,6 +295,12 @@ export default async function Search({ searchParams, home = false }) {
           </div>
         </div>
       )}
+      {distLinks.length ? (
+        <nav className="dlinks" aria-label="Tumanlar bo'yicha">
+          <div className="sec"><h2>{`${region.short || region.name}: tumanlar bo'yicha`}</h2><i /></div>
+          <div className="chips">{distLinks.map((d) => <Link key={d.id} href={d.href}>{`${d.name} (${d.n})`}</Link>)}</div>
+        </nav>
+      ) : null}
     </div>
   );
 }

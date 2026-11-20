@@ -6,6 +6,9 @@ export const metadata = {
   alternates: { canonical: '/markaz-royxat' }
 };
 
-export default function Page() {
-  return <div className="wrap page"><CenterSignup /></div>;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export default function Page({ searchParams }) {
+  const m = typeof searchParams?.markaz === 'string' && UUID.test(searchParams.markaz) ? searchParams.markaz : '';
+  return <div className="wrap page"><CenterSignup markaz={m} /></div>;
 }

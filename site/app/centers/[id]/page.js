@@ -12,6 +12,7 @@ import CenterTile from '../../../components/CenterTile';
 import SaveButton from '../../../components/SaveButton';
 import ApplyForm from '../../../components/ApplyForm';
 import ReviewForm from '../../../components/ReviewForm';
+import AskButton from '../../../components/AskButton';
 import CenterGallery from '../../../components/CenterGallery';
 import CompareToggle from '../../../components/CompareToggle';
 import ShareButton from '../../../components/ShareButton';
@@ -22,8 +23,11 @@ export const dynamic = 'force-dynamic';
 
 const ext = { target: '_blank', rel: 'noopener noreferrer' };
 const LEVEL_ORDER = { beginner: 0, intermediate: 1, advanced: 2 };
-const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,updated_at,created_at,cover_url,logo_url,center_photos(id,url,thumb_url,is_cover,sort),' +
-  'branches(id,address,phone,lat,lng,region_id),courses(id,name,level,price_monthly,duration_months,schedule,categories(id,slug,name))';
+const STALE_DAYS = 60;
+const isStale = (d) => !d || Date.now() - new Date(d).getTime() > STALE_DAYS * 864e5;
+const hoursText = (h) => (h < 1 ? '1 soat ichida' : h < 24 ? `${Math.max(1, Math.round(h))} soat ichida` : `${Math.round(h / 24)} kun ichida`);
+const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,is_sponsored,docs_verified,refund_policy,owner_id,updated_at,created_at,cover_url,logo_url,center_photos(id,url,thumb_url,is_cover,sort),' +
+  'branches(id,address,phone,lat,lng,region_id),courses(id,name,level,price_monthly,price_updated_at,duration_months,schedule,categories(id,slug,name))';
 const REL_FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,cover_url,logo_url,branches!inner(id,address,lat,lng,region_id),courses(level,price_monthly,categories(slug,name))';
 
 async function getCenter(id) {
@@ -68,12 +72,14 @@ export default async function CenterPage({ params }) {
   if (!c) notFound();
 
   const regIds = regionIdsOf(c);
-  const [revRes, relRes] = await Promise.all([
+  const [revRes, relRes, respRes] = await Promise.all([
     supabase.from('center_reviews').select('id,name,stars,comment,created_at').eq('center_id', c.id).eq('status', 'approved').order('created_at', { ascending: false }).limit(50),
     regIds.length
       ? supabase.from('centers').select(REL_FIELDS).eq('branches.region_id', regIds[0]).neq('id', c.id).limit(120)
-      : Promise.resolve({ data: [] })
+      : Promise.resolve({ data: [] }),
+    supabase.rpc('center_response_hours', { p_center: c.id })
   ]);
+  const respHours = respRes && respRes.data != null ? Number(respRes.data) : null;
   const reviews = revRes.data || [];
   const all = (relRes.data || []).map((x) => ({ ...x, branches: x.branches || [], courses: x.courses || [] }));
   const revAvg = reviews.length ? reviews.reduce((s, r) => s + r.stars, 0) / reviews.length : 0;
@@ -157,7 +163,8 @@ export default async function CenterPage({ params }) {
             <div className="h1row">
               <h1 className="h1s">{c.name}</h1>
               {c.is_verified ? <span className="vbadge" title="Ma'lumotlari tekshirilgan"><Shield />Tasdiqlangan</span> : null}
-              {c.is_featured ? <span className="fbadge"><Spark />Tavsiya etilgan</span> : null}
+              {c.docs_verified ? <span className="vbadge docs" title="Faoliyat hujjatlari (xabarnoma) sayt tomonidan ko'rib chiqilgan"><Shield />Hujjatlari tekshirilgan</span> : null}
+              {c.is_sponsored ? <span className="fbadge ad" title="Pullik joylashuv">Reklama</span> : c.is_featured ? <span className="fbadge"><Spark />Tavsiya etilgan</span> : null}
             </div>
             <div className="cline">
               {score > 0 ? <a href="#sharhlar" className="cstar"><Icon name="star" /><b>{score.toFixed(1)}</b>{reviews.length ? ` · ${reviews.length} sharh` : ''}</a> : <a href="#sharhlar" className="cstar none">Hali baho yo'q</a>}
@@ -173,9 +180,10 @@ export default async function CenterPage({ params }) {
           <div><small>Narx</small><b>{minPrice ? `${short(minPrice)} so'mdan` : 'Kelishiladi'}</b></div>
           <div><small>Daraja</small><b>{levels.length ? (levels.length === 3 ? 'Barcha darajalar' : levels.map((l) => LEVELS[l]).join(', ')) : '—'}</b></div>
           <div><small>Filiallar</small><b>{`${c.branches.length} ta`}</b></div>
+          {respHours != null ? <div><small>Javob beradi</small><b>{`odatda ${hoursText(respHours)}`}</b></div> : null}
         </div>
         <div className="actions" id="center-actions">
-          <a className="btn" href="#ariza"><Cap width="18" height="18" />O'qishga ariza berish</a>
+          <a className="btn" href="#ariza"><Cap width="18" height="18" />Narx va jadvalni so'rash</a>
           {c.phone ? <a className="btn ghost" href={tel(c.phone)}><Icon name="phone" />Qo'ng'iroq</a> : null}
           {c.telegram ? <a className="btn ghost" href={tgHref(c.telegram)} {...ext}><Icon name="send" />Telegram</a> : null}
           {c.website ? <a className="btn ghost" href={url(c.website)} {...ext}><Icon name="globe" />Veb-sayt</a> : null}
@@ -185,6 +193,9 @@ export default async function CenterPage({ params }) {
           <CompareToggle id={c.id} variant="btn ghost" />
         </div>
         {c.updated_at ? <p className="updated">Ma'lumot yangilangan: {fmtDate(c.updated_at)}</p> : null}
+        {!c.owner_id ? (
+          <p className="claim">Bu sizning markazingizmi? <Link href={`/markaz-royxat?markaz=${c.id}`}>Ma'lumotlarni tuzating yoki markazni o'z kabinetingizga oling</Link></p>
+        ) : null}
       </section>
 
       <div className="layout2">
@@ -213,7 +224,16 @@ export default async function CenterPage({ params }) {
                 {g.list.map((k) => (
                   <div key={k.id} className="crow">
                     <span>{k.name && k.name.trim() && !k.name.trim().toLowerCase().startsWith(g.cat.name.toLowerCase()) ? <><b>{k.name.trim()}</b> · </> : null}{LEVELS[k.level] || k.level}{k.duration_months ? <small className="muted">{` · ${k.duration_months} oy`}</small> : null}{k.schedule ? <small className="muted"> · {k.schedule}</small> : null}</span>
-                    <span className="kmb">{k.price_monthly ? `${Number(k.price_monthly).toLocaleString('ru-RU')} so'm/oy` : 'Narx kelishiladi'}</span>
+                    {k.price_monthly ? (
+                      <span className="kmb">
+                        {`${Number(k.price_monthly).toLocaleString('ru-RU')} so'm/oy`}
+                        <small className={'pdate' + (isStale(k.price_updated_at) ? ' stale' : '')}>
+                          {isStale(k.price_updated_at) ? (k.price_updated_at ? `${fmtDate(k.price_updated_at)} holatiga — o'zgargan bo'lishi mumkin` : "Narx eskirgan bo'lishi mumkin") : `${fmtDate(k.price_updated_at)} da yangilangan`}
+                        </small>
+                      </span>
+                    ) : (
+                      <AskButton center={c.id} course={k.id} kind="price" className="btn ghost sm kask">Narxni so'rash</AskButton>
+                    )}
                   </div>
                 ))}
               </div>
@@ -246,7 +266,14 @@ export default async function CenterPage({ params }) {
         </>
       ) : null}
 
-      <div className="sec" id="ariza"><h2>O'qishga ariza berish</h2><i /></div>
+      <div className="sec"><h2>To'lov va pulni qaytarish shartlari</h2><i /></div>
+      <section className="card refund">
+        {c.refund_policy ? <p className="about" style={{ whiteSpace: 'pre-line' }}>{c.refund_policy}</p> : (
+          <p className="muted">Markaz pulni qaytarish tartibini hali kiritmagan. Shartnoma tuzishdan oldin to'lov qanday qaytarilishini markazdan yozma ravishda so'rang.</p>
+        )}
+      </section>
+
+      <div className="sec" id="ariza"><h2>Narx va jadvalni so'rash</h2><i /></div>
       <section className="card lead-card" id="ariza-forma">
         <ApplyForm centerId={c.id} centerName={c.name} courses={courseOpts} />
       </section>

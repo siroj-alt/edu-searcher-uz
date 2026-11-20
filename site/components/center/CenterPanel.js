@@ -10,7 +10,7 @@ import CenterInfo from './CenterInfo';
 import Applications from '../shared/Applications';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const FIELDS = 'id,name,description,contract_status,contract_end,contacts_visible,owner_id,logo_url,cover_url,is_hidden,is_verified';
+const FIELDS = 'id,name,description,refund_policy,contract_status,contract_end,contacts_visible,owner_id,logo_url,cover_url,is_hidden,is_verified,docs_verified,is_sponsored';
 const initials = (n) => String(n || '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || 'M';
 const Ic = ({ d }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>;
 const ICONS = {

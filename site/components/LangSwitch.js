@@ -9,7 +9,11 @@ export default function LangSwitch() {
   const pick = (l) => {
     if (l === lang) return;
     try { localStorage.setItem(LANG_KEY, l); document.cookie = `${LANG_KEY}=${l};path=/;max-age=31536000;samesite=lax`; } catch {}
-    if (l === 'uz') { window.location.reload(); return; }
+    if (l === 'uz') {
+      const p = window.location.pathname;
+      if (p === '/ru' || p.startsWith('/ru/')) { window.location.href = (p.slice(3) || '/') + window.location.search + window.location.hash; return; }
+      window.location.reload(); return;
+    }
     setLang(l);
     try { window.dispatchEvent(new CustomEvent('es-lang', { detail: l })); } catch {}
   };

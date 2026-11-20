@@ -78,7 +78,14 @@ export default {
     // v5: markaz rasmlari (bir nechta rasm, asosiy rasm kartalarda va kurslar ro'yxatida)
     { file: "components/SavedList.js", find: "'id,name,rating,phone,website,is_verified,is_featured,branches(", replace: "'id,name,rating,phone,website,is_verified,is_featured,cover_url,branches(" },
     { file: "components/AdminPanel.js", find: "import UsersAdmin from './admin/UsersAdmin';", replace: "import UsersAdmin from './admin/UsersAdmin';\nimport CenterPhotos from './shared/CenterPhotos';" },
-    { file: "components/AdminPanel.js", find: "<CenterAccess center={c} onMsg={setMsg} onChange={load} />", replace: "<CenterPhotos centerId={c.id} onMsg={setMsg} />\n                  <CenterAccess center={c} onMsg={setMsg} onChange={load} />" }
+    { file: "components/AdminPanel.js", find: "<CenterAccess center={c} onMsg={setMsg} onChange={load} />", replace: "<CenterPhotos centerId={c.id} onMsg={setMsg} />\n                  <CenterAccess center={c} onMsg={setMsg} onChange={load} />" },
+
+    // v12: yangi uslublar, manba (UTM) va Metrika, qidiruv tizimlari teglari, pastki havolalar
+    { file: 'app/layout.js', find: `import './v7.css';`, replace: `import './v7.css';\nimport './v8.css';` },
+    { file: 'app/layout.js', find: `import UpdateCheck from '../components/UpdateCheck';`, replace: `import UpdateCheck from '../components/UpdateCheck';\nimport SourceCapture from '../components/SourceCapture';\nimport SiteMeta from '../components/SiteMeta';` },
+    { file: 'app/layout.js', find: `<UpdateCheck />`, replace: `<UpdateCheck />\n        <SourceCapture />` },
+    { file: 'app/layout.js', find: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />`, replace: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />\n        <SiteMeta />` },
+    { file: 'app/layout.js', find: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>`, replace: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>\n                  <li><Link href="/hamkorlik">Hamkorlik shartlari</Link></li>\n                  <li><Link href="/narxlar">Kurs narxlari indeksi</Link></li>` }
 
   ]
 };

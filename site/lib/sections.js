@@ -2,7 +2,7 @@
 // Bitta yo'nalish bir nechta bo'limda bo'lishi mumkin (masalan, IELTS — tillar va imtihonlar).
 export const SECTIONS = [
   { slug: 'tillar', name: 'Chet tillari', short: 'Tillar', color: '#2F6FEB', icon: 'lang',
-    cats: ['english', 'ielts', 'russian', 'german', 'french', 'turkish', 'arabic', 'chinese', 'korean', 'japanese'] },
+    cats: ['english', 'ielts', 'russian', 'german', 'french', 'turkish', 'arabic', 'chinese', 'korean', 'japanese', 'uzbek-foreign'] },
   { slug: 'it', name: 'IT va dasturlash', short: 'IT', color: '#0F9D6B', icon: 'code',
     cats: ['it', 'computer', 'ai', 'cybersecurity', 'networking', 'robotics'] },
   { slug: 'bolalar', name: 'Bolalar uchun', short: 'Bolalar', color: '#F08C00', icon: 'kid',

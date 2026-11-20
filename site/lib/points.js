@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 import { colorFor } from './cats';
 
-const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,created_at,updated_at,cover_url,logo_url,branches(id,address,lat,lng,region_id,district_id),courses(level,price_monthly,categories(slug,name))';
+const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,is_sponsored,docs_verified,created_at,updated_at,cover_url,logo_url,branches(id,address,lat,lng,region_id,district_id),courses(level,price_monthly,categories(slug,name))';
 const PAGE = 1000; // Supabase bir so'rovda ko'pi bilan 1000 qator qaytaradi
 
 export async function loadCenters() {
@@ -86,6 +86,6 @@ export function nearestKm(c, pos) {
   return best;
 }
 
-// Tavsiya etilganlar birinchi, keyin reyting va filiallar soni
-export const byFeatured = (a, b) => (b.is_featured === true) - (a.is_featured === true)
+// Reklama (pullik joy) va tavsiya etilganlar birinchi, keyin reyting va filiallar soni
+export const byFeatured = (a, b) => (b.is_sponsored === true) - (a.is_sponsored === true) || (b.is_featured === true) - (a.is_featured === true)
   || (Number(b.rating) || 0) - (Number(a.rating) || 0) || b.branches.length - a.branches.length || a.name.localeCompare(b.name);
