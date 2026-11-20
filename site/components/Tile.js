@@ -13,7 +13,8 @@ export default function Tile({ t, i = 0 }) {
     <article className="tile" style={{ '--i': Math.min(i, 12), '--c': t.color }} data-center={t.id}>
       <Link href={href} className="tile-img" tabIndex={-1} aria-hidden="true">
         {t.cover ? <img src={t.cover} alt="" loading={i < 4 ? 'eager' : 'lazy'} decoding="async" />
-          : <span className="tile-ph"><span className="tile-g">{t.glyph}</span><span className="tile-av">{t.initials}</span></span>}
+          : <span className="tile-ph"><span className="tile-g">{t.glyph}</span>{t.logo ? <img className="tile-lgb" src={t.logo} alt="" loading="lazy" decoding="async" /> : <span className="tile-av">{t.initials}</span>}</span>}
+        {t.cover && t.logo ? <img className="tile-lg" src={t.logo} alt="" loading="lazy" decoding="async" /> : null}
         {t.badge ? <span className={'tile-badge' + (t.badge === 'best' ? ' best' : '')}>{t.badge === 'best' ? 'Eng mos' : 'Tavsiya'}</span> : null}
       </Link>
       <div className="tile-fav"><SaveButton id={t.id} compact /></div>

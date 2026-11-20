@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 
-// Markaz rasmlari: bir nechta rasm yuklash, asosiy rasmni tanlash, tartibini o'zgartirish, o'chirish.
-// Asosiy rasm markaz kartalarida, kurslar ro'yxatida va markaz sahifasining boshida ko'rinadi.
+// Markaz galereyasi: bir nechta rasm yuklash, tartibini o'zgartirish, o'chirish.
+// Karta rasmi va logotip alohida tanlanadi (CenterMedia); galereyadan biror rasmni kartaga qo'yish ham mumkin.
 const BUCKET = 'center-photos';
 const MAX_PHOTOS = 20;
 const FULL = 1600;
@@ -39,7 +39,7 @@ async function shrink(bmp, max, quality) {
   return { blob, type, ext };
 }
 
-export default function CenterPhotos({ centerId, onMsg }) {
+export default function CenterPhotos({ centerId, onMsg, ver = 0, onChange }) {
   const [list, setList] = useState(null);
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
@@ -52,7 +52,7 @@ export default function CenterPhotos({ centerId, onMsg }) {
     setList(data || []);
   }, [centerId]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); }, [load, ver]);
 
   async function upload(files) {
     setErr('');
@@ -102,7 +102,8 @@ export default function CenterPhotos({ centerId, onMsg }) {
     setBusy('');
     if (error) return setErr(error.message);
     await load();
-    say('Asosiy rasm tanlandi. U markaz kartalarida va kurslar ro\'yxatida ko\'rinadi.');
+    onChange?.();
+    say("Rasm markaz kartasiga qo'yildi.");
   }
 
   async function remove(p) {
@@ -113,6 +114,7 @@ export default function CenterPhotos({ centerId, onMsg }) {
     setBusy('');
     if (error) return setErr(error.message);
     await load();
+    if (p.is_cover) onChange?.();
     say("Rasm o'chirildi.");
   }
 
@@ -136,8 +138,8 @@ export default function CenterPhotos({ centerId, onMsg }) {
     <div className="card stack cphotos" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
       <div className="cph-head">
         <div>
-          <b>Markaz rasmlari</b>
-          <p className="muted small">Bir nechta rasm yuklang. <b>Asosiy</b> deb belgilangan rasm markaz kartasida, kurslar ro'yxatida va markaz sahifasining boshida ko'rinadi.</p>
+          <b>Rasmlar galereyasi</b>
+          <p className="muted small">Sinf xonalari, bino, darslardan rasmlar. Ular markaz sahifasida galereya bo'lib ko'rinadi.</p>
         </div>
         <label className={'btn sm cph-add' + (busy ? ' dis' : '')}>
           <input ref={input} type="file" accept="image/*" multiple disabled={!!busy} onChange={(e) => upload(e.target.files)} />
@@ -158,9 +160,9 @@ export default function CenterPhotos({ centerId, onMsg }) {
           {list.map((p, i) => (
             <figure key={p.id} className={'cph' + (p.is_cover ? ' cover' : '')}>
               <img src={p.thumb_url || p.url} alt="" loading="lazy" />
-              {p.is_cover ? <span className="cph-tag">Asosiy rasm</span> : null}
+              {p.is_cover ? <span className="cph-tag">Karta rasmi</span> : null}
               <figcaption>
-                {!p.is_cover ? <button type="button" className="cph-b main" onClick={() => makeCover(p)} disabled={!!busy}>Asosiy qilish</button> : <span className="cph-note">Kartalarda ko'rinadi</span>}
+                {!p.is_cover ? <button type="button" className="cph-b main" onClick={() => makeCover(p)} disabled={!!busy}>Kartaga qo'yish</button> : <span className="cph-note">Kartada ko'rinadi</span>}
                 <span className="cph-tools">
                   <button type="button" className="cph-i" onClick={() => move(i, -1)} disabled={!!busy || i === 0} aria-label="Chapga surish">‹</button>
                   <button type="button" className="cph-i" onClick={() => move(i, 1)} disabled={!!busy || i === list.length - 1} aria-label="O'ngga surish">›</button>

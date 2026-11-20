@@ -22,9 +22,9 @@ export const dynamic = 'force-dynamic';
 
 const ext = { target: '_blank', rel: 'noopener noreferrer' };
 const LEVEL_ORDER = { beginner: 0, intermediate: 1, advanced: 2 };
-const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,updated_at,created_at,cover_url,center_photos(id,url,thumb_url,is_cover,sort),' +
+const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,updated_at,created_at,cover_url,logo_url,center_photos(id,url,thumb_url,is_cover,sort),' +
   'branches(id,address,phone,lat,lng,region_id),courses(id,name,level,price_monthly,duration_months,schedule,categories(id,slug,name))';
-const REL_FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,cover_url,branches!inner(id,address,lat,lng,region_id),courses(level,price_monthly,categories(slug,name))';
+const REL_FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,cover_url,logo_url,branches!inner(id,address,lat,lng,region_id),courses(level,price_monthly,categories(slug,name))';
 
 async function getCenter(id) {
   if (!UUID_RE.test(id || '')) return null;
@@ -152,7 +152,7 @@ export default async function CenterPage({ params }) {
       <CenterGallery photos={c.center_photos || []} name={c.name} />
       <section className="card chero">
         <div className="chead">
-          {c.cover_url ? <img className="av lg pic" src={c.cover_url} alt="" /> : <div className="av lg" style={{ background: color }}>{initials(c.name)}</div>}
+          {c.logo_url ? <img className="av lg pic" src={c.logo_url} alt={`${c.name} logotipi`} /> : <div className="av lg" style={{ background: color }}>{initials(c.name)}</div>}
           <div className="hmain">
             <div className="h1row">
               <h1 className="h1s">{c.name}</h1>

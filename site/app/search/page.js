@@ -20,10 +20,11 @@ export const metadata = {
   description: "O'zbekiston bo'ylab o'quv markazlari: bo'lim, yo'nalish, daraja, viloyat, tuman, narx va masofa bo'yicha qidiring.",
   alternates: { canonical: '/search' }
 };
-const KMS = [2, 5, 10, 25];
+const MAXKM = 300;
 const MAXP = 100000000;
 const norm = (t) => String(t || '').toLowerCase().replace(/[ʻʼ‘’`']/g, "'").replace(/\s+/g, ' ').trim();
 const fmtSum = (n) => (n >= 1e6 ? (n / 1e6).toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' mln' : Math.round(n / 1000) + ' ming');
+const fmtKmLim = (k) => String(k).replace('.', ',') + ' km';
 const fmtKm = (k) => (k == null ? null : k < 1 ? Math.round(k * 1000) + ' m' : k.toFixed(1).replace('.', ',') + ' km');
 const minPrice = (c) => { const p = c.courses.map((k) => Number(k.price_monthly)).filter((x) => x > 0); return p.length ? Math.min(...p) : null; };
 const intOf = (v) => { const n = parseInt(String(v || '').replace(/\D/g, ''), 10); return Number.isFinite(n) && n > 0 && n <= MAXP ? n : 0; };
@@ -49,7 +50,9 @@ export default async function Search({ searchParams, home = false }) {
   const district = region ? (distData || []).find((d) => String(d.id) === String(sp.tuman) && d.region_id === region.id) || null : null;
   const cat = cats.find((c) => String(c.id) === String(sp.cat)) || cats.find((c) => c.slug === sp.cat);
   const hasRef = hasPos || !!region;
-  const km = hasRef && KMS.includes(Number(sp.km)) ? Number(sp.km) : 0;
+  // Masofa: tayyor tugmalar yoki foydalanuvchi o'zi yozgan qiymat (0,5–300 km)
+  const kmRaw = Math.round(parseFloat(String(sp.km || '').replace(',', '.')) * 10) / 10;
+  const km = hasRef && Number.isFinite(kmRaw) && kmRaw >= 0.5 && kmRaw <= MAXKM ? kmRaw : 0;
   let sort = ['near', 'rating', 'price'].includes(sp.sort) ? sp.sort : '';
   if (sort === 'near' && !hasRef) sort = '';
 
@@ -76,7 +79,7 @@ export default async function Search({ searchParams, home = false }) {
   if (region) active.push([region.short, link({ region: '', tuman: '', km: hasPos ? params.km : '', sort: hasPos ? sort : sort === 'near' ? '' : sort })]);
   if (district) active.push([district.name, link({ tuman: '' })]);
   if (hasPos) active.push(['Joylashuvim', link({ lat: '', lng: '', km: region ? params.km : '', sort: region ? sort : sort === 'near' ? '' : sort })]);
-  if (km) active.push([`${km} km gacha`, link({ km: '' })]);
+  if (km) active.push([`${fmtKmLim(km)} gacha`, link({ km: '' })]);
   if (priceLabel) active.push([priceLabel, link({ pmin: '', pmax: '' })]);
   const nFilters = [section, cat, levelRaw, region, district, km, pmin || pmax, hasPos].filter(Boolean).length;
 
@@ -92,7 +95,7 @@ export default async function Search({ searchParams, home = false }) {
           <input type="search" name="q" defaultValue={q} placeholder="Markaz nomi yoki manzil" aria-label="Markaz nomi yoki manzil" maxLength={60} />
           {Object.entries(params).filter(([k, v]) => k !== 'q' && v).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
         </form>
-        <FilterSheet cats={cats} init={cat && !levelRaw ? { ...params, level: 'beginner' } : params} count={nFilters} />
+        <FilterSheet cats={cats} init={params} count={nFilters} />
       </div>
       <SectionRow active={section?.slug || ''} hrefFor={(s) => link({ bolim: s, cat: '', sahifa: '' })} />
       <div className="sortrow">
@@ -181,11 +184,11 @@ export default async function Search({ searchParams, home = false }) {
   }
 
   // ===== Yo'nalish tanlangan: tavsiya qilingan kurslar =====
-  const level = levelRaw || 'beginner';
+  // Daraja tanlanmagan bo'lsa: barcha darajalar (boshlang'ich, o'rta, yuqori)
   const r0 = ref || { lat: 41.3111, lng: 69.2797 };
   const { data, error } = await supabase.rpc('recommend_v3', {
-    p_category_id: cat.id, p_level: level, p_lat: r0.lat, p_lng: r0.lng,
-    p_max_km: hasRef ? km : 0, p_limit: region ? 120 : 160, p_region_id: region?.id ?? null
+    p_category_id: cat.id, p_level: levelRaw || null, p_lat: r0.lat, p_lng: r0.lng,
+    p_max_km: hasRef ? km : 0, p_limit: levelRaw ? (region ? 120 : 160) : (region ? 300 : 400), p_region_id: region?.id ?? null
   });
   let rows = data || [];
   const branchIds = [...new Set(rows.map((r) => r.branch_id))];
@@ -203,7 +206,7 @@ export default async function Search({ searchParams, home = false }) {
   const centerIds = [...new Set(rows.map((r) => r.center_id))].slice(0, 150);
   const [featRes, cRes, revRes] = await Promise.all([
     supabase.from('centers').select('id').eq('is_featured', true),
-    centerIds.length ? supabase.from('centers').select('id,cover_url,is_verified').in('id', centerIds) : Promise.resolve({ data: [] }),
+    centerIds.length ? supabase.from('centers').select('id,cover_url,logo_url,is_verified').in('id', centerIds) : Promise.resolve({ data: [] }),
     centerIds.length ? supabase.from('center_reviews').select('center_id').in('center_id', centerIds).eq('status', 'approved') : Promise.resolve({ data: [] })
   ]);
   const featured = new Set((featRes.data || []).map((x) => x.id));
@@ -227,9 +230,9 @@ export default async function Search({ searchParams, home = false }) {
     const reg = regionById(r.region_id);
     const dn = distName[brDist[r.branch_id]];
     tiles.push({
-      id: r.center_id, name: r.center_name, cover: cinfo[r.center_id]?.cover_url || null, color, glyph: CAT_GLYPH[cat.slug] || 'Edu', initials: initials(r.center_name),
+      id: r.center_id, name: r.center_name, cover: cinfo[r.center_id]?.cover_url || null, logo: cinfo[r.center_id]?.logo_url || null, color, glyph: CAT_GLYPH[cat.slug] || 'Edu', initials: initials(r.center_name),
       badge: r.center_id === bestCenter ? 'best' : featured.has(r.center_id) ? 'feat' : null, verified: !!cinfo[r.center_id]?.is_verified,
-      sub: `${r.course_name && !norm(r.course_name).startsWith(norm(cat.name)) ? r.course_name : cat.name} · ${LEVELS[level]}`,
+      sub: `${r.course_name && !norm(r.course_name).startsWith(norm(cat.name)) ? r.course_name : cat.name}${levelRaw ? ' · ' + LEVELS[levelRaw] : ''}`,
       price: r.price_monthly ? `${Number(r.price_monthly).toLocaleString('ru-RU')} so'm/oy` : 'Narx kelishiladi',
       place: dn || (reg ? reg.short : "O'zbekiston"),
       km: hasRef ? fmtKm(r.distance_km) : null, rating: Number(r.rating) || 0, reviews: revN[r.center_id] || 0,
@@ -240,7 +243,7 @@ export default async function Search({ searchParams, home = false }) {
   return (
     <div className="wrap page spage">
       <div className="rhead">
-        <small className="muted">{`${cat.name} · ${LEVELS[level]} · ${where}${km ? ` · ${km} km gacha` : ''}`}</small>
+        <small className="muted">{`${cat.name} · ${levelRaw ? LEVELS[levelRaw] : 'Barcha darajalar'} · ${where}${km ? ` · ${fmtKmLim(km)} gacha` : ''}`}</small>
         <h1 className="h1s">Sizga mos markazlar</h1>
       </div>
       {toolbar(tiles.length)}

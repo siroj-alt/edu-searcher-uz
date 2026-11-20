@@ -1,7 +1,7 @@
 import { supabase } from './supabase';
 import { colorFor } from './cats';
 
-const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,created_at,updated_at,cover_url,branches(id,address,lat,lng,region_id,district_id),courses(level,price_monthly,categories(slug,name))';
+const FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,created_at,updated_at,cover_url,logo_url,branches(id,address,lat,lng,region_id,district_id),courses(level,price_monthly,categories(slug,name))';
 const PAGE = 1000; // Supabase bir so'rovda ko'pi bilan 1000 qator qaytaradi
 
 export async function loadCenters() {

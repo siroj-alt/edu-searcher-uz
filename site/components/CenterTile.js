@@ -16,7 +16,7 @@ export function centerToTile(c, { slug = null, reviews = 0, km = null, districts
   const pr = priceRange(c, slug);
   const names = [...new Set(c.courses.map((k) => k.categories?.name).filter(Boolean))];
   return {
-    id: c.id, name: c.name, cover: c.cover_url || null, color: colorFor(main), glyph: CAT_GLYPH[main] || 'Edu', initials: initials(c.name),
+    id: c.id, name: c.name, cover: c.cover_url || null, logo: c.logo_url || null, color: colorFor(main), glyph: CAT_GLYPH[main] || 'Edu', initials: initials(c.name),
     badge: c.is_featured ? 'feat' : null, verified: !!c.is_verified,
     sub: names.slice(0, 2).join(', ') + (names.length > 2 ? ` +${names.length - 2}` : ''),
     price: pr ? (pr[0] === pr[1] ? `${sum(pr[0])} so'm` : `${sum(pr[0])} so'mdan`) : 'Narx kelishiladi',

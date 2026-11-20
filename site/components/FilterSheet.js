@@ -9,6 +9,7 @@ import { SECTIONS } from '../lib/sections';
 import { toast } from './Toast';
 
 export const KMS = [0, 2, 5, 10, 25];
+const kmText = (v) => String(v || '').replace(/[^\d.,]/g, '').replace(',', '.').replace(/(\..*)\./g, '$1').slice(0, 5);
 const PRESETS = [300000, 500000, 1000000];
 const fmtSum = (n) => (n >= 1e6 ? (n / 1e6).toLocaleString('ru-RU') + ' mln' : Math.round(n / 1000) + ' ming');
 const digits = (v) => String(v || '').replace(/\D/g, '').slice(0, 9);
@@ -71,6 +72,8 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
   const hasRef = !!(v.lat && v.lng) || !!v.region;
   const pmin = Number(v.pmin) || 0, pmax = Number(v.pmax) || 0;
   const priceErr = pmin && pmax && pmin > pmax ? "«dan» qiymati «gacha» qiymatidan katta bo'lmasin" : '';
+  const kmNum = parseFloat(v.km);
+  const kmErr = hasRef && v.km && !(kmNum >= 0.5 && kmNum <= 300) ? 'Masofa 0,5 dan 300 km gacha bo\'lsin' : '';
 
   const locate = () => {
     if (!navigator.geolocation) return toast("Brauzeringiz joylashuvni qo'llamaydi");
@@ -83,6 +86,7 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
   };
   const apply = () => {
     if (priceErr) return toast(priceErr);
+    if (kmErr) return toast(kmErr);
     setOpen(false);
     router.push(buildSearch({ ...v, km: hasRef ? v.km : '', tuman: v.region ? v.tuman : '' }));
   };
@@ -124,7 +128,8 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
           </fieldset>
           <fieldset className="fs-grp">
             <legend>Daraja</legend>
-            <div className="fs-seg">
+            <div className="fs-seg four">
+              <button type="button" className={!v.level ? 'on' : ''} aria-pressed={!v.level} onClick={() => setV((o) => ({ ...o, level: '' }))}>Barchasi</button>
               {Object.entries(LEVELS).map(([k, t]) => (
                 <button type="button" key={k} className={v.level === k ? 'on' : ''} aria-pressed={v.level === k} onClick={() => set('level', k)}>{t}</button>
               ))}
@@ -181,6 +186,14 @@ export default function FilterSheet({ cats = [], init = {}, count = 0 }) {
                 <button type="button" key={k} className={Number(v.km || 0) === k ? 'on' : ''} aria-pressed={Number(v.km || 0) === k} onClick={() => setV((o) => ({ ...o, km: k ? String(k) : '' }))}>{k ? `${k} km` : 'Cheksiz'}</button>
               ))}
             </div>
+            <label className="fs-km">
+              <span>Yoki o'zingiz yozing:</span>
+              <span className="fs-km-in">
+                <input inputMode="decimal" autoComplete="off" placeholder="masalan, 6" value={v.km ? String(v.km).replace('.', ',') : ''} onChange={(e) => setV((o) => ({ ...o, km: kmText(e.target.value) }))} aria-label="Masofa, km gacha" />
+                <b>km gacha</b>
+              </span>
+            </label>
+            {kmErr ? <p className="fs-note err">{kmErr}</p> : null}
             {!hasRef ? <p className="fs-note">Masofani tanlash uchun viloyatni yoki joylashuvingizni belgilang.</p> : null}
           </fieldset>
         </div>

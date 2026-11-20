@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import CenterManager from '../CenterManager';
 import CenterPhotos from '../shared/CenterPhotos';
 import ContactsEditor from '../shared/ContactsEditor';
+import CenterMedia from '../shared/CenterMedia';
 
 // Markaz ma'lumotlarini tahrirlash: nom, tavsif, aloqa, filiallar va kurslar
 export default function CenterInfo({ center, onChange }) {
@@ -12,6 +13,8 @@ export default function CenterInfo({ center, onChange }) {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [globalOn, setGlobalOn] = useState(true);
+  const [ver, setVer] = useState(0);
+  const bump = () => { setVer((x) => x + 1); onChange?.(); };
 
   useEffect(() => { setF({ name: center.name, description: center.description || '' }); setMsg(''); setErr(''); }, [center.id, center.name, center.description]);
   useEffect(() => {
@@ -30,7 +33,12 @@ export default function CenterInfo({ center, onChange }) {
 
   const hidden = !globalOn || center.contacts_visible === false;
   return (
-    <>
+    <div className="cinfo">
+      <h2 className="cinfo-h">Ko'rinish</h2>
+      <CenterMedia center={center} ver={ver} onChange={bump} onMsg={(m) => alertBar(m)} />
+      <CenterPhotos centerId={center.id} ver={ver} onChange={bump} onMsg={(m) => { if (m) alertBar(m); }} />
+
+      <h2 className="cinfo-h">Markaz haqida</h2>
       <form className="card stack" onSubmit={save}>
         <b>Asosiy ma'lumotlar</b>
         <label>Markaz nomi<input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} maxLength={120} /></label>
@@ -46,10 +54,9 @@ export default function CenterInfo({ center, onChange }) {
         <ContactsEditor centerId={center.id} onSaved={onChange} />
       </div>
 
-      <CenterPhotos centerId={center.id} onMsg={(m) => { if (m) alertBar(m); }} />
-
+      <h2 className="cinfo-h">Filiallar va kurslar</h2>
       <CenterManager centerId={center.id} onMsg={(m) => { setMsg(''); setErr(''); if (m) alertBar(m); }} />
-    </>
+    </div>
   );
 }
 

@@ -144,7 +144,8 @@ Object.assign(RU, {
   'Joylashuv belgilandi ✓': 'Местоположение отмечено ✓', "Markazni qo'shing": 'Добавьте центр', "O'quv markazingiz shu yo'nalishdami?": 'Ваш центр работает в этом направлении?',
   "Butun O'zbekiston bo'ylab qidirish": 'Искать по всему Узбекистану', "Barcha bo'limlar bo'yicha qidirish": 'Искать во всех разделах', 'Eng mos': 'Лучшее совпадение', 'Kabinetga kirish ': 'Вход в кабинет'
 });
-RU_PARTS.unshift([/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
+Object.assign(RU, { "Yoki o'zingiz yozing:": 'Или введите сами:', 'km gacha': 'км', 'Barcha darajalar': 'Все уровни', 'masalan, 6': 'например, 6', "Masofa 0,5 dan 300 km gacha bo'lsin": 'Расстояние от 0,5 до 300 км' });
+RU_PARTS.unshift([/([\d,]+) km gacha/g, 'до $1 км'], [/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
 
 const norm = (s) => s.replace(/[ʻʼ‘’`]/g, "'").replace(/\s+/g, ' ').trim();
 const DICT = new Map(Object.entries(RU).map(([k, v]) => [norm(k), v]));

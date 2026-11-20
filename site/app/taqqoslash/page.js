@@ -14,7 +14,7 @@ export const metadata = {
   robots: { index: false, follow: true }
 };
 
-const FIELDS = 'id,name,rating,phone,telegram,is_verified,cover_url,branches(id,region_id),courses(level,price_monthly,duration_months,categories(slug,name))';
+const FIELDS = 'id,name,rating,phone,telegram,is_verified,cover_url,logo_url,branches(id,region_id),courses(level,price_monthly,duration_months,categories(slug,name))';
 const LVL = ['beginner', 'intermediate', 'advanced'];
 const sum = (n) => Number(n).toLocaleString('ru-RU') + " so'm";
 const tgHref = (t) => (/^https?:/i.test(t) ? t : 'https://t.me/' + String(t).replace(/^@/, ''));
@@ -84,7 +84,7 @@ export default async function Compare({ searchParams }) {
             <div key={x.c.id} className="cmpcell hd">
               <CompareRemove id={x.c.id} ids={ids} />
               <Link href={`/centers/${x.c.id}`} className="cmpav" style={{ background: x.color }}>
-                {x.c.cover_url ? <img src={x.c.cover_url} alt="" loading="lazy" /> : initials(x.c.name)}
+                {x.c.logo_url ? <img src={x.c.logo_url} alt="" loading="lazy" /> : initials(x.c.name)}
               </Link>
               <Link href={`/centers/${x.c.id}`} className="cmpname">{x.c.name}</Link>
             </div>
