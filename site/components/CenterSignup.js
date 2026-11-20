@@ -66,7 +66,7 @@ export default function CenterSignup({ markaz = '' }) {
         <div className="card stack csu-done">
           <span className="csu-badge wait">{STATUS.pending}</span>
           <b>«{req.center_name}» so'rovi yuborilgan ({fmtDate(req.created_at)}).</b>
-          {req.inn ? <p className="muted">{`${req.org_form || ''} «${req.legal_name || ''}», STIR ${fmtInn(req.inn)}`}</p> : null}
+          {req.inn ? <p className="muted">{`${req.legal_name || ''}${req.org_form ? ' (' + req.org_form + ')' : ''} · STIR ${fmtInn(req.inn)}`}</p> : null}
           <p className="muted">Ma'muriyat STIR va ma'lumotlarni tekshirib, siz bilan telefon orqali bog'lanadi (odatda 1 ish kuni ichida). Tasdiqlangach, shu login va parol bilan markaz kabinetiga kirasiz.</p>
           <Link className="btn ghost" href="/kabinet">Shaxsiy kabinetga qaytish</Link>
         </div>
