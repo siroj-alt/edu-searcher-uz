@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useMe, validPhone, rpcMsg, fmtSum } from '../lib/auth';
 import { getSource } from '../lib/utm';
 
-// Narx va jadvalni so'rash (ariza): ro'yxatdan o'tish shart emas — ism va telefon yetarli.
+// O'qishga ariza: ro'yxatdan o'tish shart emas — ism va telefon yetarli.
 // Ariza markaz paneliga va bosh admin paneliga tushadi. Kabinetga kirgan foydalanuvchi holatini kabinetda kuzatadi.
 export default function ApplyForm({ centerId, centerName, courses = [] }) {
   const me = useMe();
@@ -20,7 +20,7 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
     setF((x) => ({ ...x, name: x.name || me.full_name || '', phone: x.phone.replace(/\D/g, '').length > 3 ? x.phone : (me.phone || x.phone) }));
   }, [me]);
 
-  // Kurslar ro'yxatidagi "Narxni so'rash" tugmasi shu formani kerakli kurs bilan ochadi
+  // Kurslar ro'yxatidagi "Ariza berish" tugmasi shu formani kerakli kurs bilan ochadi
   useEffect(() => {
     const on = (e) => {
       const d = e.detail || {};
@@ -28,7 +28,7 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
       setF((x) => ({
         ...x,
         course: d.course && courses.some((k) => k.id === d.course) ? d.course : x.course,
-        note: x.note || (d.kind === 'price' ? "Narxi va dars jadvalini bilmoqchiman" : x.note)
+        note: x.note
       }));
       setSt((s) => (s.ok ? s : { ...s, err: '' }));
       setTimeout(() => { const el = formRef.current?.querySelector('input'); if (el) el.focus({ preventScroll: true }); }, 350);
@@ -48,14 +48,14 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
       p_center: centerId, p_course: f.course || null, p_name: name, p_phone: phone, p_note: f.note.trim() || null,
       p_source: getSource(), p_consent: true
     });
-    if (error) return fail(rpcMsg(error, "So'rov yuborilmadi. Birozdan so'ng qayta urinib ko'ring."));
+    if (error) return fail(rpcMsg(error, "Ariza yuborilmadi. Birozdan so'ng qayta urinib ko'ring."));
     setSt({ busy: false, ok: { code: data?.code || '' }, err: '' });
   }
 
   if (st.ok) {
     return (
       <div className="formmsg ok" role="status">
-        <b>Rahmat! So'rovingiz «{centerName}» markaziga yuborildi.</b> Markaz siz bilan telefon orqali bog'lanadi.
+        <b>Rahmat! Arizangiz «{centerName}» markaziga yuborildi.</b> Markaz siz bilan telefon orqali bog'lanadi.
         {st.ok.code ? <> Ariza raqamingiz: <b className="appcode">{st.ok.code}</b> — markazga borganingizda shu raqamni ayting.</> : null}
         {me ? (
           <> Ariza holatini <Link href="/kabinet" style={{ textDecoration: 'underline' }}>shaxsiy kabinetingizda</Link> kuzatishingiz mumkin.</>
@@ -69,7 +69,7 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
   return (
     <form className="lf" onSubmit={send} noValidate ref={formRef}>
       <p className="muted" style={{ marginBottom: 12 }}>
-        Ro'yxatdan o'tish shart emas: ism va telefon raqamingizni qoldiring, markaz sizga narx, dars jadvali va bo'sh joylar haqida aytib beradi.
+        Ro'yxatdan o'tish shart emas: ism va telefon raqamingizni qoldiring. Arizangiz to'g'ridan-to'g'ri markazga boradi, markaz siz bilan bog'lanib narx, dars jadvali va bo'sh joylar haqida aytib beradi.
       </p>
       <div className="fgrid2">
         <label>Ism familiya<input value={f.name} onChange={set('name')} maxLength={80} autoComplete="name" placeholder="Ism familiya" /></label>
@@ -86,9 +86,9 @@ export default function ApplyForm({ centerId, centerName, courses = [] }) {
       </div>
       <label className="consent">
         <input type="checkbox" checked={f.consent} onChange={set('consent')} />
-        <span>Ismim va telefon raqamim shu so'rov bo'yicha bog'lanish uchun «{centerName}» markaziga yuborilishiga roziman.</span>
+        <span>Ismim va telefon raqamim shu ariza bo'yicha bog'lanish uchun «{centerName}» markaziga yuborilishiga roziman.</span>
       </label>
-      <button className="btn" disabled={st.busy}>{st.busy ? 'Yuborilmoqda...' : "So'rov yuborish"}</button>
+      <button className="btn" disabled={st.busy}>{st.busy ? 'Yuborilmoqda...' : 'Ariza yuborish'}</button>
       {st.err ? <div className="formmsg err" role="alert">{st.err}</div> : null}
       <p className="hint">Ma'lumotlaringiz faqat shu markazga ko'rsatiladi va boshqa maqsadda ishlatilmaydi.</p>
     </form>

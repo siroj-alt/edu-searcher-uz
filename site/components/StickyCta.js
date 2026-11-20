@@ -32,7 +32,7 @@ export default function StickyCta({ id = '', phone = '', telegram = '', name = '
   return (
     <div className={'scta glass' + (show ? ' on' : '')} aria-hidden={!show}>
       {id ? <CompareToggle id={id} variant="chip scta-cmp" /> : null}
-      <a className="scta-go" href="#ariza" tabIndex={show ? 0 : -1}>Narxni so'rash</a>
+      <a className="scta-go" href="#ariza" tabIndex={show ? 0 : -1}>Ariza berish</a>
     </div>
   );
 }

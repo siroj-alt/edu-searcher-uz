@@ -72,13 +72,15 @@ export default async function CenterPage({ params }) {
   if (!c) notFound();
 
   const regIds = regionIdsOf(c);
-  const [revRes, relRes, respRes] = await Promise.all([
+  const [revRes, relRes, respRes, legalRes] = await Promise.all([
     supabase.from('center_reviews').select('id,name,stars,comment,created_at').eq('center_id', c.id).eq('status', 'approved').order('created_at', { ascending: false }).limit(50),
     regIds.length
       ? supabase.from('centers').select(REL_FIELDS).eq('branches.region_id', regIds[0]).neq('id', c.id).limit(120)
       : Promise.resolve({ data: [] }),
-    supabase.rpc('center_response_hours', { p_center: c.id })
+    supabase.rpc('center_response_hours', { p_center: c.id }),
+    supabase.rpc('center_legal_public', { p_center: c.id })
   ]);
+  const legal = legalRes && legalRes.data && legalRes.data.org_form ? legalRes.data : null;
   const respHours = respRes && respRes.data != null ? Number(respRes.data) : null;
   const reviews = revRes.data || [];
   const all = (relRes.data || []).map((x) => ({ ...x, branches: x.branches || [], courses: x.courses || [] }));
@@ -183,7 +185,7 @@ export default async function CenterPage({ params }) {
           {respHours != null ? <div><small>Javob beradi</small><b>{`odatda ${hoursText(respHours)}`}</b></div> : null}
         </div>
         <div className="actions" id="center-actions">
-          <a className="btn" href="#ariza"><Cap width="18" height="18" />Narx va jadvalni so'rash</a>
+          <a className="btn" href="#ariza"><Cap width="18" height="18" />Ariza berish</a>
           {c.phone ? <a className="btn ghost" href={tel(c.phone)}><Icon name="phone" />Qo'ng'iroq</a> : null}
           {c.telegram ? <a className="btn ghost" href={tgHref(c.telegram)} {...ext}><Icon name="send" />Telegram</a> : null}
           {c.website ? <a className="btn ghost" href={url(c.website)} {...ext}><Icon name="globe" />Veb-sayt</a> : null}
@@ -192,6 +194,12 @@ export default async function CenterPage({ params }) {
           <ShareButton title={c.name} text={`${c.name} — EduSearcher`} />
           <CompareToggle id={c.id} variant="btn ghost" />
         </div>
+        {legal ? (
+          <p className="legal-line">
+            {legal.legal_name ? `${legal.legal_name} · STIR ${String(legal.inn).replace(/^(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3')}` : 'Yakka tartibdagi tadbirkor'}
+            {legal.verified ? <span className="legal-ok"> · STIR tasdiqlangan</span> : null}
+          </p>
+        ) : null}
         {c.updated_at ? <p className="updated">Ma'lumot yangilangan: {fmtDate(c.updated_at)}</p> : null}
         {!c.owner_id ? (
           <p className="claim">Bu sizning markazingizmi? <Link href={`/markaz-royxat?markaz=${c.id}`}>Ma'lumotlarni tuzating yoki markazni o'z kabinetingizga oling</Link></p>
@@ -232,7 +240,7 @@ export default async function CenterPage({ params }) {
                         </small>
                       </span>
                     ) : (
-                      <AskButton center={c.id} course={k.id} kind="price" className="btn ghost sm kask">Narxni so'rash</AskButton>
+                      <AskButton center={c.id} course={k.id} kind="price" className="btn ghost sm kask">Ariza berish</AskButton>
                     )}
                   </div>
                 ))}
@@ -273,7 +281,7 @@ export default async function CenterPage({ params }) {
         )}
       </section>
 
-      <div className="sec" id="ariza"><h2>Narx va jadvalni so'rash</h2><i /></div>
+      <div className="sec" id="ariza"><h2>O'qishga ariza berish</h2><i /></div>
       <section className="card lead-card" id="ariza-forma">
         <ApplyForm centerId={c.id} centerName={c.name} courses={courseOpts} />
       </section>

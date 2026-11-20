@@ -159,6 +159,15 @@ Object.assign(RU, {
   'Siz nima olasiz': 'Что вы получаете', 'Savol-javob': 'Вопросы и ответы', 'Boshlaymizmi?': 'Начнём?', 'Markazimni topish': 'Найти мой центр', 'Filtr bilan qidirish': 'Искать с фильтрами',
   'Bosh sahifa': 'Главная', 'Viloyatlar': 'Регионы', 'Telegram bildirishnomalari': 'Уведомления в Telegram', 'Ulash': 'Подключить', 'Uzish': 'Отключить'
 });
+// v13: markazlar uchun ro'yxatdan o'tish
+Object.assign(RU, {
+  "O'quv markazlari uchun": 'Для учебных центров', "Markazni ro'yxatdan o'tkazish": 'Регистрация центра', "Markazlar uchun ro'yxatdan o'tish": 'Регистрация для центров',
+  'Hisob': 'Аккаунт', 'Tashkilot': 'Организация', 'Markaz': 'Центр', 'Tasdiqlash': 'Подтверждение', 'Davom etish': 'Продолжить', 'Orqaga': 'Назад',
+  'Markaz uchun hisob': 'Аккаунт центра', "Tashkilot ma'lumotlari": 'Данные организации', "Markaz ma'lumotlari": 'Данные центра', "Ma'lumotlarni tekshiring": 'Проверьте данные',
+  'Tashkiliy-huquqiy shakli': 'Организационно-правовая форма', 'STIR (INN)': 'ИНН', 'Yuridik nomi': 'Юридическое название', "Yuridik ma'lumotlar": 'Юридические данные',
+  'STIR tasdiqlangan': 'ИНН подтверждён', 'Tekshirilmoqda': 'На проверке', "Parolni takrorlang": 'Повторите пароль', 'Elektron pochta (ixtiyoriy)': 'Эл. почта (необязательно)',
+  "Ro'yxatdan o'tish": 'Зарегистрироваться', 'Ariza yuborish': 'Отправить заявку'
+});
 RU_PARTS.unshift([/([\d,]+) km gacha/g, 'до $1 км'], [/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
 
 const norm = (s) => s.replace(/[ʻʼ‘’`]/g, "'").replace(/\s+/g, ' ').trim();

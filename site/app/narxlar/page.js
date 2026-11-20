@@ -96,7 +96,7 @@ export default async function PriceIndex({ searchParams }) {
         <div className="card pidx-empty">
           <h2 className="h2">Narxlar hozir yig'ilmoqda</h2>
           <p>{`${where} hali biror yo'nalish bo'yicha kamida ${MIN_N} ta markaz narxini yubormagan. Ishonchli o'rtacha narx chiqishi uchun shuncha markaz kerak.`}</p>
-          <p>{totalPriced ? `Hozircha ${totalPriced} ta markaz narxini yuborgan.` : ''} Aniq narxni markaz sahifasida «Narx va jadvalni so'rash» tugmasi orqali bilib olishingiz mumkin.</p>
+          <p>{totalPriced ? `Hozircha ${totalPriced} ta markaz narxini yuborgan.` : ''} Aniq narxni markaz sahifasida «Ariza berish» tugmasi orqali bilib olishingiz mumkin.</p>
           <Link className="btn" href={region ? `/search?region=${region.slug}` : '/search'}>Markazlarni ko'rish</Link>
         </div>
       )}

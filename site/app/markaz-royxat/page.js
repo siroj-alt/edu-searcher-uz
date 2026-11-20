@@ -1,8 +1,8 @@
 import CenterSignup from '../../components/CenterSignup';
 
 export const metadata = {
-  title: "O'quv markazini qo'shish | EduSearcher",
-  description: "O'quv markazingizni EduSearcher'ga bepul qo'shing: qidiruv va xaritada chiqing, arizalarni kabinetda qabul qiling.",
+  title: "O'quv markazlari uchun ro'yxatdan o'tish | EduSearcher",
+  description: "O'quv markazingizni EduSearcher'da STIR (INN) bilan ro'yxatdan o'tkazing: qidiruv va xaritada chiqing, arizalarni kabinet va Telegram orqali qabul qiling.",
   alternates: { canonical: '/markaz-royxat' }
 };
 

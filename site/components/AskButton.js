@@ -1,6 +1,6 @@
 'use client';
 
-// "Narxni so'rash" / "Narx va jadvalni so'rash": sahifadagi so'rov formasini kerakli kurs bilan ochadi
+// Kurslar ro'yxatidagi "Ariza berish": sahifadagi ariza formasini kerakli kurs bilan ochadi
 export default function AskButton({ center, course = null, kind = 'price', className = 'btn ghost sm', children }) {
   const go = () => {
     try { window.dispatchEvent(new CustomEvent('es-ask', { detail: { center, course, kind } })); } catch {}

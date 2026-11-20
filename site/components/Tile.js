@@ -29,7 +29,7 @@ export default function Tile({ t, i = 0 }) {
         {t.rating > 0 ? <p className="tile-r">{STAR}<b>{t.rating.toFixed(1)}</b>{t.reviews ? <span>{` · ${t.reviews} sharh`}</span> : null}</p> : null}
       </div>
       <div className="tile-a">
-        <Link className="tile-go" href={href + '#ariza'}>{/so'm/.test(t.price || '') ? "Jadvalni so'rash" : "Narxni so'rash"}</Link>
+        <Link className="tile-go" href={href + '#ariza'}>Ariza berish</Link>
         <CompareToggle id={t.id} variant="chip" />
       </div>
     </article>

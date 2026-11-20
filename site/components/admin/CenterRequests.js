@@ -15,6 +15,7 @@ export default function CenterRequests() {
   const [msg, setMsg] = useState('');
   const [busy, setBusy] = useState(0);
   const [note, setNote] = useState({});
+  const [docs, setDocs] = useState({});
 
   const load = useCallback(async () => {
     setList(null); setErr('');
@@ -27,7 +28,7 @@ export default function CenterRequests() {
   async function decide(r, approve) {
     if (!approve && !(note[r.id] || '').trim() && !window.confirm('Sababsiz rad etilsinmi?')) return;
     setBusy(r.id); setErr(''); setMsg('');
-    const { data, error } = await supabase.rpc('admin_decide_center_request', { p_id: r.id, p_approve: approve, p_note: note[r.id] || null, p_link_center: null });
+    const { data, error } = await supabase.rpc('admin_decide_center_request', { p_id: r.id, p_approve: approve, p_note: note[r.id] || null, p_link_center: null, p_docs: approve && !!docs[r.id] });
     setBusy(0);
     if (error) return setErr(rpcMsg(error));
     setMsg(approve ? `«${r.center_name}» tasdiqlandi, markaz kabineti ochildi.` : `«${r.center_name}» rad etildi.`);
@@ -55,6 +56,17 @@ export default function CenterRequests() {
               <span className={'csu-badge ' + (r.status === 'pending' ? 'wait' : r.status === 'approved' ? 'ok' : 'bad')}>{r.status === 'pending' ? 'Yangi' : r.status === 'approved' ? 'Tasdiqlangan' : 'Rad etilgan'}</span>
             </header>
             <dl className="creq-d">
+              {r.inn ? (
+                <>
+                  <dt>STIR (INN)</dt>
+                  <dd><b className="creq-inn">{String(r.inn).replace(/^(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3')}</b>{' '}
+                    <a href={`https://orginfo.uz/search/all?q=${r.inn}`} target="_blank" rel="noopener noreferrer">orginfo.uz da tekshirish</a></dd>
+                  <dt>Tashkilot</dt><dd>{`${r.legal_name || '—'}${r.org_form ? ' · ' + r.org_form : ''}`}</dd>
+                  <dt>Rahbar</dt><dd>{r.director_name || '—'}</dd>
+                  {r.license_no ? <><dt>Ruxsatnoma</dt><dd>{r.license_no}</dd></> : null}
+                  {r.email ? <><dt>E-pochta</dt><dd><a href={'mailto:' + r.email}>{r.email}</a></dd></> : null}
+                </>
+              ) : <><dt>STIR (INN)</dt><dd className="muted">Kiritilmagan (eski so'rov)</dd></>}
               <dt>Mas'ul shaxs</dt><dd>{r.contact_name}</dd>
               <dt>Telefon</dt><dd><a href={'tel:' + String(r.phone).replace(/[^\d+]/g, '')}>{r.phone}</a></dd>
               {r.telegram ? <><dt>Telegram</dt><dd>{r.telegram}</dd></> : null}
@@ -71,6 +83,7 @@ export default function CenterRequests() {
             {r.status === 'pending' ? (
               <div className="creq-a">
                 <input placeholder="Izoh (rad etilsa sababi foydalanuvchiga ko'rinadi)" maxLength={500} value={note[r.id] || ''} onChange={(e) => setNote((n) => ({ ...n, [r.id]: e.target.value }))} />
+                <label className="chk"><input type="checkbox" checked={!!docs[r.id]} onChange={(e) => setDocs((d) => ({ ...d, [r.id]: e.target.checked }))} /> Hujjatlarni (guvohnoma, ruxsatnoma) ko'rdim — «Hujjatlari tekshirilgan» belgisini qo'yish</label>
                 <div className="row">
                   <button type="button" className="btn" disabled={busy === r.id} onClick={() => decide(r, true)}>{busy === r.id ? 'Kutib turing…' : 'Tasdiqlash va kabinet ochish'}</button>
                   <button type="button" className="btn ghost" disabled={busy === r.id} onClick={() => decide(r, false)}>Rad etish</button>

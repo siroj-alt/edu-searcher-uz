@@ -58,6 +58,10 @@ export default function AuthBox({ next = '', defaultMode = 'login', title = '', 
         <button type="button" className={'tab' + (!reg ? ' on' : '')} onClick={() => { setMode('login'); setSt({ busy: false, err: '' }); }}>Kirish</button>
         <button type="button" className={'tab' + (reg ? ' on' : '')} onClick={() => { setMode('register'); setSt({ busy: false, err: '' }); }}>Ro'yxatdan o'tish</button>
       </div>
+      <div className="auth-who" role="note">
+        <span>{reg ? "Bu forma o'quvchilar va ota-onalar uchun." : "O'quvchilar va o'quv markazlari shu yerdan kiradi."}</span>
+        <Link href="/markaz-royxat">{reg ? "O'quv markazimisiz? Markazlar uchun ro'yxatdan o'tish" : "Markazingiz hali ro'yxatdan o'tmaganmi? Markazni ro'yxatdan o'tkazish"}</Link>
+      </div>
       <form className="card stack" onSubmit={submit} noValidate>
         <OAuthButtons next={next} label={reg ? "ro'yxatdan o'tish" : 'kirish'} />
         {reg ? (

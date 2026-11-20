@@ -24,7 +24,7 @@ export default async function Hamkorlik() {
   const example = 500000;
 
   const steps = [
-    ['Markazni qo\'shing', "Ro'yxatdan o'ting yoki saytdagi markazingiz sahifasida «Bu sizning markazingizmi?» tugmasini bosing. Tekshiruvdan so'ng kabinet ochiladi."],
+    ['Ro\'yxatdan o\'ting', "«Markazlar uchun ro'yxatdan o'tish» bo'limida hisob oching va tashkilot STIR (INN) raqamini kiriting. Saytda markazingiz bo'lsa, uni tanlang. STIR tekshirilgach kabinet ochiladi."],
     ['Narx va jadvalni kiriting', "Kurslar, oylik narx, filial manzillari va logotip. Narx ko'rsatilgan markazlar qidiruvda ko'proq so'rov oladi."],
     ['So\'rovlarni qabul qiling', "Har bir so'rov kabinetga va Telegram botga darhol keladi. Javob berilmagan so'rov haqida 24 soatdan keyin eslatamiz."],
     ['«Yozildi» deb belgilang', "O'quvchi o'qishni boshlasa, so'rovni «yozildi» holatiga o'tkazing. 14 kundan keyin bot o'quvchining o'zidan so'raydi."]
@@ -50,7 +50,7 @@ export default async function Hamkorlik() {
         <h1 className="h1s">O'quvchi kelmasa — to'lov yo'q</h1>
         <p className="lp-intro">EduSearcher'da markazingizni bepul joylaysiz. Biz faqat sayt orqali kelib, o'qishni boshlagan va buni o'zi tasdiqlagan o'quvchi uchun haq olamiz.</p>
         <div className="row-btns">
-          <Link className="btn" href="/markaz-royxat">Markazni qo'shish</Link>
+          <Link className="btn" href="/markaz-royxat">Markazni ro'yxatdan o'tkazish</Link>
           <Link className="btn ghost" href="/markaz-kabineti">Kabinetga kirish</Link>
         </div>
       </section>

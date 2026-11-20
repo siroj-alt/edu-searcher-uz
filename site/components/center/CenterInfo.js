@@ -7,6 +7,7 @@ import ContactsEditor from '../shared/ContactsEditor';
 import CenterMedia from '../shared/CenterMedia';
 import TgLink from '../shared/TgLink';
 import ReviewQr from './ReviewQr';
+import CenterLegal from './CenterLegal';
 
 // Markaz ma'lumotlarini tahrirlash: nom, tavsif, aloqa, filiallar va kurslar
 export default function CenterInfo({ center, onChange }) {
@@ -57,6 +58,8 @@ export default function CenterInfo({ center, onChange }) {
         {msg ? <div className="formmsg ok">{msg}</div> : null}
         {err ? <div className="formmsg err">{err}</div> : null}
       </form>
+
+      <CenterLegal center={center} />
 
       <div className="card stack">
         <b>Aloqa ma'lumotlari</b>

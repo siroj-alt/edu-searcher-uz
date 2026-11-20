@@ -55,8 +55,8 @@ export default function CenterPanel({ centerParam = '' }) {
       <div className="wrap page">
         <div className="card empty-state">
           <h1 className="h2">O'quv markazi kabineti</h1>
-          <p className="muted">Markazingiz paneliga kirish uchun sizga berilgan login va parol bilan kiring.</p>
-          <p style={{ marginTop: 14 }}><Link className="btn" href="/kirish?next=/markaz-kabineti">Kirish</Link></p>
+          <p className="muted">Markazingiz paneliga ro'yxatdan o'tishda yaratgan login va parolingiz bilan kiring.</p>
+          <p className="row-btns" style={{ marginTop: 14 }}><Link className="btn" href="/kirish?next=/markaz-kabineti">Kirish</Link><Link className="btn ghost" href="/markaz-royxat">Markazni ro'yxatdan o'tkazish</Link></p>
         </div>
       </div>
     );
@@ -67,8 +67,8 @@ export default function CenterPanel({ centerParam = '' }) {
       <div className="wrap page">
         <div className="card empty-state">
           <h1 className="h2">Bu hisobga o'quv markazi biriktirilmagan</h1>
-          <p className="muted">Markazingiz uchun kabinet ochish yoki mavjud markazni hisobingizga biriktirish uchun sayt ma'muriyatiga murojaat qiling.</p>
-          <p style={{ marginTop: 14 }}><Link className="btn ghost" href="/kabinet">Shaxsiy kabinet</Link></p>
+          <p className="muted">Markazingizni STIR (INN) bilan ro'yxatdan o'tkazing yoki saytdagi mavjud markazni hisobingizga biriktiring. So'rov yuborgan bo'lsangiz, holatini ro'yxatdan o'tish sahifasida ko'rasiz.</p>
+          <p className="row-btns" style={{ marginTop: 14 }}><Link className="btn" href="/markaz-royxat">Markazni ro'yxatdan o'tkazish</Link><Link className="btn ghost" href="/kabinet">Shaxsiy kabinet</Link></p>
         </div>
       </div>
     );

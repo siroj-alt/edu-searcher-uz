@@ -79,7 +79,7 @@ export default async function DistrictPage({ params }) {
       <p className="lp-intro">
         {`${region.name}, ${district.name}: ${phrase} bo'yicha ${centers.length} ta o'quv markazi. `}
         {pi ? `Oylik narx odatda ${sum(pi.p_min)} so'mdan ${sum(pi.p_max)} so'mgacha, o'rtacha ${sum(pi.p_med)} so'm. ` : ''}
-        Xaritada uyingizga yaqinini tanlang va markazdan narx va dars jadvalini so'rang.
+        Xaritada uyingizga yaqinini tanlang va sayt orqali o'qishga ariza bering.
       </p>
       <div className="row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', margin: '6px 0 16px' }}>
         <Link className="btn sm" href={`/search?region=${region.slug}&tuman=${district.id}&cat=${cat.id}`}>Filtr bilan qidirish</Link>
