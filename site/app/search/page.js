@@ -152,7 +152,7 @@ export default async function Search({ searchParams, home = false }) {
     return (
       <div className="wrap page spage">
         {!nFilters && !q
-          ? <h1 className="h1s h1home">O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</h1>
+          ? <h1 className="h1s h1home"><span className="l-uz">O'zingizga mos o'quv markazini <mark>bir daqiqada</mark> toping</span><span className="l-ru" lang="ru" data-notr>Найдите подходящий учебный центр <mark>за минуту</mark></span></h1>
           : <h1 className="h1s">{section ? `${section.name}: o'quv markazlari` : district ? `${district.name}dagi o'quv markazlari` : region ? `${region.name}dagi o'quv markazlari` : "O'zbekiston bo'ylab o'quv markazlari"}</h1>}
         {toolbar(centers.length)}
         {catChips}

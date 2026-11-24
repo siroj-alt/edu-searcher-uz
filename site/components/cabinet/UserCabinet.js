@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useMe, refreshMe, signOut, rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom, thisMonth, APP_STATUS, PAY_METHOD, PAY_STATUS } from '../../lib/auth';
 import SavedList from '../SavedList';
 import TgLink from '../shared/TgLink';
+import BranchTransfer from './BranchTransfer';
 
 const TABS = [['markazlar', 'Markazlarim'], ['tolov', "To'lovlar"], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
 const ENR_STATUS = { active: "O'qiyapman", finished: 'Tugatilgan', left: "To'xtatilgan" };
@@ -21,14 +22,26 @@ export default function UserCabinet({ initialTab = '' }) {
     if (!me) return;
     const [a, e, p] = await Promise.all([
       supabase.from('applications').select('id,code,center_id,course_name,status,reply,note,created_at,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
-      supabase.from('enrollments').select('id,center_id,course_name,group_name,monthly_fee,started_on,ended_on,status,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
+      supabase.from('enrollments').select('id,center_id,branch_id,course_name,group_name,monthly_fee,started_on,ended_on,status,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
       supabase.from('payments').select('id,enrollment_id,period,amount,method,status,note,created_at').eq('user_id', me.id).order('period', { ascending: false }).limit(1000)
     ]);
     if (a.error || e.error || p.error) { setErr("Ma'lumotlarni yuklab bo'lmadi. Internetni tekshirib, sahifani yangilang."); return; }
     const ids = [...new Set((e.data || []).map((x) => x.center_id))];
-    const info = ids.length ? await supabase.from('center_payment_info').select('*').in('center_id', ids) : { data: [] };
+    const actIds = [...new Set((e.data || []).filter((x) => x.status === 'active').map((x) => x.center_id))];
+    const [info, br, trs] = await Promise.all([
+      ids.length ? supabase.from('center_payment_info').select('*').in('center_id', ids) : { data: [] },
+      actIds.length ? supabase.from('branches').select('id,center_id,address,district_id').in('center_id', actIds) : { data: [] },
+      supabase.from('enrollment_transfers').select('id,enrollment_id,to_branch_id,status,admin_note,wanted_from,created_at,decided_at').eq('user_id', me.id).order('created_at', { ascending: false }).limit(100)
+    ]);
+    const dIds = [...new Set((br.data || []).map((b) => b.district_id).filter(Boolean))];
+    const ds = dIds.length ? await supabase.from('districts').select('id,name').in('id', dIds) : { data: [] };
+    const branches = {};
+    for (const b of br.data || []) (branches[b.center_id] = branches[b.center_id] || []).push(b);
     setErr('');
-    setD({ apps: a.data || [], enr: e.data || [], pays: p.data || [], info: Object.fromEntries((info.data || []).map((x) => [x.center_id, x])) });
+    setD({
+      apps: a.data || [], enr: e.data || [], pays: p.data || [], info: Object.fromEntries((info.data || []).map((x) => [x.center_id, x])),
+      branches, dist: Object.fromEntries((ds.data || []).map((x) => [x.id, x.name])), tr: trs.data || []
+    });
   }, [me]);
   useEffect(() => { load(); }, [load]);
 
@@ -62,6 +75,13 @@ export default function UserCabinet({ initialTab = '' }) {
         {TABS.map(([k, v]) => <button key={k} type="button" className={'tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>{v}</button>)}
       </div>
       {err ? <div className="formmsg err" style={{ marginBottom: 12 }}>{err}</div> : null}
+      {!me.phone && tab !== 'profil' ? (
+        <div className="card note-card" style={{ marginBottom: 12 }}>
+          <b>Telefon raqamingizni qo'shing</b>
+          <p className="muted" style={{ margin: '4px 0 10px' }}>Arizalaringiz bo'yicha markazlar siz bilan telefon orqali bog'lanadi.</p>
+          <button type="button" className="btn sm" onClick={() => setTab('profil')}>Profilni to'ldirish</button>
+        </div>
+      ) : null}
       {me.role === 'user' ? <TgLink compact forStudent /> : null}
 
       {tab === 'markazlar' ? (
@@ -83,6 +103,7 @@ export default function UserCabinet({ initialTab = '' }) {
                         <span className="muted">Oylik to'lov</span>
                         <b>{x.monthly_fee ? fmtSum(x.monthly_fee) : 'Belgilanmagan'}</b>
                       </div>
+                      <BranchTransfer e={x} branches={d.branches[x.center_id] || []} dist={d.dist} transfers={d.tr} onChange={load} />
                       <button type="button" className="btn sm" style={{ marginTop: 10 }} onClick={() => setTab('tolov')}>To'lovlar</button>
                     </div>
                   ))}

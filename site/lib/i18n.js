@@ -168,6 +168,15 @@ Object.assign(RU, {
   'STIR tasdiqlangan': 'ИНН подтверждён', 'Tekshirilmoqda': 'На проверке', "Parolni takrorlang": 'Повторите пароль', 'Elektron pochta (ixtiyoriy)': 'Эл. почта (необязательно)',
   "Ro'yxatdan o'tish": 'Зарегистрироваться', 'Ariza yuborish': 'Отправить заявку'
 });
+// v14: filialga ko'chirish, profil
+Object.assign(RU, {
+  "Boshqa filialga ko'chirish": 'Перевестись в другой филиал', 'Filial': 'Филиал', "Ko'chirish arizasi ko'rib chiqilmoqda": 'Заявка на перевод рассматривается',
+  'Arizani bekor qilish': 'Отменить заявку', "O'qishingiz yangi filialga ko'chirildi": 'Ваше обучение переведено в новый филиал', "Ko'chirish arizasi rad etildi": 'Заявка на перевод отклонена',
+  "Qaysi filialga ko'chmoqchisiz?": 'В какой филиал хотите перейти?', 'Filialni tanlang': 'Выберите филиал', 'Qachondan (ixtiyoriy)': 'С какой даты (необязательно)',
+  'Sababi (ixtiyoriy)': 'Причина (необязательно)', "Telefon raqamingizni qo'shing": 'Добавьте номер телефона', "Profilni to'ldirish": 'Заполнить профиль',
+  "Arizalaringiz bo'yicha markazlar siz bilan telefon orqali bog'lanadi.": 'Центры свяжутся с вами по телефону по вашим заявкам.',
+  "Markaz belgilamagan": 'Центр не указал'
+});
 RU_PARTS.unshift([/([\d,]+) km gacha/g, 'до $1 км'], [/([\d,.]+ (?:ming|mln)) so'mgacha/g, 'до $1 сум'], [/(.+): o'quv markazlari$/, '$1: учебные центры'], [/^Barcha: (.+)$/, 'Все: $1'], [/(\d+) filial\b/g, '$1 фил.'], [/Butun (.+) bo'yicha qidirish/, 'Искать по всему: $1']);
 
 const norm = (s) => s.replace(/[ʻʼ‘’`]/g, "'").replace(/\s+/g, ' ').trim();

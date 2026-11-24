@@ -18,6 +18,7 @@ const ICONS = {
   stats: ic(<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>),
   price: ic(<><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" /><circle cx="8" cy="8" r="1.5" /></>),
   bill: ic(<><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" /><path d="M9 8h6M9 12h6M9 16h3" /></>),
+  move: ic(<><path d="M4 7h13l-3-3M20 17H7l3 3" /></>),
   gear: ic(<><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></>)
 };
 
@@ -60,6 +61,7 @@ export default function AdminNav() {
     [ADMIN + '/sharhlar', 'Sharhlar', 'Tasdiqlashni kutayotgan sharhlar', 'reviews', cnt.reviews_pending],
     [ADMIN + '/tavsiya', 'Belgilar va kontaktlar', 'Tavsiya, tasdiq belgisi, aloqa', 'badges'],
     [ADMIN + '/bot', 'Telegram bot', 'Bot foydalanuvchilari va arizalari', 'bot'],
+    [ADMIN + '/kochirish', "Filialga ko'chirish", "O'quvchilar arizalari", 'move', cnt.transfers_pending],
     [ADMIN + '/narxlar', "Narxlarni yig'ish", "Narxi kiritilmagan kurslar", 'price'],
     [ADMIN + '/hisob', 'Oylik hisob', "Tasdiqlangan o'quvchilar bo'yicha", 'bill'],
     [ADMIN + '/statistika', 'Statistika', "Tashriflar va qiziqishlar", 'stats'],

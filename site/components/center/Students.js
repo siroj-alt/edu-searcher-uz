@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { tel } from '../../lib/cats';
 import { rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom, thisMonth, PAY_METHOD } from '../../lib/auth';
+import { useBranches } from '../shared/useBranches';
 
 const TABS = [['active', "O'qiyotganlar"], ['done', 'Tugatgan / chiqqan'], ['', 'Barchasi']];
 const ST = { active: "O'qiyapti", finished: 'Tugatdi', left: 'Chiqib ketdi' };
@@ -17,10 +18,13 @@ export default function Students({ centerId, onChange }) {
   const [err, setErr] = useState('');
   const [open, setOpen] = useState(null); // { id, mode: 'edit' | 'pay' }
   const month = thisMonth();
+  const branches = useBranches(centerId);
+  const multi = branches && branches.length > 1;
+  const bName = (id) => (branches || []).find((b) => b.id === id)?.label || '';
 
   const load = useCallback(async () => {
     const [e, p] = await Promise.all([
-      supabase.from('enrollments').select('id,course_name,group_name,full_name,phone,monthly_fee,started_on,ended_on,status').eq('center_id', centerId).order('course_name').order('full_name').limit(2000),
+      supabase.from('enrollments').select('id,branch_id,course_name,group_name,full_name,phone,monthly_fee,started_on,ended_on,status').eq('center_id', centerId).order('course_name').order('full_name').limit(2000),
       supabase.from('payments').select('enrollment_id,status,amount').eq('center_id', centerId).eq('period', month).neq('status', 'rejected')
     ]);
     if (e.error) { setErr("O'quvchilarni yuklab bo'lmadi."); setRows([]); return; }
@@ -56,7 +60,7 @@ export default function Students({ centerId, onChange }) {
           <div className="sec" style={{ margin: '22px 0 10px' }}><h2 style={{ fontSize: 19 }}>{name} ({list.length})</h2><i /></div>
           <div className="card ascroll" style={{ padding: 0 }}>
             <table className="atable">
-              <thead><tr><th>O'quvchi</th><th>Telefon</th><th>Boshlagan</th><th>Oylik to'lov</th><th>{fmtMonth(month)}</th><th>Holat</th><th /></tr></thead>
+              <thead><tr><th>O'quvchi</th>{multi ? <th>Filial</th> : null}<th>Telefon</th><th>Boshlagan</th><th>Oylik to'lov</th><th>{fmtMonth(month)}</th><th>Holat</th><th /></tr></thead>
               <tbody>
                 {list.map((x) => {
                   const p = pays[x.id];
@@ -65,6 +69,7 @@ export default function Students({ centerId, onChange }) {
                     <RowGroup key={x.id}>
                       <tr>
                         <td><b>{x.full_name}</b></td>
+                        {multi ? <td className="small">{bName(x.branch_id) || <span className="muted">Belgilanmagan</span>}</td> : null}
                         <td style={{ whiteSpace: 'nowrap' }}><a className="ok" href={tel(x.phone)}>{x.phone}</a></td>
                         <td style={{ whiteSpace: 'nowrap' }}>{fmtDay(x.started_on)}</td>
                         <td style={{ whiteSpace: 'nowrap' }}>{x.monthly_fee ? fmtSum(x.monthly_fee) : <span className="muted">Belgilanmagan</span>}</td>
@@ -77,8 +82,8 @@ export default function Students({ centerId, onChange }) {
                           </div>
                         </td>
                       </tr>
-                      {mode === 'edit' ? <tr><td colSpan={7}><EditForm x={x} onDone={changed} onCancel={() => setOpen(null)} /></td></tr> : null}
-                      {mode === 'pay' ? <tr><td colSpan={7}><PayForm x={x} onDone={changed} onCancel={() => setOpen(null)} /></td></tr> : null}
+                      {mode === 'edit' ? <tr><td colSpan={multi ? 8 : 7}><EditForm x={x} branches={branches} onDone={changed} onCancel={() => setOpen(null)} /></td></tr> : null}
+                      {mode === 'pay' ? <tr><td colSpan={multi ? 8 : 7}><PayForm x={x} onDone={changed} onCancel={() => setOpen(null)} /></td></tr> : null}
                     </RowGroup>
                   );
                 })}
@@ -93,15 +98,15 @@ export default function Students({ centerId, onChange }) {
 
 const RowGroup = ({ children }) => <>{children}</>;
 
-function EditForm({ x, onDone, onCancel }) {
-  const [f, setF] = useState({ group: x.group_name || '', fee: x.monthly_fee != null ? String(x.monthly_fee) : '', status: x.status, start: x.started_on });
+function EditForm({ x, branches, onDone, onCancel }) {
+  const [f, setF] = useState({ group: x.group_name || '', fee: x.monthly_fee != null ? String(x.monthly_fee) : '', status: x.status, start: x.started_on, branch: x.branch_id || '' });
   const [st, setSt] = useState({ busy: false, err: '' });
   async function submit(e) {
     e.preventDefault();
     const fee = f.fee === '' ? null : Math.round(Number(f.fee));
     if (fee !== null && (!Number.isFinite(fee) || fee < 0)) return setSt({ busy: false, err: "Oylik to'lovni raqam bilan kiriting." });
     setSt({ busy: true, err: '' });
-    const { error } = await supabase.rpc('update_enrollment', { p_id: x.id, p_group: f.group, p_fee: fee, p_status: f.status, p_start: f.start || null });
+    const { error } = await supabase.rpc('update_enrollment', { p_id: x.id, p_group: f.group, p_fee: fee, p_status: f.status, p_start: f.start || null, p_branch: f.branch || null });
     if (error) return setSt({ busy: false, err: rpcMsg(error) });
     onDone();
   }
@@ -117,6 +122,14 @@ function EditForm({ x, onDone, onCancel }) {
           </select>
         </label>
         <label>Boshlagan sana<input value={f.start || ''} onChange={(e) => setF({ ...f, start: e.target.value })} type="date" /></label>
+        {branches && branches.length > 1 ? (
+          <label>Filial
+            <select value={f.branch} onChange={(e) => setF({ ...f, branch: e.target.value })}>
+              <option value="">Belgilanmagan</option>
+              {branches.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+            </select>
+          </label>
+        ) : null}
       </div>
       <div className="row" style={{ justifyContent: 'flex-start' }}>
         <button className="btn sm" disabled={st.busy}>Saqlash</button>

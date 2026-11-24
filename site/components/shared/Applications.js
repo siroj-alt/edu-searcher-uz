@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { supabase } from '../../lib/supabase';
 import { tel } from '../../lib/cats';
 import { rpcMsg, fmtDay, APP_STATUS } from '../../lib/auth';
+import { useBranches } from './useBranches';
 
 const TABS = [['new', 'Yangi'], ['contacted', "Bog'lanildi"], ['accepted', 'Qabul qilingan'], ['rejected', 'Rad etilgan'], ['', 'Barchasi']];
 const csvCell = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
@@ -110,8 +111,9 @@ function Row({ r, cols, showCenter, open, onOpen, onStatus, onDone }) {
 // Qabul qilish: kursga bog'lash va o'qiyotganlar guruhiga qo'shish
 function AcceptForm({ r, onDone, onCancel }) {
   const [courses, setCourses] = useState(null);
-  const [f, setF] = useState({ course: r.course_id || '', group: '', fee: '', start: today() });
+  const [f, setF] = useState({ course: r.course_id || '', group: '', fee: '', start: today(), branch: '' });
   const [st, setSt] = useState({ busy: false, err: '' });
+  const branches = useBranches(r.center_id);
 
   useEffect(() => {
     supabase.from('courses').select('id,name,price_monthly').eq('center_id', r.center_id).order('name').then(({ data }) => {
@@ -131,8 +133,9 @@ function AcceptForm({ r, onDone, onCancel }) {
     e.preventDefault();
     const fee = f.fee === '' ? null : Math.round(Number(f.fee));
     if (fee !== null && (!Number.isFinite(fee) || fee < 0)) return setSt({ busy: false, err: "Oylik to'lovni raqam bilan kiriting." });
+    if (branches && branches.length > 1 && !f.branch) return setSt({ busy: false, err: "O'quvchi qaysi filialda o'qishini tanlang." });
     setSt({ busy: true, err: '' });
-    const { error } = await supabase.rpc('accept_application', { p_id: r.id, p_course: f.course || null, p_group: f.group.trim() || null, p_fee: fee, p_start: f.start || null });
+    const { error } = await supabase.rpc('accept_application', { p_id: r.id, p_course: f.course || null, p_group: f.group.trim() || null, p_fee: fee, p_start: f.start || null, p_branch: f.branch || null });
     if (error) return setSt({ busy: false, err: rpcMsg(error) });
     onDone();
   }
@@ -150,6 +153,14 @@ function AcceptForm({ r, onDone, onCancel }) {
         <label>Guruh (ixtiyoriy)<input value={f.group} onChange={(e) => setF({ ...f, group: e.target.value })} maxLength={60} placeholder="Masalan: Du-Chor-Ju 18:00" /></label>
         <label>Oylik to'lov (so'm)<input value={f.fee} onChange={(e) => setF({ ...f, fee: e.target.value })} type="number" min="0" step="1000" placeholder="Masalan: 450000" /></label>
         <label>O'qish boshlanadigan sana<input value={f.start} onChange={(e) => setF({ ...f, start: e.target.value })} type="date" /></label>
+        {branches && branches.length > 1 ? (
+          <label>Filial
+            <select value={f.branch} onChange={(e) => setF({ ...f, branch: e.target.value })}>
+              <option value="">Filialni tanlang</option>
+              {branches.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+            </select>
+          </label>
+        ) : null}
       </div>
       <div className="row" style={{ justifyContent: 'flex-start' }}>
         <button className="btn sm" disabled={st.busy}>{st.busy ? 'Saqlanmoqda...' : "Qabul qilish va guruhga qo'shish"}</button>

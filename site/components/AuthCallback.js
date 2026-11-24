@@ -13,7 +13,13 @@ export default function AuthCallback() {
     const sp = new URLSearchParams(window.location.search);
     const next = safeNext(sp.get('next') || '');
     const fail = sp.get('error_description') || sp.get('error');
-    if (fail) { setErr(/denied|cancel/i.test(fail) ? 'Kirish bekor qilindi.' : "Kirib bo'lmadi. Qayta urinib ko'ring."); return; }
+    if (fail) {
+      setErr(/denied|cancel/i.test(fail) ? 'Kirish bekor qilindi.'
+        : /saving new user|signup/i.test(fail) ? "Hisob ochib bo'lmadi. Birozdan so'ng qayta urinib ko'ring yoki login va parol bilan ro'yxatdan o'ting."
+        : /already registered|exists/i.test(fail) ? "Bu elektron pochta bilan hisob allaqachon bor. Login va parol bilan kiring."
+        : "Kirib bo'lmadi. Qayta urinib ko'ring.");
+      return;
+    }
     let done = false;
     const finish = async () => {
       if (done) return;
@@ -21,6 +27,8 @@ export default function AuthCallback() {
       if (!session) return;
       done = true;
       const me = await refreshMe();
+      // Google/Apple orqali yangi kirgan o'quvchida telefon bo'lmaydi — avval profilni to'ldirishga yo'naltiramiz
+      if (!next && me && me.role === 'user' && !me.phone) { router.replace('/kabinet?b=profil'); return; }
       router.replace(next || homeFor(me));
     };
     const code = sp.get('code');

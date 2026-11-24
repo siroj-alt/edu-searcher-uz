@@ -118,12 +118,18 @@ const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://xmdxmfvrzbfjursk
 const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_BVrfkdIa6RfE2vCD761KUg_YG4Rn51u';
 let provCache = null;
 
-// Supabase'da qaysi provayderlar yoqilganini bilib oladi (yoqilmaganlari tugma sifatida ko'rsatilmaydi)
+// Provayder Supabase'da yoqilgan VA to'liq sozlangan bo'lsagina tugma ko'rsatiladi
+// (masalan, Apple yoqilgan, lekin maxfiy kalit kiritilmagan bo'lsa — tugma chiqmaydi, foydalanuvchi xatoga duch kelmaydi)
+const ready = (p) => fetch(`${SB_URL}/auth/v1/authorize?provider=${p}&skip_http_redirect=true`, { headers: { apikey: SB_KEY }, cache: 'no-store' })
+  .then((r) => r.ok).catch(() => false);
 export function oauthProviders() {
   if (!provCache) {
     provCache = fetch(SB_URL + '/auth/v1/settings', { headers: { apikey: SB_KEY }, cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : {}))
-      .then((j) => ({ google: !!j?.external?.google, apple: !!j?.external?.apple }))
+      .then(async (j) => {
+        const [google, apple] = await Promise.all([j?.external?.google ? ready('google') : false, j?.external?.apple ? ready('apple') : false]);
+        return { google, apple };
+      })
       .catch(() => ({ google: false, apple: false }));
   }
   return provCache;
@@ -137,7 +143,7 @@ export async function signInWithProvider(provider, next = '') {
     provider,
     options: { redirectTo, ...(provider === 'google' ? { queryParams: { prompt: 'select_account' } } : {}) }
   });
-  if (error) return /not enabled|unsupported provider/i.test(error.message || '') ? 'Bu usul hozircha yoqilmagan.' : "Kirib bo'lmadi. Qayta urinib ko'ring.";
+  if (error) return /not enabled|unsupported provider|missing oauth/i.test(error.message || '') ? 'Bu usul hozircha sozlanmagan. Login va parol bilan kiring.' : "Kirib bo'lmadi. Qayta urinib ko'ring.";
   return '';
 }
 export { safeNext };
