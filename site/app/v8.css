@@ -174,3 +174,11 @@ html[lang=ru] .l-ru{display:inline}
 .btr-act input{height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 12px;font:inherit;font-size:14px}
 @media (max-width:560px){.btr-move{grid-template-columns:1fr}.btr-move i{transform:rotate(90deg);justify-self:center}}
 .note-card{border-color:var(--line2);background:var(--soft2)}
+
+/* Huquqiy sahifalar */
+.legal{max-width:820px}
+.legal p,.legal li{line-height:1.65}
+.legal-s{margin-top:22px}
+.legal-s h2{font-size:19px;margin:0 0 8px}
+.legal-s ul{padding-left:20px;margin:0}
+.legal-s li{margin:4px 0}

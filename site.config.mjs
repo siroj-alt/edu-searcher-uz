@@ -85,7 +85,7 @@ export default {
     { file: 'app/layout.js', find: `import UpdateCheck from '../components/UpdateCheck';`, replace: `import UpdateCheck from '../components/UpdateCheck';\nimport SourceCapture from '../components/SourceCapture';\nimport SiteMeta from '../components/SiteMeta';` },
     { file: 'app/layout.js', find: `<UpdateCheck />`, replace: `<UpdateCheck />\n        <SourceCapture />` },
     { file: 'app/layout.js', find: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />`, replace: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />\n        <SiteMeta />` },
-    { file: 'app/layout.js', find: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>`, replace: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>\n                  <li><Link href="/hamkorlik">Hamkorlik shartlari</Link></li>\n                  <li><Link href="/narxlar">Kurs narxlari indeksi</Link></li>` }
+    { file: 'app/layout.js', find: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>`, replace: `<li><Link href="/markaz-kabineti">Markazlar uchun kabinet</Link></li>\n                  <li><Link href="/hamkorlik">Hamkorlik shartlari</Link></li>\n                  <li><Link href="/narxlar">Kurs narxlari indeksi</Link></li>\n                  <li><Link href="/maxfiylik">Maxfiylik siyosati</Link></li>\n                  <li><Link href="/foydalanish-shartlari">Foydalanish shartlari</Link></li>` }
 
   ]
 };
