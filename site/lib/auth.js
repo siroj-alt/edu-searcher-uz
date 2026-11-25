@@ -120,8 +120,9 @@ let provCache = null;
 
 // Provayder Supabase'da yoqilgan VA to'liq sozlangan bo'lsagina tugma ko'rsatiladi
 // (masalan, Apple yoqilgan, lekin maxfiy kalit kiritilmagan bo'lsa — tugma chiqmaydi, foydalanuvchi xatoga duch kelmaydi)
-const ready = (p) => fetch(`${SB_URL}/auth/v1/authorize?provider=${p}&skip_http_redirect=true`, { headers: { apikey: SB_KEY }, cache: 'no-store' })
-  .then((r) => r.ok).catch(() => false);
+// Sozlangan provayder Google/Apple'ga yo'naltiradi (opaqueredirect), sozlanmagani 400 qaytaradi
+const ready = (p) => fetch(`${SB_URL}/auth/v1/authorize?provider=${p}`, { headers: { apikey: SB_KEY }, cache: 'no-store', redirect: 'manual' })
+  .then((r) => r.type === 'opaqueredirect' || (r.status >= 300 && r.status < 400) || r.ok).catch(() => false);
 export function oauthProviders() {
   if (!provCache) {
     provCache = fetch(SB_URL + '/auth/v1/settings', { headers: { apikey: SB_KEY }, cache: 'no-store' })
