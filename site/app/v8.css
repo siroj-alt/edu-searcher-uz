@@ -182,3 +182,12 @@ html[lang=ru] .l-ru{display:inline}
 .legal-s h2{font-size:19px;margin:0 0 8px}
 .legal-s ul{padding-left:20px;margin:0}
 .legal-s li{margin:4px 0}
+
+/* Loyiha egasi va ishlab chiquvchi (har sahifaning eng pastida) */
+.pcredit{background:#163A2C;color:#fff;margin-top:26px;border-radius:22px 22px 0 0}
+.pcredit-in{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-top:22px;padding-bottom:22px}
+.pcredit-own{margin:0;display:flex;flex-direction:column;gap:2px}
+.pcredit-own b{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.pcredit-own span{font-size:17px;color:rgba(255,255,255,.82)}
+.pcredit-dev{width:300px;max-width:100%;height:auto;border-radius:14px;display:block;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+@media (max-width:560px){.pcredit-in{flex-direction:column;align-items:flex-start}.pcredit-dev{width:100%}}
