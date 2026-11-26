@@ -7,6 +7,8 @@ import Overview from './Overview';
 import Students from './Students';
 import Payments from './Payments';
 import CenterInfo from './CenterInfo';
+import Diary from './Diary';
+import AppFeatures from './AppFeatures';
 import Applications from '../shared/Applications';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -76,7 +78,7 @@ export default function CenterPanel({ centerParam = '' }) {
 
   const expired = center.contract_status === 'expired' || (center.contract_end && new Date(center.contract_end + 'T23:59:59') < new Date());
   const nNew = ov?.applications?.new || 0, nPay = ov?.payments_pending || 0;
-  const TABS = [['umumiy', 'Umumiy'], ['arizalar', 'Arizalar', nNew], ['oquvchilar', "O'quvchilar"], ['tolovlar', "To'lovlar", nPay], ['malumot', "Ma'lumotlar"]];
+  const TABS = [['umumiy', 'Umumiy'], ['arizalar', 'Arizalar', nNew], ['oquvchilar', "O'quvchilar"], ['kundalik', 'Kundalik'], ['tolovlar', "To'lovlar", nPay], ['ilova', 'Ilova uchun'], ['malumot', "Ma'lumotlar"]];
   const status = center.is_hidden ? ['off', 'Saytda yashirilgan'] : center.is_verified ? ['ok', 'Saytda ko\'rinadi · Tasdiqlangan'] : ['ok', 'Saytda ko\'rinadi'];
   return (
     <div className="wrap page cab">
@@ -112,6 +114,8 @@ export default function CenterPanel({ centerParam = '' }) {
       {tab === 'arizalar' ? <Applications centerId={center.id} onChange={loadOv} /> : null}
       {tab === 'oquvchilar' ? <Students centerId={center.id} onChange={loadOv} /> : null}
       {tab === 'tolovlar' ? <Payments centerId={center.id} onChange={loadOv} /> : null}
+      {tab === 'kundalik' ? <Diary centerId={center.id} /> : null}
+      {tab === 'ilova' ? <AppFeatures center={center} onChange={loadCenters} /> : null}
       {tab === 'malumot' ? <CenterInfo center={center} onChange={loadCenters} /> : null}
     </div>
   );
