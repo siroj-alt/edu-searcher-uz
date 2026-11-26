@@ -130,7 +130,7 @@
 .lt-cefr span.on{background:rgba(255,255,255,.95);color:var(--tc)}
 
 /* Admin: ilova bo'limi */
-.appadm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.appadm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .appadm-grid .stat{margin:0}
 .trial-row{align-items:center}
-@media (max-width:560px){.acct-pick{grid-template-columns:1fr}.kid-boxes b{font-size:17px}}
+@media (max-width:360px){.acct-pick{grid-template-columns:1fr}}@media (max-width:560px){.kid-boxes b{font-size:17px}}
