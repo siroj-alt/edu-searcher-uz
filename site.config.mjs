@@ -81,7 +81,7 @@ export default {
     { file: "components/AdminPanel.js", find: "<CenterAccess center={c} onMsg={setMsg} onChange={load} />", replace: "<CenterPhotos centerId={c.id} onMsg={setMsg} />\n                  <CenterAccess center={c} onMsg={setMsg} onChange={load} />" },
 
     // v12: yangi uslublar, manba (UTM) va Metrika, qidiruv tizimlari teglari, pastki havolalar
-    { file: 'app/layout.js', find: `import './v7.css';`, replace: `import './v7.css';\nimport './v8.css';` },
+    { file: 'app/layout.js', find: `import './v7.css';`, replace: `import './v7.css';\nimport './v8.css';\nimport './v9.css';` },
     { file: 'app/layout.js', find: `import UpdateCheck from '../components/UpdateCheck';`, replace: `import UpdateCheck from '../components/UpdateCheck';\nimport SourceCapture from '../components/SourceCapture';\nimport SiteMeta from '../components/SiteMeta';` },
     { file: 'app/layout.js', find: `<UpdateCheck />`, replace: `<UpdateCheck />\n        <SourceCapture />` },
     { file: 'app/layout.js', find: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />`, replace: `<script dangerouslySetInnerHTML={{ __html: LANG_SCRIPT }} />\n        <SiteMeta />` },

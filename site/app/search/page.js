@@ -156,6 +156,13 @@ export default async function Search({ searchParams, home = false }) {
           : <h1 className="h1s">{section ? `${section.name}: o'quv markazlari` : district ? `${district.name}dagi o'quv markazlari` : region ? `${region.name}dagi o'quv markazlari` : "O'zbekiston bo'ylab o'quv markazlari"}</h1>}
         {toolbar(centers.length)}
         {catChips}
+        {home && !nFilters && !q ? (
+          <Link href="/daraja-testi" className="tbanner">
+            <i aria-hidden="true">?</i>
+            <span><b>Darajangizni aniqlang</b><small>Ingliz tili yoki matematika, 4–6 daqiqa. Natijaga qarab mos markazlarni tavsiya qilamiz.</small></span>
+            <em aria-hidden="true">›</em>
+          </Link>
+        ) : null}
         <div className="sec">
           <h2>{q ? `«${q}» bo'yicha` : where} <span className="muted">({centers.length})</span></h2><i />
           <Link href={'/xarita' + (region ? '?region=' + region.slug : '')}>Xaritada <Icon name="arrow" /></Link>

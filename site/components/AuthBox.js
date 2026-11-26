@@ -1,16 +1,25 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMe, refreshMe, signIn, signUp, signOut, homeFor, normLogin, LOGIN_RE, validPhone } from '../lib/auth';
 import OAuthButtons from './OAuthButtons';
+import { AccountTypePicker } from './cabinet/Extras';
 
 // Kirish va ro'yxatdan o'tish (login + parol)
 export default function AuthBox({ next = '', defaultMode = 'login', title = '', subtitle = '' }) {
   const router = useRouter();
   const me = useMe();
   const [mode, setMode] = useState(defaultMode);
-  const [f, setF] = useState({ login: '', password: '', full_name: '', phone: '+998 ' });
+  const [f, setF] = useState({ login: '', password: '', full_name: '', phone: '+998 ', ref: '' });
+  const [acct, setAcct] = useState('student');
+  // Taklif havolasi: /kirish?ref=KOD
+  useEffect(() => {
+    try {
+      const r = new URLSearchParams(window.location.search).get('ref');
+      if (r) { setF((x) => ({ ...x, ref: r.slice(0, 12).toUpperCase() })); setMode('register'); }
+    } catch { /* jim */ }
+  }, []);
   const [show, setShow] = useState(false);
   const [st, setSt] = useState({ busy: false, err: '' });
   const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }));
@@ -28,7 +37,7 @@ export default function AuthBox({ next = '', defaultMode = 'login', title = '', 
     if (f.password.length < 6) return fail("Parol kamida 6 belgidan iborat bo'lsin.");
     setSt({ busy: true, err: '' });
     const err = reg
-      ? await signUp({ login, password: f.password, full_name: f.full_name.trim(), phone: f.phone.trim() })
+      ? await signUp({ login, password: f.password, full_name: f.full_name.trim(), phone: f.phone.trim(), accountType: acct, ref: f.ref })
       : await signIn(login, f.password);
     if (err) return fail(err);
     const m = await refreshMe();
@@ -66,7 +75,11 @@ export default function AuthBox({ next = '', defaultMode = 'login', title = '', 
         <OAuthButtons next={next} label={reg ? "ro'yxatdan o'tish" : 'kirish'} />
         {reg ? (
           <>
-            <label>Ism familiya<input value={f.full_name} onChange={set('full_name')} maxLength={80} autoComplete="name" placeholder="Masalan: Aziz Karimov" /></label>
+            <div className="stack" style={{ gap: 8 }}>
+              <b style={{ fontSize: 14 }}>Hisob kim uchun?</b>
+              <AccountTypePicker value={acct} onChange={setAcct} />
+            </div>
+            <label>{acct === 'parent' ? 'Ism familiyangiz (ota-ona)' : 'Ism familiya'}<input value={f.full_name} onChange={set('full_name')} maxLength={80} autoComplete="name" placeholder="Masalan: Aziz Karimov" /></label>
             <label>Telefon raqam<input value={f.phone} onChange={set('phone')} maxLength={20} inputMode="tel" autoComplete="tel" placeholder="+998 90 123 45 67" /></label>
           </>
         ) : null}
@@ -77,6 +90,7 @@ export default function AuthBox({ next = '', defaultMode = 'login', title = '', 
         <label>Parol{reg ? ' (kamida 6 belgi)' : ''}
           <input value={f.password} onChange={set('password')} type={show ? 'text' : 'password'} maxLength={72} autoComplete={reg ? 'new-password' : 'current-password'} />
         </label>
+        {reg ? <label>Taklif kodi (ixtiyoriy)<input value={f.ref} onChange={(e) => setF((x) => ({ ...x, ref: e.target.value.toUpperCase() }))} maxLength={12} autoCapitalize="characters" placeholder="Do'stingiz bergan kod" /></label> : null}
         <label className="chk"><input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} /> Parolni ko'rsatish</label>
         <button className="btn" disabled={st.busy}>{st.busy ? 'Kutib turing...' : reg ? "Ro'yxatdan o'tish" : 'Kirish'}</button>
         {st.err ? <div className="formmsg err" role="alert">{st.err}</div> : null}

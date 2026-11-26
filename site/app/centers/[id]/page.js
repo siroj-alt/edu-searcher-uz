@@ -17,6 +17,7 @@ import CenterGallery from '../../../components/CenterGallery';
 import CompareToggle from '../../../components/CompareToggle';
 import ShareButton from '../../../components/ShareButton';
 import StickyCta from '../../../components/StickyCta';
+import { TrialBooking, ResultAdd } from '../../../components/center/PublicExtras';
 import { Shield, Spark, Stars, Cap } from '../../../components/Glyphs';
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,7 @@ const LEVEL_ORDER = { beginner: 0, intermediate: 1, advanced: 2 };
 const STALE_DAYS = 60;
 const isStale = (d) => !d || Date.now() - new Date(d).getTime() > STALE_DAYS * 864e5;
 const hoursText = (h) => (h < 1 ? '1 soat ichida' : h < 24 ? `${Math.max(1, Math.round(h))} soat ichida` : `${Math.round(h / 24)} kun ichida`);
-const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,is_sponsored,docs_verified,refund_policy,owner_id,updated_at,created_at,cover_url,logo_url,center_photos(id,url,thumb_url,is_cover,sort),' +
+const FIELDS = 'id,name,description,website,telegram,instagram,phone,rating,is_verified,is_featured,is_sponsored,docs_verified,app_discount,refund_policy,owner_id,updated_at,created_at,cover_url,logo_url,center_photos(id,url,thumb_url,is_cover,sort),' +
   'branches(id,address,phone,lat,lng,region_id),courses(id,name,level,price_monthly,price_updated_at,duration_months,schedule,categories(id,slug,name))';
 const REL_FIELDS = 'id,name,rating,phone,telegram,website,is_verified,is_featured,cover_url,logo_url,branches!inner(id,address,lat,lng,region_id),courses(level,price_monthly,categories(slug,name))';
 
@@ -72,14 +73,21 @@ export default async function CenterPage({ params }) {
   if (!c) notFound();
 
   const regIds = regionIdsOf(c);
-  const [revRes, relRes, respRes, legalRes] = await Promise.all([
+  const [revRes, relRes, respRes, legalRes, teachRes, resRes, slotRes] = await Promise.all([
     supabase.from('center_reviews').select('id,name,stars,comment,created_at').eq('center_id', c.id).eq('status', 'approved').order('created_at', { ascending: false }).limit(50),
     regIds.length
       ? supabase.from('centers').select(REL_FIELDS).eq('branches.region_id', regIds[0]).neq('id', c.id).limit(120)
       : Promise.resolve({ data: [] }),
     supabase.rpc('center_response_hours', { p_center: c.id }),
-    supabase.rpc('center_legal_public', { p_center: c.id })
+    supabase.rpc('center_legal_public', { p_center: c.id }),
+    supabase.from('center_teachers').select('id,full_name,subject,experience_years,certificate,bio,photo_url').eq('center_id', c.id).order('sort').order('created_at').limit(30),
+    supabase.from('center_results').select('id,student_name,exam,score,achieved_on,photo_url,created_at').eq('center_id', c.id).eq('status', 'approved').order('created_at', { ascending: false }).limit(60),
+    supabase.from('center_trial_slots').select('weekday,at').eq('center_id', c.id).order('weekday').order('at')
   ]);
+  const teachers = teachRes?.data || [];
+  const results = resRes?.data || [];
+  const slots = slotRes?.data || [];
+  const discount = Number(c.app_discount) || 0;
   const legal = legalRes && legalRes.data && legalRes.data.org_form ? legalRes.data : null;
   const respHours = respRes && respRes.data != null ? Number(respRes.data) : null;
   const reviews = revRes.data || [];
@@ -186,6 +194,7 @@ export default async function CenterPage({ params }) {
         </div>
         <div className="actions" id="center-actions">
           <a className="btn" href="#ariza"><Cap width="18" height="18" />Ariza berish</a>
+          <a className="btn ghost" href="#sinov"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>Bepul sinov darsi</a>
           {c.phone ? <a className="btn ghost" href={tel(c.phone)}><Icon name="phone" />Qo'ng'iroq</a> : null}
           {c.telegram ? <a className="btn ghost" href={tgHref(c.telegram)} {...ext}><Icon name="send" />Telegram</a> : null}
           {c.website ? <a className="btn ghost" href={url(c.website)} {...ext}><Icon name="globe" />Veb-sayt</a> : null}
@@ -199,6 +208,12 @@ export default async function CenterPage({ params }) {
             {legal.legal_name ? `${legal.legal_name} · STIR ${String(legal.inn).replace(/^(\d{3})(\d{3})(\d{3})$/, '$1 $2 $3')}` : 'Yakka tartibdagi tadbirkor'}
             {legal.verified ? <span className="legal-ok"> · STIR tasdiqlangan</span> : null}
           </p>
+        ) : null}
+        {discount ? (
+          <div className="disc">
+            <i>−{discount}%</i>
+            <div><b>Faqat EduSearcher orqali</b><p>Sayt yoki ilova orqali yozilsangiz birinchi oy {discount}% arzon. Markazga ariza raqamini ayting.</p></div>
+          </div>
         ) : null}
         {c.updated_at ? <p className="updated">Ma'lumot yangilangan: {fmtDate(c.updated_at)}</p> : null}
         {!c.owner_id ? (
@@ -250,6 +265,41 @@ export default async function CenterPage({ params }) {
         </>
       ) : null}
 
+      {teachers.length ? (
+        <>
+          <div className="sec"><h2>Ustozlar ({teachers.length})</h2><i /></div>
+          <div className="teach">
+            {teachers.map((p) => (
+              <div key={p.id} className="card tch">
+                {p.photo_url ? <img src={p.photo_url} alt={p.full_name} loading="lazy" /> : <span className="tch-av">{initials(p.full_name)}</span>}
+                <b>{p.full_name}</b>
+                {p.subject ? <small className="muted">{p.subject}</small> : null}
+                <div className="tags">
+                  {p.experience_years ? <span className="tag">{`${p.experience_years} yil tajriba`}</span> : null}
+                  {p.certificate ? <span className="tag on">{p.certificate}</span> : null}
+                </div>
+                {p.bio ? <p className="muted tch-bio">{p.bio}</p> : null}
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      <div className="sec" id="natijalar"><h2>Natijalar devori{results.length ? ` (${results.length})` : ''}</h2><i /></div>
+      {results.length ? (
+        <div className="resw">
+          {results.map((r) => (
+            <div key={r.id} className="card resw-i">
+              {r.photo_url ? <a href={r.photo_url} target="_blank" rel="noopener noreferrer"><img src={r.photo_url} alt={`${r.student_name} — ${r.exam} ${r.score}`} loading="lazy" /></a> : null}
+              <span className="resw-s"><small>{r.exam}</small><b>{r.score}</b></span>
+              <b>{r.student_name}</b>
+              <small className="muted">{fmtDate(r.achieved_on || r.created_at)}</small>
+            </div>
+          ))}
+        </div>
+      ) : <p className="muted">Bu markaz o'quvchilarining tasdiqlangan natijalari hali yo'q. Shu yerda o'qigan bo'lsangiz — birinchi bo'lib qo'shing.</p>}
+      <ResultAdd centerId={c.id} centerName={c.name} />
+
       {c.branches.length ? (
         <>
           <div className="sec"><h2>Filiallar ({c.branches.length})</h2><i /></div>
@@ -279,6 +329,11 @@ export default async function CenterPage({ params }) {
         {c.refund_policy ? <p className="about" style={{ whiteSpace: 'pre-line' }}>{c.refund_policy}</p> : (
           <p className="muted">Markaz pulni qaytarish tartibini hali kiritmagan. Shartnoma tuzishdan oldin to'lov qanday qaytarilishini markazdan yozma ravishda so'rang.</p>
         )}
+      </section>
+
+      <div className="sec" id="sinov"><h2>Bepul sinov darsi</h2><i /></div>
+      <section className="card">
+        <TrialBooking centerId={c.id} courses={courseOpts} slots={slots} />
       </section>
 
       <div className="sec" id="ariza"><h2>O'qishga ariza berish</h2><i /></div>

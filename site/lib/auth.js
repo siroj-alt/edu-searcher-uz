@@ -24,14 +24,15 @@ export const homeFor = (me) => (me?.role === 'center_owner' ? '/markaz-kabineti'
 export async function getMe() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return null;
-  const { data } = await supabase.from('profiles').select('role,login,full_name,phone,email').eq('id', session.user.id).maybeSingle();
+  const { data } = await supabase.from('profiles').select('role,login,full_name,phone,email,account_type').eq('id', session.user.id).maybeSingle();
   return {
     id: session.user.id,
     role: data?.role || 'user',
     login: data?.login || null,
     full_name: data?.full_name || '',
     phone: data?.phone || '',
-    email: data?.email || session.user.email || ''
+    email: data?.email || session.user.email || '',
+    accountType: data?.account_type === 'parent' ? 'parent' : 'student'
   };
 }
 
@@ -74,10 +75,15 @@ export async function signIn(login, password) {
   return '';
 }
 
-export async function signUp({ login, password, full_name, phone }) {
+export async function signUp({ login, password, full_name, phone, accountType, ref }) {
   const { error } = await supabase.rpc('register_user', { p_login: login, p_password: password, p_full_name: full_name, p_phone: phone || null });
   if (error) return rpcMsg(error, "Ro'yxatdan o'tib bo'lmadi. Birozdan so'ng qayta urinib ko'ring.");
-  return signIn(login, password);
+  const e2 = await signIn(login, password);
+  if (e2) return e2;
+  // Hisob turi va taklif kodi — xato bo'lsa ham ro'yxatdan o'tish buzilmaydi
+  if (accountType === 'parent') await supabase.rpc('set_account_type', { p_type: 'parent' }).then(() => {}, () => {});
+  if (ref && String(ref).trim()) await supabase.rpc('apply_referral', { p_code: String(ref).trim() }).then(() => {}, () => {});
+  return '';
 }
 
 export async function signOut() {

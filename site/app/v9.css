@@ -1,0 +1,136 @@
+/* v9: ilova imkoniyatlari saytda — sinov darsi, ustozlar, natijalar devori, oila, kundalik, xabarlar, daraja testi */
+
+/* Bosh sahifa: daraja testi banneri */
+.tbanner{display:flex;align-items:center;gap:14px;margin:14px 0 6px;padding:14px 16px;border-radius:20px;background:linear-gradient(135deg,#F3EEFF,#E9E1FF);border:1px solid #E0D6FF;color:#3B2A84;text-decoration:none;transition:transform .15s}
+.tbanner:hover{transform:translateY(-1px)}
+.tbanner i{flex:none;width:44px;height:44px;border-radius:14px;background:#7950F2;color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:20px;box-shadow:0 6px 14px rgba(121,80,242,.35)}
+.tbanner span{flex:1;display:flex;flex-direction:column;gap:2px}
+.tbanner b{font-size:16px}.tbanner small{color:#5F4BB6;font-size:13.5px}
+.tbanner em{font-style:normal;font-size:26px;color:#7950F2}
+[data-theme=dark] .tbanner{background:linear-gradient(135deg,#241C44,#1A1433);border-color:#352A66;color:#E5DBFF}
+[data-theme=dark] .tbanner small{color:#B9A8F5}
+
+/* Markaz: chegirma */
+.disc{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--warn-bg,#FFF4DB);border:1px solid #FFE3A8}
+.disc i{flex:none;width:46px;height:46px;border-radius:14px;background:#F59F00;color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
+.disc b{color:var(--warn,#B35C00)}.disc p{color:var(--warn,#B35C00);font-size:14px;margin-top:2px}
+[data-theme=dark] .disc{border-color:#5A4417}
+
+/* Ustozlar */
+.teach{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.tch{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;margin:0}
+.tch img,.tch-av{width:84px;height:84px;border-radius:50%;object-fit:cover}
+.tch-av{display:grid;place-items:center;background:var(--soft2);color:var(--accent-d);font-weight:800;font-size:24px}
+.tch .tags{justify-content:center}
+.tch-bio{font-size:13.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Natijalar devori */
+.resw{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.resw-i{display:flex;flex-direction:column;gap:6px;margin:0}
+.resw-i img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:var(--soft)}
+.resw-s{display:inline-flex;align-items:baseline;gap:6px;align-self:flex-start;padding:4px 10px;border-radius:10px;background:var(--soft2);color:var(--accent-d)}
+.resw-s b{font-size:20px}.resw-s small{font-weight:700}
+
+/* Sinov darsi */
+.trial-l{font-size:14px;color:var(--muted)}
+.trial-days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.trial-days button{flex:none;width:62px;padding:8px 0;border-radius:16px;border:1.5px solid var(--line2);background:var(--card);color:var(--text);display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;font:inherit}
+.trial-days button b{font-size:20px}.trial-days button small{font-size:11.5px;color:var(--muted)}
+.trial-times{display:flex;flex-wrap:wrap;gap:8px}
+.trial-times button{flex:1 1 76px;max-width:140px;height:42px;border-radius:21px;border:1.5px solid var(--line2);background:var(--card);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
+.trial-days button.on,.trial-times button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.trial-days button.on small{color:var(--on-accent);opacity:.85}
+.trial-ok{padding:14px;border-radius:16px;background:var(--ok-bg,var(--soft2));display:flex;flex-direction:column;gap:6px}
+.trial-line{margin-top:8px;font-size:13.5px;color:var(--accent-d)}
+
+/* Ro'yxatdan o'tish: hisob turi */
+.acct-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acct-pick button{position:relative;text-align:left;padding:12px;border-radius:16px;border:1.5px solid var(--line2);background:var(--card);color:var(--text);font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.acct-pick button i{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--soft2);color:var(--accent-d);margin-bottom:4px}
+.acct-pick button small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.acct-pick button::after{content:'';position:absolute;top:12px;right:12px;width:16px;height:16px;border-radius:50%;border:2px solid var(--line2)}
+.acct-pick button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card))}
+.acct-pick button.on i{background:var(--accent);color:var(--on-accent)}
+.acct-pick button.on::after{border-color:var(--accent);background:radial-gradient(circle,var(--accent) 45%,transparent 50%)}
+.acct-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;background:var(--soft2);color:var(--accent-d);font-weight:700;font-size:12.5px;margin-right:6px;vertical-align:1px}
+.acct-badge.par{background:#EDF2FF;color:#3B5BDB}
+[data-theme=dark] .acct-badge.par{background:#1C2547;color:#A5B4FC}
+
+/* Taklif */
+.ref-h{display:flex;gap:12px;align-items:flex-start}
+.ref-h i{flex:none;width:42px;height:42px;border-radius:13px;background:#FFDEEB;color:#C2255C;display:grid;place-items:center}
+.ref-h p{font-size:13.5px;margin-top:2px}
+.ref-code{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 16px;border:1.5px dashed var(--line2);border-radius:14px}
+.ref-code b{flex:1;font-size:22px;letter-spacing:.2em}
+.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ref-stats div{padding:10px;border-radius:12px;background:var(--soft);display:flex;flex-direction:column}
+.ref-stats b{font-size:20px}.ref-stats small{color:var(--muted)}
+
+/* Oila va kundalik */
+.kid-card header{margin-bottom:10px}
+.kid-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#EDF2FF;color:#3B5BDB;font-weight:800}
+.kid-enr{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.kid-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.kid-boxes div{padding:10px 12px;border-radius:14px;background:var(--soft);display:flex;flex-direction:column}
+.kid-boxes b{font-size:20px}.kid-boxes small{color:var(--muted);font-size:12.5px}
+.kid-boxes .ok b{color:var(--accent-d)}.kid-boxes .bad b{color:var(--bad)}.kid-boxes .pur b{color:#7048E8}
+.kid-pay{width:100%;padding:9px 12px;border-radius:12px;font-weight:700;font-size:14px}
+.kid-pay.ok{background:var(--soft2);color:var(--accent-d)}
+.kid-pay.warn{background:var(--warn-bg,#FFF4DB);color:var(--warn,#B35C00)}
+.kid-pay.bad{background:var(--bad-bg,#FFF0F0);color:var(--bad)}
+.kid-enr .btn svg,.enr-acts .btn svg{vertical-align:-3px;margin-right:4px}
+.enr-acts{justify-content:flex-start;gap:8px;margin-top:10px;flex-wrap:wrap}
+.enr-acts .btn.on{border-color:var(--accent);color:var(--accent-d)}
+.diary{width:100%;margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.diary-t{font-size:14px}
+.att-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.att{flex:none;width:46px;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;background:var(--soft);font-size:13px}
+.att small{font-size:10.5px;color:var(--muted)}
+.att.ok{background:var(--soft2);color:var(--accent-d)}.att.warn{background:var(--warn-bg,#FFF4DB);color:var(--warn,#B35C00)}
+.att.bad{background:var(--bad-bg,#FFF0F0);color:var(--bad)}
+.hw{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--soft)}
+.hw p{font-size:13.5px;margin-top:2px}.hw small{flex:none;font-weight:700}.hw .warn{color:var(--warn,#B35C00)}
+
+/* Xabarlar */
+.tabs.chips{gap:8px;flex-wrap:wrap}
+.inbox-h{font-size:13px;font-weight:700;color:var(--muted);margin:14px 4px 8px}
+.inbox-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;color:var(--text);text-decoration:none;position:relative}
+.inbox-row i{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center}
+.inbox-row div{flex:1;min-width:0}
+.inbox-row p{color:var(--muted);font-size:14px;margin-top:2px}
+.inbox-row small{color:var(--muted);font-size:12px}
+.inbox-row em{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;margin-top:6px}
+.inbox-row.new{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+
+/* Daraja testi */
+.lt-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.lt-card{position:relative;overflow:hidden;text-align:left;font:inherit;color:var(--text);cursor:pointer;display:flex;flex-direction:column;gap:6px;margin:0;border:1.5px solid var(--line)}
+.lt-card:hover{border-color:var(--tc)}
+.lt-g{width:52px;height:52px;border-radius:16px;background:var(--tc);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;margin-bottom:6px}
+.lt-card b{font-size:19px}.lt-card em{font-style:normal;font-weight:700;color:var(--tc);margin-top:6px}
+.lt-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}.lt-top b{flex:1;font-size:18px}
+.lt-prog{display:flex;gap:4px;margin-bottom:14px}
+.lt-prog span{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.lt-lv{display:inline-block;padding:3px 10px;border-radius:8px;font-weight:800;font-size:12.5px;margin-bottom:10px}
+.lt-q{min-height:130px;display:flex;align-items:center;border-radius:24px}
+.lt-q h2{font-size:clamp(20px,3vw,26px);line-height:1.3}
+.lt-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:12px}
+.lt-o{display:flex;align-items:center;gap:12px;padding:15px;border-radius:18px;border:1.5px solid var(--line2);background:var(--card);color:var(--text);font:inherit;font-size:17px;font-weight:600;text-align:left;cursor:pointer}
+.lt-o span{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:800;font-size:14px}
+.lt-o em{margin-left:auto;font-style:normal;color:var(--tc);font-weight:800}
+.lt-o:hover{border-color:var(--tc)}
+.lt-o.on{border:2px solid var(--tc);background:color-mix(in srgb,var(--tc) 10%,var(--card))}
+.lt-o.on span{background:var(--tc);color:#fff}
+.lt-res{position:relative;overflow:hidden;padding:28px 22px;border-radius:28px;background:var(--tc);background-image:radial-gradient(120% 100% at 0 0,rgba(255,255,255,.28),rgba(0,0,0,.12) 70%);color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;max-width:560px}
+.lt-res-g{position:absolute;right:-16px;top:-34px;font-size:150px;font-weight:800;opacity:.12;letter-spacing:-6px}
+.lt-res small{font-weight:700;opacity:.85}
+.lt-res > b{font-size:44px;line-height:1.15}.lt-res > b.big{font-size:72px;letter-spacing:-3px}
+.lt-cefr{display:flex;gap:6px;margin-bottom:6px}
+.lt-cefr span{padding:3px 9px;border-radius:9px;background:rgba(255,255,255,.2);font-weight:800;font-size:12px}
+.lt-cefr span.on{background:rgba(255,255,255,.95);color:var(--tc)}
+
+/* Admin: ilova bo'limi */
+.appadm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.appadm-grid .stat{margin:0}
+.trial-row{align-items:center}
+@media (max-width:560px){.acct-pick{grid-template-columns:1fr}.kid-boxes b{font-size:17px}}

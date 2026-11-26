@@ -6,22 +6,34 @@ import { useMe, refreshMe, signOut, rpcMsg, fmtSum, fmtDay, fmtMonth, monthsFrom
 import SavedList from '../SavedList';
 import TgLink from '../shared/TgLink';
 import BranchTransfer from './BranchTransfer';
+import { AccountTypeCard, ReferralCard, FamilyTab, DiaryBox, InboxTab, useInbox, IC } from './Extras';
+import { ResultForm } from '../center/PublicExtras';
 
-const TABS = [['markazlar', 'Markazlarim'], ['tolov', "To'lovlar"], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
+const TABS_STUDENT = [['markazlar', 'Markazlarim'], ['tolov', "To'lovlar"], ['oila', 'Oila'], ['xabarlar', 'Xabarlar'], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
+const TABS_PARENT = [['farzandlar', 'Farzandlarim'], ['markazlar', 'Arizalar'], ['xabarlar', 'Xabarlar'], ['saqlangan', 'Saqlanganlar'], ['profil', 'Profil']];
+const ALL_TABS = ['markazlar', 'tolov', 'oila', 'xabarlar', 'saqlangan', 'profil', 'farzandlar'];
 const ENR_STATUS = { active: "O'qiyapman", finished: 'Tugatilgan', left: "To'xtatilgan" };
 const ext = { target: '_blank', rel: 'noopener noreferrer' };
 
 // Foydalanuvchining shaxsiy kabineti
 export default function UserCabinet({ initialTab = '' }) {
   const me = useMe();
-  const [tab, setTab] = useState(TABS.some(([k]) => k === initialTab) ? initialTab : 'markazlar');
+  const [tab, setTab] = useState(ALL_TABS.includes(initialTab) ? initialTab : '');
+  const inbox = useInbox(me);
+  const parent = me?.accountType === 'parent';
+  const TABS = parent ? TABS_PARENT : TABS_STUDENT;
+  // Hisob turiga mos boshlang'ich bo'lim (va tur o'zgarsa — mos bo'limga o'tish)
+  useEffect(() => {
+    if (!me) return;
+    setTab((t) => (t && TABS.some(([k]) => k === t) ? t : parent ? 'farzandlar' : 'markazlar'));
+  }, [me, parent]); // eslint-disable-line react-hooks/exhaustive-deps
   const [d, setD] = useState(null);
   const [err, setErr] = useState('');
 
   const load = useCallback(async () => {
     if (!me) return;
     const [a, e, p] = await Promise.all([
-      supabase.from('applications').select('id,code,center_id,course_name,status,reply,note,created_at,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
+      supabase.from('applications').select('id,code,center_id,course_name,status,reply,note,created_at,trial_at,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
       supabase.from('enrollments').select('id,center_id,branch_id,course_name,group_name,monthly_fee,started_on,ended_on,status,centers(name)').eq('user_id', me.id).order('created_at', { ascending: false }).limit(200),
       supabase.from('payments').select('id,enrollment_id,period,amount,method,status,note,created_at').eq('user_id', me.id).order('period', { ascending: false }).limit(1000)
     ]);
@@ -64,7 +76,7 @@ export default function UserCabinet({ initialTab = '' }) {
       <div className="cab-head">
         <div>
           <h1 className="h1s">Salom, {(me.full_name || me.login || 'foydalanuvchi').split(/\s+/)[0]}!</h1>
-          <p className="muted">Shaxsiy kabinet{me.login ? ` · login: ${me.login}` : ''}</p>
+          <p className="muted"><span className={'acct-badge' + (parent ? ' par' : '')}>{parent ? IC.family(14) : IC.user(14)}{parent ? 'Ota-ona' : "O'quvchi"}</span>{me.login ? ` login: ${me.login}` : ''}</p>
         </div>
         <div className="row">
           {me.role === 'center_owner' ? <Link className="btn sm" href="/markaz-kabineti">Markaz kabineti</Link> : null}
@@ -72,7 +84,7 @@ export default function UserCabinet({ initialTab = '' }) {
         </div>
       </div>
       <div className="tabs">
-        {TABS.map(([k, v]) => <button key={k} type="button" className={'tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>{v}</button>)}
+        {TABS.map(([k, v]) => <button key={k} type="button" className={'tab' + (tab === k ? ' on' : '')} onClick={() => setTab(k)}>{v}{k === 'xabarlar' && inbox.unread ? <em className="tcnt">{inbox.unread}</em> : null}</button>)}
       </div>
       {err ? <div className="formmsg err" style={{ marginBottom: 12 }}>{err}</div> : null}
       {!me.phone && tab !== 'profil' ? (
@@ -104,12 +116,13 @@ export default function UserCabinet({ initialTab = '' }) {
                         <b>{x.monthly_fee ? fmtSum(x.monthly_fee) : 'Belgilanmagan'}</b>
                       </div>
                       <BranchTransfer e={x} branches={d.branches[x.center_id] || []} dist={d.dist} transfers={d.tr} onChange={load} />
-                      <button type="button" className="btn sm" style={{ marginTop: 10 }} onClick={() => setTab('tolov')}>To'lovlar</button>
+                      <EnrollActions e={x} onPay={() => setTab('tolov')} />
                     </div>
                   ))}
                 </div>
               </>
             ) : null}
+            {parent ? <div className="card note-card" style={{ marginTop: 10 }}><b>Farzandingiz uchun ariza bering</b><p className="muted" style={{ marginTop: 4 }}>Markaz sahifasidagi formada farzandingiz ismini yozing. Arizalar holati shu yerda ko'rinadi.</p></div> : null}
             <div className="sec" style={{ marginTop: active.length ? 34 : 10 }}><h2>Arizalarim</h2><i /></div>
             {d.apps.length ? d.apps.map((a) => <AppRow key={a.id} a={a} onChange={load} />) : (
               <div className="card empty-state">
@@ -122,6 +135,10 @@ export default function UserCabinet({ initialTab = '' }) {
         )
       ) : null}
 
+      {tab === 'farzandlar' ? <FamilyTab mode="parent" /> : null}
+      {tab === 'oila' ? <FamilyTab mode="student" /> : null}
+      {tab === 'xabarlar' ? <InboxTab inbox={inbox} /> : null}
+
       {tab === 'tolov' ? (!d ? <div className="card muted">Yuklanmoqda...</div> : <PaymentsTab d={d} onChange={load} />) : null}
 
       {tab === 'saqlangan' ? (
@@ -131,8 +148,32 @@ export default function UserCabinet({ initialTab = '' }) {
         </>
       ) : null}
 
-      {tab === 'profil' ? <ProfileTab me={me} /> : null}
+      {tab === 'profil' ? (
+        <>
+          <ProfileTab me={me} />
+          <div className="grid2" style={{ marginTop: 16 }}>
+            <AccountTypeCard me={me} />
+            <ReferralCard />
+          </div>
+        </>
+      ) : null}
     </div>
+  );
+}
+
+// Faol kurs: kundalik, natija qo'shish, to'lovlar
+function EnrollActions({ e, onPay }) {
+  const [open, setOpen] = useState('');
+  return (
+    <>
+      <div className="row enr-acts">
+        <button type="button" className="btn sm" onClick={onPay}>To'lovlar</button>
+        <button type="button" className={'btn ghost sm' + (open === 'diary' ? ' on' : '')} onClick={() => setOpen(open === 'diary' ? '' : 'diary')}>{IC.book(16)} Kundalik</button>
+        <button type="button" className={'btn ghost sm' + (open === 'res' ? ' on' : '')} onClick={() => setOpen(open === 'res' ? '' : 'res')}>{IC.trophy(16)} Natijam</button>
+      </div>
+      {open === 'diary' ? <DiaryBox enrollmentId={e.id} /> : null}
+      {open === 'res' ? <div style={{ marginTop: 10 }}><ResultForm centerId={e.center_id} centerName={e.centers?.name} /></div> : null}
+    </>
   );
 }
 
@@ -159,6 +200,7 @@ function AppRow({ a, onChange }) {
           {a.status === 'new' || a.status === 'contacted' ? <button type="button" className="btn ghost sm" disabled={busy} onClick={cancel}>Bekor qilish</button> : null}
         </div>
       </div>
+      {a.trial_at ? <p className="trial-line">Bepul sinov darsi: <b>{new Date(a.trial_at).toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</b></p> : null}
       {a.status === 'new' ? <p className="muted" style={{ fontSize: 13.5, marginTop: 8 }}>Ariza markazga yetkazildi. Markaz siz bilan bog'lanadi.</p> : null}
       {a.status === 'accepted' ? <p className="ok" style={{ fontSize: 13.5, marginTop: 8 }}>Siz kursga qabul qilindingiz. Kurs «O'qiyotgan kurslarim» bo'limida.</p> : null}
       {a.status === 'rejected' && a.reply ? <p className="muted" style={{ fontSize: 13.5, marginTop: 8 }}>Markaz izohi: {a.reply}</p> : null}
