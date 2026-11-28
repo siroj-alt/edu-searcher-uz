@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const UPDATED = '25.11.2026';
+const UPDATED = '28.11.2026';
 const EMAIL = 'yunusnorbekov1977@gmail.com';
 
 export const metadata = {
@@ -57,7 +57,7 @@ export default function Maxfiylik() {
       </S>
 
       <S t="5. Saqlash muddati va himoya">
-        <p>Ma'lumotlar hisobingiz faol bo'lgan muddatda saqlanadi. Hisobni o'chirishni so'rasangiz, 30 kun ichida shaxsiy ma'lumotlaringiz o'chiriladi; qonun yoki markaz bilan hisob-kitob talab qiladigan yozuvlar (masalan, to'lov qaydlari) shaxsga bog'lanmagan holda qolishi mumkin. Ma'lumotlar shifrlangan aloqa (HTTPS) orqali uzatiladi, bazaga kirish huquqlar bilan cheklangan.</p>
+        <p>Ma'lumotlar hisobingiz faol bo'lgan muddatda saqlanadi. Hisobni o'zingiz ilovadagi Sozlamalar yoki <Link href="/hisobni-ochirish">shu sahifa</Link> orqali o'chirsangiz, profilingiz, arizalaringiz, sharhlaringiz, to'lov yozuvlaringiz va rasmlaringiz darhol bazadan olib tashlanadi. Baza zahira nusxalarida ma'lumot bir muddat saqlanib turishi mumkin, keyin ular ham almashadi. O'quv markazi o'z hisob-kitobi uchun o'zida saqlagan yozuvlar markazning javobgarligida qoladi. Ma'lumotlar shifrlangan aloqa (HTTPS) orqali uzatiladi, bazaga kirish huquqlar bilan cheklangan.</p>
       </S>
 
       <S t="6. Sizning huquqlaringiz">
@@ -65,7 +65,7 @@ export default function Maxfiylik() {
           <li>Ism va telefoningizni kabinetdagi «Profil» bo'limida ko'rish va o'zgartirish.</li>
           <li>Telegram bildirishnomalarini istalgan vaqtda uzish.</li>
           <li>Arizangizni bekor qilish, sharhingizni o'chirishni so'rash.</li>
-          <li>Hisobingiz va ma'lumotlaringizni o'chirishni so'rash — {EMAIL} manziliga yozing.</li>
+          <li>Hisobingiz va ma'lumotlaringizni o'chirish — <Link href="/hisobni-ochirish">hisobni o'chirish sahifasi</Link> yoki {EMAIL} manzili orqali.</li>
         </ul>
       </S>
 

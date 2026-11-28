@@ -28,6 +28,7 @@ export default async function sitemap() {
     ...page('/narxlar', 'weekly', 0.7, true),
     ...page('/hamkorlik', 'monthly', 0.5),
     ...page('/maxfiylik', 'yearly', 0.2),
+    ...page('/hisobni-ochirish', 'yearly', 0.1),
     ...page('/foydalanish-shartlari', 'yearly', 0.2)
   ];
   const regCat = new Set();

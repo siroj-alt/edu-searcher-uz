@@ -358,6 +358,11 @@ function ProfileTab({ me }) {
         {pmsg.ok ? <div className="formmsg ok">{pmsg.ok}</div> : null}
         {pmsg.err ? <div className="formmsg err">{pmsg.err}</div> : null}
       </form>
+      <div className="card stack" style={{ marginBottom: 0 }}>
+        <b>Hisobni o'chirish</b>
+        <p className="muted">Profil, arizalar va sharhlaringiz butunlay o'chiriladi.</p>
+        <Link className="btn danger sm" href="/hisobni-ochirish">Hisobni o'chirish</Link>
+      </div>
     </div>
   );
 }
